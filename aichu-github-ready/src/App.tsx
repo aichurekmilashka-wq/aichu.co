@@ -4,9 +4,6 @@ export default function App() {
   return (
     <main id="top" className="min-h-screen bg-[#07142D] text-[#F4EAF0]">
       <header className="mx-auto flex max-w-[1440px] items-center justify-between px-6 py-7 md:px-12">
-        <a href="#top" aria-label="aichu.co, наверх" className="inline-flex items-center">
-          <img src={`${import.meta.env.BASE_URL}aichu-logo.png`} alt="aichu.co" className="max-h-12 w-auto max-w-[150px] object-contain" />
-        </a>
         <span className="text-[10px] uppercase tracking-[.2em] text-[#F4EAF0]/65">Digital intelligence studio</span>
       </header>
 
