@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react"
 import HalftoneWordmarkFooter from "@/components/ui/halftone-wordmark-footer"
 
+const translations: Record<string, [string, string]> = {tr("Наши решения"):["Solutions","Чечимдер"],tr("Готовые сайты"):["Ready-made websites","Даяр сайттар"],tr("Продукты"):["Products","Продукттар"],tr("Решения"):["Solutions","Чечимдер"],tr("Студия"):["Studio",tr("Студия")],tr("Наш подход"):["Our approach","Биздин ыкма"],tr("Контакты"):["Contacts","Байланыш"],tr("Разрабатываем B2B SaaS-продукты для аналитики продаж, контроля CRM и автоматизации бизнеса."):["We develop B2B SaaS products for sales analytics, CRM quality control and business automation.","Биз сатууну талдоо, CRM сапатын көзөмөлдөө жана бизнести автоматташтыруу үчүн B2B SaaS продукттарын иштеп чыгабыз."],tr("4 SaaS-продукта · Индивидуальные решения"):["4 SaaS products · Tailored solutions","4 SaaS продукт · Жекече чечимдер"],tr("Когда данные разрознены, решения принимаются вслепую."):["Fragmented data leads to decisions without visibility.","Маалыматтар чачыранды болгондо, чечимдер толук көрүнүшсүз кабыл алынат."],tr("От данных к действиям."):["From data to action.","Маалыматтан иш-аракетке."],tr("Практические сценарии."):["Business use cases.","Практикалык сценарийлер."],tr("Интеллект в каждом решении"):["Intelligence in every decision","Ар бир чечимдеги интеллект"],tr("Четыре B2B SaaS-продукта для решений на основе данных, а не догадок."):["Four B2B SaaS products for evidence-based decisions.","Божомолдорго эмес, маалыматтарга негизделген чечимдер үчүн төрт B2B SaaS продукт."],tr("Стоимость рассчитывается индивидуально под объём данных, интеграции и задачи."):["Pricing is tailored to data volume, integrations and business requirements.","Баасы маалымат көлөмүнө, интеграцияларга жана милдеттерге жараша жекече эсептелет."],tr("Для команд, которым нужна ясность."):["For teams that demand clarity.","Так маалыматты талап кылган командалар үчүн."],tr("Частые вопросы."):["Frequently asked questions.","Көп берилүүчү суроолор."],tr("Бизнес-контекст"):["Business context","Бизнес контекст"],tr("Аналитическая модель"):["Analytical model","Аналитикалык модель"],tr("Применение"):["Application","Колдонуу"],tr("Управленческая ценность"):["Management value","Башкаруудагы баалуулук"],tr("Выручка растёт, но её динамика сама по себе не объясняет изменение прибыли и результативность коммерческой команды."):["Revenue growth alone does not explain profitability or commercial team performance.","Кирешенин өсүшү өзү эле пайданын өзгөрүшүн жана коммерциялык команданын натыйжалуулугун түшүндүрбөйт."],tr("Единая система показателей продаж, прибыли и KPI с разграничением доступа к управленческой информации."):["Unified sales, profit and KPI reporting with role-based access to management data.","Сатуу, пайда жана KPI көрсөткүчтөрүнүн бирдиктүү системасы, башкаруу маалыматына ролдор боюнча жеткиликтүүлүк."],tr("Сопоставление коммерческих результатов и ключевых метрик по доступным срезам данных; выявление отклонений для управленческого разбора."):["Compare commercial results and key metrics across available dimensions; identify variances for management review.","Коммерциялык натыйжаларды жана негизги көрсөткүчтөрдү салыштырып, башкаруу үчүн четтөөлөрдү аныктоо."],tr("Прозрачность финансово-коммерческой результативности и более обоснованная приоритизация решений."):["Clearer commercial performance and better-informed management priorities.","Коммерциялык натыйжалардын ачыктыгы жана негиздүү башкаруу артыкчылыктары."],tr("Формальное ведение CRM не гарантирует контроля над потерями лидов, скоростью реакции и экономикой сделки."):["Using a CRM does not guarantee visibility into lost leads, response times or deal economics.","CRM колдонуу лиддердин жоголушун, жооп берүү ылдамдыгын жана бүтүмдүн экономикасын көзөмөлдөөгө кепилдик бербейт."],tr("Аналитика юнит-экономики, длительности цикла сделки, скорости обработки обращений и конверсии по этапам воронки."):["Analysis of unit economics, sales cycle duration, response speed and funnel-stage conversion.","Юнит-экономиканы, бүтүм циклин, кайрылууларды иштетүү ылдамдыгын жана воронкадагы конверсияны талдоо."],tr("Локализация этапов потери лидов, анализ задержек и сопоставление операционных показателей с экономикой продаж."):["Identify lead-loss stages, analyze delays and connect operational metrics to sales economics.","Лиддер жоголгон этаптарды жана кечигүүлөрдү аныктап, операциялык көрсөткүчтөрдү сатуу экономикасы менен салыштыруу."],tr("Основа для точечных изменений в процессе продаж вместо решений на уровне субъективных оценок."):["Evidence for targeted sales-process improvements instead of subjective judgments.","Субъективдүү баалардын ордуна сатуу процессин так жакшыртууга негиз."],tr("Изменения закупочных и рыночных цен могут ухудшать маржинальность раньше, чем это отражается в итоговой отчётности."):["Supplier and market price shifts can erode margins before the impact appears in financial reports.","Сатып алуу жана рыноктук баалардын өзгөрүшү отчетто көрүнгөнгө чейин маржаны азайтышы мүмкүн."],tr("Мониторинг цен, анализ поставщиков и контроль показателей маржинальности."):["Price monitoring, supplier analysis and margin tracking.","Бааларды мониторингдөө, жеткирүүчүлөрдү талдоо жана маржаны көзөмөлдөө."],tr("Сопоставление ценовых изменений и условий поставщиков с маржинальностью для оценки необходимости пересмотра закупок или ценовой политики."):["Assess price and supplier changes against margins to inform purchasing and pricing decisions.","Баалардын жана жеткирүүчүлөрдүн шарттарынын өзгөрүшүн маржа менен салыштырып, сатып алуу жана баа саясатын баалоо."],tr("Более оперативный контроль факторов, влияющих на валовую доходность, и аргументированная работа с ценами."):["Faster visibility into gross-margin drivers and more defensible pricing decisions.","Дүң кирешелүүлүккө таасир эткен факторлорду тезирээк көзөмөлдөө жана негиздүү баа чечимдери."],tr("Оценка качества клиентских коммуникаций зависит от выборочных проверок и не даёт системной картины работы команды."):["Sample-based conversation reviews fail to provide a consistent view of team performance.","Кардарлар менен сүйлөшүүлөрдү тандалма текшерүү команданын иши жөнүндө системалуу көрүнүш бербейт."],tr("Анализ переписок с клиентами и качества коммуникации менеджеров."):["Analysis of customer conversations and manager communication quality.","Кардарлар менен кат алышууну жана менеджерлердин баарлашуу сапатын талдоо."],tr("Выявление повторяющихся проблем в диалогах и формирование предметной базы для обратной связи, контроля стандартов и обучения."):["Detect recurring issues in conversations to support coaching, quality standards and training.","Диалогдордогу кайталанган көйгөйлөрдү аныктап, окутууга жана сапатты көзөмөлдөөгө негиз түзүү."],tr("Более последовательная оценка клиентского взаимодействия и управляемое повышение качества работы команды."):["More consistent customer-interaction reviews and structured quality improvement.","Кардарлар менен иштөөнү ырааттуу баалоо жана команданын сапатын системалуу жакшыртуу."],tr("Продажи и прибыль"):["Sales and profit","Сатуу жана пайда"],tr("KPI и динамика"):["KPI and trends","KPI жана динамика"],tr("Разграничение доступа"):["Access controls","Жеткиликтүүлүктү чектөө"],tr("Юнит-экономика"):["Unit economics",tr("Юнит-экономика")],tr("Цикл сделки и скорость реакции"):["Sales cycle and response speed","Бүтүм цикли жана жооп ылдамдыгы"],tr("Воронка и потери лидов"):["Funnel and lead loss","Воронка жана лид жоготуулар"],tr("Мониторинг цен"):["Price monitoring","Баалар мониторинги"],tr("Анализ поставщиков"):["Supplier analysis","Жеткирүүчүлөрдү талдоо"],tr("Маржинальность"):["Margins","Маржа"],tr("Анализ переписок"):["Conversation analysis","Кат алышууну талдоо"],tr("Оценка качества диалогов"):["Conversation quality review","Диалог сапатын баалоо"],tr("Повторяющиеся ошибки"):["Recurring issues","Кайталанган каталар"]}
+
 export default function App() {
+  const [language, setLanguage] = useState<"ru" | "en" | "ky">(() => (localStorage.getItem("aichu-language") as "ru" | "en" | "ky") || "ru")
+  const [theme, setTheme] = useState<"dark" | "light">(() => localStorage.getItem("aichu-theme") === "light" ? "light" : "dark")
+  const tr = (text: string) => language === "ru" ? text : (translations[text]?.[language === "en" ? 0 : 1] || text)
+  useEffect(() => { localStorage.setItem("aichu-language", language); document.documentElement.lang = language === "ky" ? "ky" : language }, [language])
+  useEffect(() => { localStorage.setItem("aichu-theme", theme) }, [theme])
   const [section, setSection] = useState("about")
   const [visible, setVisible] = useState(false)
   useEffect(() => {
@@ -17,19 +24,34 @@ export default function App() {
     return () => { window.removeEventListener("scroll", update); window.removeEventListener("resize", update) }
   }, [])
   return (
-    <main id="top" className="min-h-screen bg-[#07142D] text-[#F4EAF0]">
+    <main id="top" className={`min-h-screen bg-[#07142D] text-[#F4EAF0] ${theme === "light" ? "aichu-light" : ""}`}>
+      <style>{`
+        .aichu-light { background:#f6f3f5 !important; color:#07142D !important; }
+        .aichu-light .bg-\\[\\#07142D\\], .aichu-light .bg-\\[\\#091932\\], .aichu-light .bg-\\[\\#0B1C3B\\] { background-color:#fff !important; }
+        .aichu-light .text-\\[\\#F4EAF0\\], .aichu-light [class*="text-[#F4EAF0]"] { color:#07142D !important; }
+        .aichu-light [class*="border-[#F4EAF0]"] { border-color:rgba(7,20,45,.16) !important; }
+        .aichu-light [class*="bg-[#F4EAF0]/"] { background-color:rgba(7,20,45,.06) !important; }
+        .aichu-light .bg-\\[\\#F4EAF0\\] { background-color:#e9e3e8 !important; }
+        .aichu-light .text-\\[\\#07142D\\] { color:#07142D !important; }
+        .aichu-light aside { background:rgba(246,243,245,.96) !important; }
+      `}</style>
+      <div className="fixed right-3 top-3 z-50 flex items-center gap-2 rounded-full border border-[#FA347D]/30 bg-[#07142D] px-3 py-2 text-[#F4EAF0] shadow-lg md:right-6 md:top-5">
+        <button type="button" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label={theme === "dark" ? "Light mode" : "Dark mode"} className="rounded-full px-2 py-1 text-sm hover:bg-white/10">{theme === "dark" ? "☀" : "☾"}</button>
+        <span className="h-4 w-px bg-white/20" />
+        {(["ru", "en", "ky"] as const).map(code => <button key={code} type="button" onClick={() => setLanguage(code)} aria-pressed={language === code} className={`rounded px-1.5 py-1 text-xs font-semibold ${language === code ? "bg-[#FA347D] text-[#07142D]" : "text-[#F4EAF0]/70 hover:text-white"}`}>{code.toUpperCase()}</button>)}
+      </div>
       <aside aria-label="Навигация" className={`fixed left-0 top-0 z-40 hidden h-screen w-56 border-r border-[#F4EAF0]/10 bg-[#07142D]/95 px-5 py-10 backdrop-blur-xl transition-transform duration-500 lg:flex lg:flex-col ${visible ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="mb-12 text-xl font-semibold tracking-tight">aichu<span className="text-[#FA347D]">.co</span></div>
         <p className="mb-10 text-xs leading-relaxed text-[#F4EAF0]/45">DIGITAL INTELLIGENCE STUDIO</p>
         <nav className="flex flex-col gap-2">
-          {[{id:"about",number:"01",label:"Overview"},{id:"problem",number:"02",label:"The problem"},{id:"how",number:"03",label:"How it fits"},{id:"practice",number:"04",label:"In practice"},{id:"products",number:"05",label:"Products"},{id:"templates",number:"06",label:"Готовые сайты"},{id:"customers",number:"07",label:"Customers"},{id:"questions",number:"08",label:"Questions"}].map(item => (
+          {[{id:"about",number:"01",label:language === "ru" ? "Обзор" : language === "ky" ? "Сереп" : "Overview"},{id:"problem",number:"02",label:language === "ru" ? "Проблемы" : language === "ky" ? "Көйгөйлөр" : "The problem"},{id:"how",number:"03",label:language === "ru" ? "Подход" : language === "ky" ? "Ыкма" : "How it fits"},{id:"practice",number:"04",label:language === "ru" ? "Практика" : language === "ky" ? "Практика" : "In practice"},{id:"products",number:"05",label:language === "ru" ? "Продукты" : language === "ky" ? "Продукттар" : "Products"},{id:"templates",number:"06",label:tr("Готовые сайты")},{id:"customers",number:"07",label:language === "ru" ? "Клиенты" : language === "ky" ? "Кардарлар" : "Customers"},{id:"questions",number:"08",label:language === "ru" ? "Вопросы" : language === "ky" ? "Суроолор" : "Questions"}].map(item => (
             <a key={item.id} href={`#${item.id}`} aria-current={section === item.id ? "location" : undefined}
               className={`flex items-center gap-4 rounded-lg px-3 py-4 text-sm transition-colors ${section === item.id ? "bg-[#F4EAF0]/10 text-[#F4EAF0]" : "text-[#F4EAF0]/50 hover:bg-[#F4EAF0]/5 hover:text-[#F4EAF0]"}`}>
               <span className="text-xs text-[#FA347D]">{item.number}</span>{item.label}
             </a>
           ))}
         </nav>
-        <a href="#products" className="mt-auto rounded-full bg-[#FA347D] px-4 py-3 text-center text-sm font-semibold text-[#07142D] transition hover:brightness-110">Наши решения</a>
+        <a href="#products" className="mt-auto rounded-full bg-[#FA347D] px-4 py-3 text-center text-sm font-semibold text-[#07142D] transition hover:brightness-110">{tr(tr("Наши решения"))}</a>
       </aside>
       {/* The original interactive halftone wordmark now IS the hero, not a footer below it. */}
       <section aria-label="Интерактивный логотип aichu.co" className="w-full">
@@ -45,9 +67,9 @@ export default function App() {
           grain={0.25}
           height="clamp(460px, 74svh, 850px)"
           columns={[
-            { title: "Продукты", links: [{ label: "Sales Intelligence", href: "#products" }, { label: "CRM Quality Control", href: "#products" }] },
-            { title: "Решения", links: [{ label: "Price & Margin", href: "#products" }, { label: "AI Conversation", href: "#products" }] },
-            { title: "Студия", links: [{ label: "Наш подход", href: "#about" }, { label: "Контакты", href: "#about" }] },
+            { title: tr("Продукты"), links: [{ label: "Sales Intelligence", href: "#products" }, { label: "CRM Quality Control", href: "#products" }] },
+            { title: tr("Решения"), links: [{ label: "Price & Margin", href: "#products" }, { label: "AI Conversation", href: "#products" }] },
+            { title: tr("Студия"), links: [{ label: tr("Наш подход"), href: "#about" }, { label: tr("Контакты"), href: "#about" }] },
           ]}
         />
       </section>
@@ -58,7 +80,7 @@ export default function App() {
         <p className="max-w-2xl text-xl leading-relaxed md:text-3xl">
           Разрабатываем B2B SaaS-продукты для аналитики продаж, контроля CRM и автоматизации бизнеса.
         </p>
-        <span className="text-xs uppercase tracking-[.18em] text-[#F4EAF0]/45">4 SaaS-продукта · Индивидуальные решения</span>
+        <span className="text-xs uppercase tracking-[.18em] text-[#F4EAF0]/45">{tr(tr("4 SaaS-продукта · Индивидуальные решения"))}</span>
       </section>
 
       <section aria-label="Схема цифровой аналитики" className="mx-auto max-w-[1440px] px-6 pb-16 md:px-12">
@@ -76,21 +98,21 @@ export default function App() {
       </section>
       <section id="problem" className="mx-auto max-w-[1440px] px-6 pb-20 md:px-12">
         <span className="text-xs tracking-[.2em] text-[#FA347D]">02 / THE PROBLEM</span>
-        <h2 className="mt-5 max-w-3xl text-3xl font-medium md:text-5xl">Когда данные разрознены, решения принимаются вслепую.</h2>
+        <h2 className="mt-5 max-w-3xl text-3xl font-medium md:text-5xl">{tr(tr("Когда данные разрознены, решения принимаются вслепую."))}</h2>
         <div className="mt-8 grid gap-px bg-[#F4EAF0]/15 md:grid-cols-2">
           {["Sales Intelligence: сложно увидеть реальную динамику продаж, прибыли и KPI по одной системе показателей.", "CRM Quality Control: задержки обработки заявок, длинный цикл сделки и потери лидов остаются незаметными.", "Price & Margin Intelligence: изменения цен поставщиков влияют на маржу, пока данные собирают вручную.", "AI Conversation Intelligence: качество переписок менеджеров трудно оценивать последовательно."].map(t=><div key={t} className="bg-[#07142D] p-7 text-sm leading-relaxed text-[#F4EAF0]/70">{t}</div>)}
         </div>
       </section>
       <section id="how" className="mx-auto max-w-[1440px] px-6 pb-20 md:px-12">
         <span className="text-xs tracking-[.2em] text-[#FA347D]">03 / HOW IT FITS</span>
-        <h2 className="mt-5 text-3xl font-medium md:text-5xl">От данных к действиям.</h2>
+        <h2 className="mt-5 text-3xl font-medium md:text-5xl">{tr(tr("От данных к действиям."))}</h2>
         <div className="mt-8 grid gap-3 md:grid-cols-3">
           {[["01","Определяем данные","Выбираем необходимые показатели продаж, CRM, цен и коммуникаций под задачи компании."],["02","Настраиваем анализ","Формируем метрики прибыли и KPI, цикл сделки, потери лидов, маржу и качество диалогов."],["03","Применяем результаты","Используем выявленные отклонения для контроля процессов и принятия управленческих решений."]].map(([n,t,d])=><div key={n} className="border border-[#F4EAF0]/15 p-7"><span className="text-[#FA347D]">{n}</span><h3 className="mt-8 text-xl">{t}</h3><p className="mt-3 text-sm text-[#F4EAF0]/60">{d}</p></div>)}
         </div>
       </section>
       <section id="practice" className="mx-auto max-w-[1440px] px-6 pb-20 md:px-12">
         <span className="text-xs tracking-[.2em] text-[#FA347D]">04 / IN PRACTICE</span>
-        <h2 className="mt-5 text-3xl font-medium md:text-5xl">Практические сценарии.</h2>
+        <h2 className="mt-5 text-3xl font-medium md:text-5xl">{tr(tr("Практические сценарии."))}</h2>
         <div className="mt-8 grid gap-3 md:grid-cols-2">
           {[["Sales Intelligence Platform","Сопоставляйте продажи, прибыль и KPI. Разграничивайте доступ к показателям для разных ролей."],["CRM Quality Control","Оценивайте юнит-экономику, длительность сделки, скорость обработки заявок и этапы потери лидов."],["Price & Margin Intelligence","Отслеживайте изменения цен и предложения поставщиков, анализируйте влияние на маржинальность."],["AI Conversation Intelligence","Анализируйте клиентские переписки и качество работы менеджеров, находите проблемные диалоги."]].map(([t,d])=><div key={t} className="border-l-2 border-[#FA347D] bg-[#F4EAF0]/5 p-7"><h3 className="text-xl">{t}</h3><p className="mt-3 text-sm text-[#F4EAF0]/60">{d}</p></div>)}
         </div>
@@ -99,16 +121,16 @@ export default function App() {
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6 border-b border-[#F4EAF0]/15 pb-7">
           <div>
             <span className="text-[11px] uppercase tracking-[.28em] text-[#FA347D]">05 / НАШИ ПРОДУКТЫ</span>
-            <h2 className="mt-4 text-4xl font-semibold tracking-tight md:text-6xl">Интеллект в каждом решении<span className="text-[#FA347D]">.</span></h2>
+            <h2 className="mt-4 text-4xl font-semibold tracking-tight md:text-6xl">{tr(tr("Интеллект в каждом решении"))}<span className="text-[#FA347D]">.</span></h2>
           </div>
-          <p className="max-w-sm text-sm leading-relaxed text-[#F4EAF0]/60">Четыре B2B SaaS-продукта для решений на основе данных, а не догадок.</p>
+          <p className="max-w-sm text-sm leading-relaxed text-[#F4EAF0]/60">{tr(tr("Четыре B2B SaaS-продукта для решений на основе данных, а не догадок."))}</p>
         </div>
         <div className="grid grid-cols-1 gap-px overflow-hidden rounded-sm border border-[#F4EAF0]/15 bg-[#F4EAF0]/15 md:grid-cols-2">
-          [
-            { number: "01", name: "Sales Intelligence Platform", tag: "SALES / PROFITABILITY", challenge: "Выручка растёт, но её динамика сама по себе не объясняет изменение прибыли и результативность коммерческой команды.", model: "Единая система показателей продаж, прибыли и KPI с разграничением доступа к управленческой информации.", application: "Сопоставление коммерческих результатов и ключевых метрик по доступным срезам данных; выявление отклонений для управленческого разбора.", value: "Прозрачность финансово-коммерческой результативности и более обоснованная приоритизация решений.", features: ["Продажи и прибыль", "KPI и динамика", "Разграничение доступа"] },
-            { number: "02", name: "CRM Quality Control", tag: "REVENUE OPERATIONS", challenge: "Формальное ведение CRM не гарантирует контроля над потерями лидов, скоростью реакции и экономикой сделки.", model: "Аналитика юнит-экономики, длительности цикла сделки, скорости обработки обращений и конверсии по этапам воронки.", application: "Локализация этапов потери лидов, анализ задержек и сопоставление операционных показателей с экономикой продаж.", value: "Основа для точечных изменений в процессе продаж вместо решений на уровне субъективных оценок.", features: ["Юнит-экономика", "Цикл сделки и скорость реакции", "Воронка и потери лидов"] },
-            { number: "03", name: "Price & Margin Intelligence", tag: "PRICING / PROCUREMENT", challenge: "Изменения закупочных и рыночных цен могут ухудшать маржинальность раньше, чем это отражается в итоговой отчётности.", model: "Мониторинг цен, анализ поставщиков и контроль показателей маржинальности.", application: "Сопоставление ценовых изменений и условий поставщиков с маржинальностью для оценки необходимости пересмотра закупок или ценовой политики.", value: "Более оперативный контроль факторов, влияющих на валовую доходность, и аргументированная работа с ценами.", features: ["Мониторинг цен", "Анализ поставщиков", "Маржинальность"] },
-            { number: "04", name: "AI Conversation Intelligence", tag: "AI / CUSTOMER COMMUNICATION", challenge: "Оценка качества клиентских коммуникаций зависит от выборочных проверок и не даёт системной картины работы команды.", model: "Анализ переписок с клиентами и качества коммуникации менеджеров.", application: "Выявление повторяющихся проблем в диалогах и формирование предметной базы для обратной связи, контроля стандартов и обучения.", value: "Более последовательная оценка клиентского взаимодействия и управляемое повышение качества работы команды.", features: ["Анализ переписок", "Оценка качества диалогов", "Повторяющиеся ошибки"] },
+          {[
+            { number: "01", name: "Sales Intelligence Platform", tag: "SALES / PROFITABILITY", challenge: tr("Выручка растёт, но её динамика сама по себе не объясняет изменение прибыли и результативность коммерческой команды."), model: tr("Единая система показателей продаж, прибыли и KPI с разграничением доступа к управленческой информации."), application: tr("Сопоставление коммерческих результатов и ключевых метрик по доступным срезам данных; выявление отклонений для управленческого разбора."), value: tr("Прозрачность финансово-коммерческой результативности и более обоснованная приоритизация решений."), features: [tr("Продажи и прибыль"), tr("KPI и динамика"), tr("Разграничение доступа")] },
+            { number: "02", name: "CRM Quality Control", tag: "REVENUE OPERATIONS", challenge: tr("Формальное ведение CRM не гарантирует контроля над потерями лидов, скоростью реакции и экономикой сделки."), model: tr("Аналитика юнит-экономики, длительности цикла сделки, скорости обработки обращений и конверсии по этапам воронки."), application: tr("Локализация этапов потери лидов, анализ задержек и сопоставление операционных показателей с экономикой продаж."), value: tr("Основа для точечных изменений в процессе продаж вместо решений на уровне субъективных оценок."), features: [tr("Юнит-экономика"), tr("Цикл сделки и скорость реакции"), tr("Воронка и потери лидов")] },
+            { number: "03", name: "Price & Margin Intelligence", tag: "PRICING / PROCUREMENT", challenge: tr("Изменения закупочных и рыночных цен могут ухудшать маржинальность раньше, чем это отражается в итоговой отчётности."), model: tr("Мониторинг цен, анализ поставщиков и контроль показателей маржинальности."), application: tr("Сопоставление ценовых изменений и условий поставщиков с маржинальностью для оценки необходимости пересмотра закупок или ценовой политики."), value: tr("Более оперативный контроль факторов, влияющих на валовую доходность, и аргументированная работа с ценами."), features: [tr("Мониторинг цен"), tr("Анализ поставщиков"), tr("Маржинальность")] },
+            { number: "04", name: "AI Conversation Intelligence", tag: "AI / CUSTOMER COMMUNICATION", challenge: tr("Оценка качества клиентских коммуникаций зависит от выборочных проверок и не даёт системной картины работы команды."), model: tr("Анализ переписок с клиентами и качества коммуникации менеджеров."), application: tr("Выявление повторяющихся проблем в диалогах и формирование предметной базы для обратной связи, контроля стандартов и обучения."), value: tr("Более последовательная оценка клиентского взаимодействия и управляемое повышение качества работы команды."), features: [tr("Анализ переписок"), tr("Оценка качества диалогов"), tr("Повторяющиеся ошибки")] },
           ].map((product) => (
             <article key={product.number} className="group flex min-h-[610px] flex-col justify-between bg-[#07142D] p-7 transition-colors duration-300 hover:bg-[#0B1C3B] md:p-10">
               <div>
@@ -118,10 +140,10 @@ export default function App() {
                 </div>
                 <h3 className="max-w-md text-2xl font-medium leading-tight tracking-tight md:text-3xl">{product.name}</h3>
                 <div className="mt-7 space-y-6">
-                  {[[ "Бизнес-контекст", product.challenge ], [ "Аналитическая модель", product.model ], [ "Применение", product.application ]].map(([label, copy]) => (
+                  {[[ tr("Бизнес-контекст"), product.challenge ], [ tr("Аналитическая модель"), product.model ], [ tr("Применение"), product.application ]].map(([label, copy]) => (
                     <div key={label}><p className="mb-2 text-[10px] font-medium uppercase tracking-[.18em] text-[#F4EAF0]/40">{label}</p><p className="max-w-lg text-sm leading-relaxed text-[#F4EAF0]/75">{copy}</p></div>
                   ))}
-                  <div className="border-t border-[#FA347D]/50 pt-5"><p className="mb-2 text-[10px] font-medium uppercase tracking-[.18em] text-[#FA347D]">Управленческая ценность</p><p className="max-w-lg text-base leading-relaxed text-[#F4EAF0]">{product.value}</p></div>
+                  <div className="border-t border-[#FA347D]/50 pt-5"><p className="mb-2 text-[10px] font-medium uppercase tracking-[.18em] text-[#FA347D]">{tr(tr("Управленческая ценность"))}</p><p className="max-w-lg text-base leading-relaxed text-[#F4EAF0]">{product.value}</p></div>
                 </div>
               </div>
               <div className="mt-10 flex flex-wrap gap-2">
@@ -131,7 +153,7 @@ export default function App() {
           ))}
         </div>
         <div className="mt-7 flex flex-wrap items-center justify-between gap-3 text-sm text-[#F4EAF0]/60">
-          <p>Стоимость рассчитывается индивидуально под объём данных, интеграции и задачи.</p>
+          <p>{tr(tr("Стоимость рассчитывается индивидуально под объём данных, интеграции и задачи."))}</p>
           <span className="text-[#FA347D]">AICHU.CO / B2B SOFTWARE</span>
         </div>
       </section>
@@ -139,7 +161,7 @@ export default function App() {
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6 border-b border-[#F4EAF0]/15 pb-7">
           <div>
             <span className="text-[11px] uppercase tracking-[.28em] text-[#FA347D]">06 / READY-MADE WEBSITES</span>
-            <h2 className="mt-4 text-4xl font-semibold tracking-tight md:text-6xl">Готовые сайты<span className="text-[#FA347D]">.</span></h2>
+            <h2 className="mt-4 text-4xl font-semibold tracking-tight md:text-6xl">{tr(tr("Готовые сайты"))}<span className="text-[#FA347D]">.</span></h2>
           </div>
           <p className="max-w-sm text-sm leading-relaxed text-[#F4EAF0]/60">Выберите готовый дизайн или закажите адаптацию под свой бизнес.</p>
         </div>
@@ -175,12 +197,12 @@ export default function App() {
       </section>
       <section id="customers" className="mx-auto max-w-[1440px] px-6 pb-20 md:px-12">
         <span className="text-xs tracking-[.2em] text-[#FA347D]">07 / CUSTOMERS</span>
-        <h2 className="mt-5 text-3xl font-medium md:text-5xl">Для команд, которым нужна ясность.</h2>
+        <h2 className="mt-5 text-3xl font-medium md:text-5xl">{tr(tr("Для команд, которым нужна ясность."))}</h2>
         <p className="mt-6 max-w-2xl text-[#F4EAF0]/65">Для собственников и руководителей, которым важны прибыль и KPI; для отделов продаж, контролирующих воронку и скорость обработки; для коммерческих команд, управляющих ценами и маржой; для руководителей клиентского сервиса, оценивающих качество переписок.</p>
       </section>
       <section id="questions" className="mx-auto max-w-[1440px] px-6 pb-28 md:px-12">
         <span className="text-xs tracking-[.2em] text-[#FA347D]">08 / QUESTIONS</span>
-        <h2 className="mt-5 text-3xl font-medium md:text-5xl">Частые вопросы.</h2>
+        <h2 className="mt-5 text-3xl font-medium md:text-5xl">{tr(tr("Частые вопросы."))}</h2>
         <div className="mt-8 divide-y divide-[#F4EAF0]/15 border-y border-[#F4EAF0]/15">
           {[["Сколько стоит внедрение?","Стоимость каждого продукта рассчитывается индивидуально и зависит от объёма данных, интеграций и задач."],["Нужно ли подключать все четыре продукта?","Нет. Sales Intelligence, CRM Quality Control, Price & Margin Intelligence и AI Conversation Intelligence представлены как отдельные решения."],["Какие показатели анализирует Sales Intelligence?","Продажи, прибыль, KPI и динамику показателей. Предусмотрено разграничение доступа."],["Что контролирует CRM Quality Control?","Юнит-экономику, цикл сделки, скорость обработки заявок, воронку и потери лидов."],["Что даёт Price & Margin Intelligence?","Мониторинг цен и поставщиков, а также анализ маржинальности."],["Что анализирует AI Conversation Intelligence?","Переписки с клиентами и качество работы менеджеров."],["Можно ли интегрировать решение с нашей CRM?","Совместимость и необходимый состав интеграций определяются при обсуждении конкретного проекта."]].map(([q,a])=><details key={q} className="group py-5"><summary className="cursor-pointer list-none text-lg">{q}<span className="float-right text-[#FA347D]">+</span></summary><p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#F4EAF0]/65">{a}</p></details>)}
         </div>
