@@ -11,7 +11,7 @@ export default function App() {
       <section aria-label="Интерактивный логотип aichu.co" className="w-full">
         <HalftoneWordmarkFooter
           wordmark="aichu.co"
-          label="AICHU / TECHNOLOGY STUDIO"
+          label="DIGITAL INTELLIGENCE STUDIO"
           meta="B2B SOFTWARE · AI & ANALYTICS"
           backToTop={false}
           palette={{ background: "#07142D", ink: "#F4EAF0", warm: "#FA347D" }}
