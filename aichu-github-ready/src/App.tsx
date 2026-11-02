@@ -118,15 +118,7 @@ export default function App() {
         />
       </section>
 
-      <div className="relative">
-      <section id="about" className="mx-auto flex max-w-[1440px] flex-col gap-5 px-6 pb-14 pt-6 md:px-12">
-        <span className="text-[11px] uppercase tracking-[.28em] text-[#FA347D]">AICHU.CO / DIGITAL INTELLIGENCE</span>
-        <p className="max-w-2xl text-xl leading-relaxed md:text-3xl">
-          {tr("Разрабатываем B2B SaaS-продукты для аналитики продаж, контроля CRM и автоматизации бизнеса.")}
-        </p>
-        <span className="text-xs uppercase tracking-[.18em] text-[#F4EAF0]/45">{tr("4 SaaS-продукта · Индивидуальные решения")}</span>
-      </section>
-
+      <div id="about" className="relative">
       <SalesLeakageFunnel language={language} theme={theme} />
       <section id="how" className="mx-auto max-w-[1440px] px-6 pb-20 md:px-12">
         <span className="text-xs tracking-[.2em] text-[#FA347D]">03 / HOW IT FITS</span>
