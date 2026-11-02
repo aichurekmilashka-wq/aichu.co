@@ -72,7 +72,7 @@ export default function HalftoneWordmarkFooter({
    m.font=o.fontWeight+" 100px "+o.fontFamily;const word=o.wordmark||" ";
    const fit=hwfFitSize(m.measureText(word).width,w*0.90);m.font=o.fontWeight+" "+fit+"px "+o.fontFamily;
    const box=m.measureText(word),cap=box.actualBoundingBoxAscent||fit*.72,c=Math.max(0,Math.min(.6,o.crop));
-   m.fillStyle="#000";m.textBaseline="alphabetic";m.fillText(word,(w-box.width)/2,h+cap*c);
+   m.fillStyle="#000";m.textBaseline="alphabetic";m.fillText(word,(w-box.width)/2,(h+cap-(box.actualBoundingBoxDescent||fit*.08))/2+cap*c*.08);
    const img=m.getImageData(0,0,w,h).data,gap=Math.max(3,o.dotGap),cols=Math.ceil(w/gap),rows=Math.ceil(h/gap),tmp:number[]=[];
    for(let gy=0;gy<rows;gy++)for(let gx=0;gx<cols;gx++){
     let sum=0;for(let sy=0;sy<3;sy++)for(let sx=0;sx<3;sx++){
@@ -120,9 +120,9 @@ export default function HalftoneWordmarkFooter({
  },[key]);
  return <footer ref={rootRef} className={"hwf-root "+className} style={{height,"--hwf-bg":colors.background,"--hwf-ink":colors.ink,"--hwf-mono":monoFamily} as React.CSSProperties}>
   <style>{HWF_CSS}</style><canvas ref={canvasRef} aria-hidden="true"/><span className="hwf-sr">{wordmark}</span>
-  <div className="hwf-top"><div className="hwf-brand"><strong>{label}</strong><span>{meta}</span></div>
+  {(label||meta||columns.length>0)&&<div className="hwf-top"><div className="hwf-brand"><strong>{label}</strong><span>{meta}</span></div>
    {columns.map(col=><nav className="hwf-col" key={col.title} aria-label={col.title}><h3>{col.title}</h3><ul>{col.links.map(l=><li key={l.label}><a href={l.href||"#"}>{l.label}</a></li>)}</ul></nav>)}
-  </div>
-  <div className="hwf-rule">{backToTop?<button type="button" className="hwf-up" onClick={()=>window.scrollTo({top:0,behavior:"smooth"})}>Back to top ↑</button>:null}</div>
+  </div>}
+  {backToTop&&<div className="hwf-rule">{backToTop?<button type="button" className="hwf-up" onClick={()=>window.scrollTo({top:0,behavior:"smooth"})}>Back to top ↑</button>:null}</div>}
  </footer>
 }
