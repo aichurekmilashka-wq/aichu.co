@@ -221,7 +221,7 @@ export default function SalesLeakageFunnel({ language, theme }: { language: Lang
                         onMouseLeave={() => setHoveredLeak(null)}
                         onFocus={() => showLeak(i)}
                         onBlur={() => setHoveredLeak(null)}
-                        onClick={event => { event.stopPropagation(); if (hoveredLeak === i) setHoveredLeak(null); else showLeak(i) }}
+                        onClick={event => { event.stopPropagation(); showLeak(i) }}
                         onKeyDown={event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); event.stopPropagation(); showLeak(i) } }}
                       >
                         <ellipse cx={tier.holeX} cy={tier.holeY} rx="10" ry="15" transform={"rotate(" + (tier.holeSide * 18) + " " + tier.holeX + " " + tier.holeY + ")"} fill="url(#sl-hole-gradient)" stroke={hoveredLeak === i ? "#FFC0D8" : selected ? "#FA347D" : "#A43C70"} strokeWidth={hoveredLeak === i ? 3 : selected ? 2.5 : 1.5} className="sl-hole-visual"/>
