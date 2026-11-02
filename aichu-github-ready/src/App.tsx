@@ -71,8 +71,8 @@ export default function App() {
       <section aria-label="Интерактивный логотип aichu.co" className="w-full">
         <HalftoneWordmarkFooter
           wordmark="aichu.co"
-          label="DIGITAL INTELLIGENCE STUDIO"
-          meta="B2B SOFTWARE · AI & ANALYTICS"
+          label=""
+          meta=""
           backToTop={false}
           palette={theme === "dark" ? { background: "#07142D", ink: "#F4EAF0", warm: "#FA347D" } : { background: "#F6F3F5", ink: "#07142D", warm: "#FA347D" }}
           dotGap={6}
