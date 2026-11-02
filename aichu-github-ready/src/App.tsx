@@ -7,9 +7,9 @@ export default function App() {
   useEffect(() => {
     const update = () => {
       const about = document.getElementById("about")
-      const products = document.getElementById("products")
+      const ids = ["about", "problem", "how", "practice", "products", "customers", "questions"]
       setVisible(Boolean(about && about.getBoundingClientRect().top < window.innerHeight * 0.5))
-      setSection(products && products.getBoundingClientRect().top < window.innerHeight * 0.5 ? "products" : "about")
+      setSection([...ids].reverse().find(id => (document.getElementById(id)?.getBoundingClientRect().top ?? Infinity) < window.innerHeight * 0.5) ?? "about")
     }
     update()
     window.addEventListener("scroll", update, { passive: true })
@@ -22,7 +22,7 @@ export default function App() {
         <div className="mb-12 text-xl font-semibold tracking-tight">aichu<span className="text-[#FA347D]">.co</span></div>
         <p className="mb-10 text-xs leading-relaxed text-[#F4EAF0]/45">DIGITAL INTELLIGENCE STUDIO</p>
         <nav className="flex flex-col gap-2">
-          {[{id:"about",number:"01",label:"Студия"},{id:"products",number:"02",label:"Продукты"}].map(item => (
+          {[{id:"about",number:"01",label:"Overview"},{id:"problem",number:"02",label:"The problem"},{id:"how",number:"03",label:"How it fits"},{id:"practice",number:"04",label:"In practice"},{id:"products",number:"05",label:"Products"},{id:"customers",number:"06",label:"Customers"},{id:"questions",number:"07",label:"Questions"}].map(item => (
             <a key={item.id} href={`#${item.id}`} aria-current={section === item.id ? "location" : undefined}
               className={`flex items-center gap-4 rounded-lg px-3 py-4 text-sm transition-colors ${section === item.id ? "bg-[#F4EAF0]/10 text-[#F4EAF0]" : "text-[#F4EAF0]/50 hover:bg-[#F4EAF0]/5 hover:text-[#F4EAF0]"}`}>
               <span className="text-xs text-[#FA347D]">{item.number}</span>{item.label}
@@ -74,6 +74,27 @@ export default function App() {
           <div className="mt-8 flex flex-wrap justify-between gap-3 border-t border-[#F4EAF0]/15 pt-5 text-[10px] tracking-[.14em] text-[#F4EAF0]/50"><span>01 / COLLECT</span><span>02 / ANALYZE</span><span>03 / OPTIMIZE</span><span>04 / ACT</span></div>
         </div>
       </section>
+      <section id="problem" className="mx-auto max-w-[1440px] px-6 pb-20 md:px-12">
+        <span className="text-xs tracking-[.2em] text-[#FA347D]">02 / THE PROBLEM</span>
+        <h2 className="mt-5 max-w-3xl text-3xl font-medium md:text-5xl">Когда данные разрознены, решения принимаются вслепую.</h2>
+        <div className="mt-8 grid gap-px bg-[#F4EAF0]/15 md:grid-cols-3">
+          {["Продажи и прибыль без единой картины", "Потери лидов и слабый контроль CRM", "Цены и маржа меняются быстрее отчётов"].map(t=><div key={t} className="bg-[#07142D] p-7 text-sm leading-relaxed text-[#F4EAF0]/70">{t}</div>)}
+        </div>
+      </section>
+      <section id="how" className="mx-auto max-w-[1440px] px-6 pb-20 md:px-12">
+        <span className="text-xs tracking-[.2em] text-[#FA347D]">03 / HOW IT FITS</span>
+        <h2 className="mt-5 text-3xl font-medium md:text-5xl">От данных к действиям.</h2>
+        <div className="mt-8 grid gap-3 md:grid-cols-3">
+          {[["01","Собираем","Объединяем нужные источники и показатели."],["02","Анализируем","Выявляем закономерности, отклонения и потери."],["03","Управляем","Превращаем аналитику в понятные решения."]].map(([n,t,d])=><div key={n} className="border border-[#F4EAF0]/15 p-7"><span className="text-[#FA347D]">{n}</span><h3 className="mt-8 text-xl">{t}</h3><p className="mt-3 text-sm text-[#F4EAF0]/60">{d}</p></div>)}
+        </div>
+      </section>
+      <section id="practice" className="mx-auto max-w-[1440px] px-6 pb-20 md:px-12">
+        <span className="text-xs tracking-[.2em] text-[#FA347D]">04 / IN PRACTICE</span>
+        <h2 className="mt-5 text-3xl font-medium md:text-5xl">Практические сценарии.</h2>
+        <div className="mt-8 grid gap-3 md:grid-cols-2">
+          {[["Продажи","Сравнивайте динамику выручки, прибыли и KPI."],["CRM","Находите задержки обработки и точки потери лидов."],["Ценообразование","Следите за ценами поставщиков и маржой."],["Коммуникации","Анализируйте переписки и качество диалогов."]].map(([t,d])=><div key={t} className="border-l-2 border-[#FA347D] bg-[#F4EAF0]/5 p-7"><h3 className="text-xl">{t}</h3><p className="mt-3 text-sm text-[#F4EAF0]/60">{d}</p></div>)}
+        </div>
+      </section>
       <section id="products" className="mx-auto max-w-[1440px] px-6 pb-28 pt-8 md:px-12">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6 border-b border-[#F4EAF0]/15 pb-7">
           <div>
@@ -107,6 +128,18 @@ export default function App() {
         <div className="mt-7 flex flex-wrap items-center justify-between gap-3 text-sm text-[#F4EAF0]/60">
           <p>Стоимость рассчитывается индивидуально под объём данных, интеграции и задачи.</p>
           <span className="text-[#FA347D]">AICHU.CO / B2B SOFTWARE</span>
+        </div>
+      </section>
+      <section id="customers" className="mx-auto max-w-[1440px] px-6 pb-20 md:px-12">
+        <span className="text-xs tracking-[.2em] text-[#FA347D]">06 / CUSTOMERS</span>
+        <h2 className="mt-5 text-3xl font-medium md:text-5xl">Для команд, которым нужна ясность.</h2>
+        <p className="mt-6 max-w-2xl text-[#F4EAF0]/65">Для собственников, руководителей продаж, коммерческих и операционных команд, которые управляют бизнесом через данные.</p>
+      </section>
+      <section id="questions" className="mx-auto max-w-[1440px] px-6 pb-28 md:px-12">
+        <span className="text-xs tracking-[.2em] text-[#FA347D]">07 / QUESTIONS</span>
+        <h2 className="mt-5 text-3xl font-medium md:text-5xl">Частые вопросы.</h2>
+        <div className="mt-8 divide-y divide-[#F4EAF0]/15 border-y border-[#F4EAF0]/15">
+          {[["Сколько стоит продукт?","Стоимость индивидуальна и зависит от объёма данных, интеграций и задач."],["Можно ли выбрать одно решение?","Продукты представлены как отдельные направления. Состав внедрения определяется задачами бизнеса."],["Подойдут ли решения под нашу CRM?","Совместимость и необходимые интеграции оцениваются для конкретного проекта."]].map(([q,a])=><details key={q} className="group py-5"><summary className="cursor-pointer list-none text-lg">{q}<span className="float-right text-[#FA347D]">+</span></summary><p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#F4EAF0]/65">{a}</p></details>)}
         </div>
       </section>
       </div>
