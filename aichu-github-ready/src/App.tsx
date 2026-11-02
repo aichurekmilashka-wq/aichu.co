@@ -40,7 +40,7 @@ export default function App() {
         .aichu-light article:not([class*="bg-[#F4EAF0]"]) { background-color:#fff !important; }
         .aichu-light [class*="text-[#F4EAF0]/"] { color:rgba(7,20,45,.72) !important; }
       `}</style>
-      <header className="sticky top-0 z-40 border-b border-[#FA347D]/20 bg-[#07142D]/95 px-4 py-3 text-[#F4EAF0] backdrop-blur-xl md:px-8">
+      <header className="sticky top-0 z-40 border-b border-[#FA347D]/20 bg-[#07142D] px-4 py-3 text-[#F4EAF0] md:px-8">
         <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4">
           <a href="#top" className="shrink-0 text-xl font-semibold tracking-tight">aichu<span className="text-[#FA347D]">.co</span></a>
           <nav aria-label="Main navigation" className="hidden items-center gap-2 lg:flex">
@@ -60,9 +60,9 @@ export default function App() {
             <a href="#templates" className="px-3 py-2 text-sm hover:text-[#FA347D]">{language === "ru" ? "Готовые сайты" : language === "ky" ? "Даяр сайттар" : "Website templates"}</a>
           </nav>
           <div className="flex items-center gap-2">
-            <button type="button" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label={theme === "dark" ? "Light mode" : "Dark mode"} className="rounded-full border border-white/20 px-3 py-2 text-sm">{theme === "dark" ? "☀" : "☾"}</button>
-            <select aria-label="Language" value={language} onChange={e => setLanguage(e.target.value as "ru" | "en" | "ky")} className="rounded border border-white/20 bg-[#07142D] px-2 py-2 text-xs text-[#F4EAF0]"><option value="ru">RU</option><option value="en">EN</option><option value="ky">KY</option></select>
-            <button type="button" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu" aria-expanded={mobileOpen} className="rounded border border-white/20 px-3 py-2 text-sm lg:hidden">{mobileOpen ? "✕" : "☰"}</button>
+            <button type="button" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label={theme === "dark" ? "Light mode" : "Dark mode"} className="px-3 py-2 text-sm transition-colors hover:text-[#FA347D]">{theme === "dark" ? "☀" : "☾"}</button>
+            <select aria-label="Language" value={language} onChange={e => setLanguage(e.target.value as "ru" | "en" | "ky")} className="bg-[#07142D] px-2 py-2 text-xs text-[#F4EAF0] outline-none"><option value="ru">RU</option><option value="en">EN</option><option value="ky">KY</option></select>
+            <button type="button" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu" aria-expanded={mobileOpen} className="px-3 py-2 text-sm lg:hidden">{mobileOpen ? "✕" : "☰"}</button>
           </div>
         </div>
         {mobileOpen && <nav aria-label="Mobile navigation" className="mt-3 grid gap-1 border-t border-white/15 pt-3 lg:hidden">{navSections.map(item => <a key={item.id} href={`#${item.id}`} onClick={() => setMobileOpen(false)} className="px-3 py-3 text-sm hover:bg-white/10">{item.number} / {item.label}</a>)}</nav>}
