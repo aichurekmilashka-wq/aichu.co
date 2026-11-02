@@ -72,6 +72,38 @@
 .sl-tier .sl-tier-face, .sl-tier .sl-tier-glow { transition: stroke .25s ease, filter .25s ease; }
 .sl-tier:focus-visible .sl-tier-face { stroke: #FA347D; stroke-width: 3px; filter: drop-shadow(0 0 6px #FA347D); }
 .sl-tier:hover .sl-tier-face, .sl-tier-active .sl-tier-face { filter: drop-shadow(0 0 9px rgba(250,52,125,.23)); }
+.sl-hole { cursor: help; outline: none; }
+.sl-hole-target { pointer-events: all; }
+.sl-hole-visual { pointer-events: none; transition: filter .18s ease, stroke .18s ease; }
+.sl-hole:hover .sl-hole-visual, .sl-hole-hovered .sl-hole-visual, .sl-hole:focus-visible .sl-hole-visual {
+  filter: drop-shadow(0 0 9px rgba(250,52,125,.88));
+}
+.sl-hole:focus-visible .sl-hole-target { stroke: #FA347D; stroke-width: 2px; stroke-dasharray: 2 5; }
+.sl-hole-tooltip {
+  position: absolute; z-index: 4; pointer-events: none;
+  display: flex; flex-direction: column; gap: 7px;
+  width: max-content; max-width: min(244px, 64%);
+  padding: 13px 16px;
+  border: 1px solid rgba(250,52,125,.78);
+  background: rgba(5,15,34,.97);
+  box-shadow: 0 12px 30px rgba(1,8,21,.44);
+  color: #F4EAF0;
+  animation: sl-tooltip-appear .16s ease-out both;
+}
+.sl-hole-tooltip--left { transform: translate(18px, -50%); }
+.sl-hole-tooltip--right { transform: translate(calc(-100% - 18px), -50%); }
+.sl-hole-tooltip-label {
+  font-size: 10px; letter-spacing: .07em; color: #FA81AA;
+  line-height: 1.4;
+}
+.sl-hole-tooltip strong {
+  font-size: clamp(12px, 1.1vw, 15px); font-weight: 600;
+  line-height: 1.45; overflow-wrap: anywhere;
+}
+@keyframes sl-tooltip-appear {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 .sl-leak-line { stroke-dasharray: 6 8; animation: sl-leak 2.7s linear infinite; }
 .sl-incoming line { animation: sl-incoming 1.9s linear infinite; }
 .sl-incoming line:nth-child(2n) { animation-duration: 2.3s; }
@@ -152,6 +184,9 @@
   .sl-card { min-height: 0; }
   .sl-card h3 { margin: 28px 0; font-size: 30px; }
   .sl-legend-mark { margin-top: 7px; }
+  .sl-hole-tooltip { padding: 8px 10px; max-width: 65%; }
+  .sl-hole-tooltip-label { font-size: 9px; }
+  .sl-hole-tooltip strong { font-size: 12px; }
 }
 @media (max-width: 420px) {
   .sl-shell { padding-left: 14px; padding-right: 14px; }
