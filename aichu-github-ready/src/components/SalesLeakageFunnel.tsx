@@ -25,6 +25,7 @@ type Content = {
   previous: string
   restart: string
   legend: string
+  leakHints: string[]
   stages: Stage[]
 }
 const text: Record<Language, Content> = {
@@ -44,6 +45,7 @@ const text: Record<Language, Content> = {
     previous: "Назад",
     restart: "Новый цикл",
     legend: "Розовые потоки обозначают возможные потери, а не реальные показатели компании.",
+    leakHints: ["Долгий ответ менеджера", "Скрытые мотивы не выявлены", "Не предложены нужные услуги", "Неудобный способ оплаты", "Покупатель не вернулся"],
     stages: [
       { title: "Первый контакт", shortLines: ["Первый контакт"], task: "Принять обращение, понять первоначальный запрос и ответить на вопросы покупателя.", risk: "Запрос обработан неправильно. Открытые вопросы остаются без ответа.", metric: "Скорость и качество обработки обращения, полнота ответов." },
       { title: "Выявление потребностей", shortLines: ["Выявление", "потребностей"], task: "Выявить скрытые потребности, мотивы и реальные критерии выбора покупателя.", risk: "Менеджер ограничился поверхностным запросом и не понял, что действительно важно покупателю.", metric: "Качество выявления потребностей и мотивов." },
@@ -68,6 +70,7 @@ const text: Record<Language, Content> = {
     previous: "Back",
     restart: "New cycle",
     legend: "Pink streams illustrate potential leakage, not actual company performance.",
+    leakHints: ["Manager responds too slowly", "Underlying motivations missed", "Relevant services not offered", "Inconvenient payment options", "Customer does not return"],
     stages: [
       { title: "First contact", shortLines: ["First contact"], task: "Handle the enquiry, understand the initial request and answer the buyer's questions.", risk: "The request is handled poorly and questions remain unanswered.", metric: "Response speed, handling quality and completeness of answers." },
       { title: "Needs discovery", shortLines: ["Needs", "discovery"], task: "Uncover underlying needs, motivations and the buyer's real decision criteria.", risk: "The manager only addresses the surface request and misses what matters most.", metric: "Quality of needs and motivation discovery." },
@@ -92,6 +95,7 @@ const text: Record<Language, Content> = {
     previous: "Артка",
     restart: "Жаңы цикл",
     legend: "Кызгылт агымдар компаниянын чыныгы көрсөткүчтөрүн эмес, мүмкүн болгон жоготууларды билдирет.",
+    leakHints: ["Менеджер кеч жооп берет", "Жашыруун мотивдер аныкталган эмес", "Керектүү кызматтар сунушталбайт", "Төлөм ыкмасы ыңгайсыз", "Кардар кайра келген жок"],
     stages: [
       { title: "Биринчи байланыш", shortLines: ["Биринчи", "байланыш"], task: "Кайрылууну туура кабыл алып, алгачкы суроо-талапты түшүнүп, сатып алуучунун суроолоруна жооп берүү.", risk: "Суроо-талап туура иштелбейт, кардардын суроолору жоопсуз калат.", metric: "Жооп берүү ылдамдыгы, кайрылууну иштетүү сапаты жана жооптордун толуктугу." },
       { title: "Муктаждыктарды аныктоо", shortLines: ["Муктаждыктарды", "аныктоо"], task: "Сатып алуучунун жашыруун муктаждыктарын, мотивдерин жана тандоо критерийлерин аныктоо.", risk: "Менеджер үстүртөн айтылган суроо-талап менен чектелип, кардар үчүн маанилүү нерсени түшүнбөйт.", metric: "Муктаждыктарды жана мотивдерди аныктоо сапаты." },
@@ -112,6 +116,7 @@ const tiers = [
 
 export default function SalesLeakageFunnel({ language, theme }: { language: Language; theme: "dark" | "light" }) {
   const [active, setActive] = useState(0)
+  const [hoveredLeak, setHoveredLeak] = useState<number | null>(null)
   const [manual, setManual] = useState(false)
   const [reducedMotion, setReducedMotion] = useState(false)
   const copy = text[language]
@@ -133,6 +138,13 @@ export default function SalesLeakageFunnel({ language, theme }: { language: Lang
   function choose(index: number) {
     setActive((index + 5) % 5)
     setManual(true)
+    setHoveredLeak(null)
+  }
+
+  function showLeak(index: number) {
+    setActive(index)
+    setManual(true)
+    setHoveredLeak(index)
   }
 
   return (
@@ -146,7 +158,7 @@ export default function SalesLeakageFunnel({ language, theme }: { language: Lang
         <div className="sl-stage-layout">
           <div className="sl-visual-column">
             <div className="sl-visual">
-              <svg viewBox="0 0 700 790" role="img" aria-label={copy.overview} className="sl-funnel-svg">
+              <svg viewBox="0 0 700 790" role="group" aria-label={copy.overview} className="sl-funnel-svg">
                 <defs>
                   <linearGradient id="sl-tier-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stopColor="#1F3658" stopOpacity=".82" />
@@ -198,8 +210,23 @@ export default function SalesLeakageFunnel({ language, theme }: { language: Lang
                       <text x="350" y={tier.labelY + (stage.shortLines.length > 1 ? 6 : 12)} className="sl-svg-stage" textAnchor="middle">
                         {stage.shortLines.map((line, j) => <tspan key={j} x="350" dy={j === 0 ? 0 : 20}>{line}</tspan>)}
                       </text>
-                      <ellipse cx={tier.holeX} cy={tier.holeY} rx="10" ry="15" transform={"rotate(" + (tier.holeSide * 18) + " " + tier.holeX + " " + tier.holeY + ")"} fill="url(#sl-hole-gradient)" stroke={selected ? "#FA347D" : "#A43C70"} strokeWidth={selected ? 2.5 : 1.5}/>
                       <path d={tier.leak} fill="none" stroke="#FA347D" strokeWidth={selected ? 3 : 1.6} strokeOpacity={selected ? ".92" : ".4"} strokeLinecap="round" className="sl-leak-line"/>
+                      <g
+                        className={"sl-hole " + (hoveredLeak === i ? "sl-hole-hovered" : "")}
+                        role="button"
+                        tabIndex={0}
+                        aria-label={stage.title + ": " + copy.leakHints[i]}
+                        aria-expanded={hoveredLeak === i}
+                        onMouseEnter={() => showLeak(i)}
+                        onMouseLeave={() => setHoveredLeak(null)}
+                        onFocus={() => showLeak(i)}
+                        onBlur={() => setHoveredLeak(null)}
+                        onClick={event => { event.stopPropagation(); if (hoveredLeak === i) setHoveredLeak(null); else showLeak(i) }}
+                        onKeyDown={event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); event.stopPropagation(); showLeak(i) } }}
+                      >
+                        <ellipse cx={tier.holeX} cy={tier.holeY} rx="10" ry="15" transform={"rotate(" + (tier.holeSide * 18) + " " + tier.holeX + " " + tier.holeY + ")"} fill="url(#sl-hole-gradient)" stroke={hoveredLeak === i ? "#FFC0D8" : selected ? "#FA347D" : "#A43C70"} strokeWidth={hoveredLeak === i ? 3 : selected ? 2.5 : 1.5} className="sl-hole-visual"/>
+                        <ellipse cx={tier.holeX} cy={tier.holeY} rx="32" ry="34" fill="transparent" className="sl-hole-target"/>
+                      </g>
                     </g>
                   )
                 })}
@@ -214,6 +241,19 @@ export default function SalesLeakageFunnel({ language, theme }: { language: Lang
                 <circle cx="350" cy="723" r="4" fill="#FA347D" className="sl-exit-dot"/>
                 <text x="350" y="752" textAnchor="middle" className="sl-svg-overline">{copy.result}</text>
               </svg>
+              {hoveredLeak !== null && (
+                <div
+                  className={"sl-hole-tooltip " + (tiers[hoveredLeak].holeSide < 0 ? "sl-hole-tooltip--left" : "sl-hole-tooltip--right")}
+                  style={{
+                    left: (tiers[hoveredLeak].holeX / 700 * 100) + "%",
+                    top: (tiers[hoveredLeak].holeY / 790 * 100) + "%",
+                  }}
+                  role="status"
+                >
+                  <span className="sl-hole-tooltip-label">{String(hoveredLeak + 1).padStart(2, "0")} / {copy.stages[hoveredLeak].title}</span>
+                  <strong>{copy.leakHints[hoveredLeak]}</strong>
+                </div>
+              )}
             </div>
             <div className="sl-stage-tabs" aria-label={copy.overview}>
               {copy.stages.map((stage, i) => <button key={i} type="button" aria-pressed={active === i} onClick={() => choose(i)}>{String(i + 1).padStart(2, "0")}</button>)}
