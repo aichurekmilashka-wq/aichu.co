@@ -61,7 +61,7 @@ export default function App() {
           </nav>
           <div className="flex items-center gap-2">
             <button type="button" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label={theme === "dark" ? "Light mode" : "Dark mode"} className="px-3 py-2 text-sm transition-colors hover:text-[#FA347D]">{theme === "dark" ? "☀" : "☾"}</button>
-            <select aria-label="Language" value={language} onChange={e => setLanguage(e.target.value as "ru" | "en" | "ky")} className="bg-[#07142D] px-2 py-2 text-xs text-[#F4EAF0] outline-none"><option value="ru">RU</option><option value="en">EN</option><option value="ky">KY</option></select>
+            <div role="group" aria-label="Language" className="flex items-center gap-1">{(["ru","en","ky"] as const).map(code => <button type="button" key={code} onClick={() => setLanguage(code)} aria-pressed={language === code} className={`px-2 py-2 text-xs font-semibold transition-colors ${language === code ? "text-[#FA347D] underline underline-offset-4" : "text-[#F4EAF0]/65 hover:text-[#F4EAF0]"}`}>{code.toUpperCase()}</button>)}</div>
             <button type="button" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu" aria-expanded={mobileOpen} className="px-3 py-2 text-sm lg:hidden">{mobileOpen ? "✕" : "☰"}</button>
           </div>
         </div>
@@ -79,13 +79,13 @@ export default function App() {
           radius={80}
           crop={0.05}
           grain={0.25}
-          height="clamp(460px, 74svh, 850px)"
+          height="clamp(320px, 58svh, 620px)"
           columns={[]}
         />
       </section>
 
       <div className="relative">
-      <section id="about" className="mx-auto flex max-w-[1440px] flex-col gap-5 px-6 pb-14 pt-12 md:px-12">
+      <section id="about" className="mx-auto flex max-w-[1440px] flex-col gap-5 px-6 pb-14 pt-6 md:px-12">
         <span className="text-[11px] uppercase tracking-[.28em] text-[#FA347D]">AICHU.CO / DIGITAL INTELLIGENCE</span>
         <p className="max-w-2xl text-xl leading-relaxed md:text-3xl">
           Разрабатываем B2B SaaS-продукты для аналитики продаж, контроля CRM и автоматизации бизнеса.
