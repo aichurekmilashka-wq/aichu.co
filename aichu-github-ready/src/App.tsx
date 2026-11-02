@@ -51,8 +51,9 @@ export default function App() {
   return (
     <main id="top" className={`min-h-screen bg-[#07142D] text-[#F4EAF0] ${theme === "light" ? "aichu-light" : ""}`}>
       <style>{`
-        .aichu-light { background:#f6f3f5 !important; color:#07142D !important; }
-        .aichu-light .bg-\\[\\#07142D\\], .aichu-light .bg-\\[\\#091932\\], .aichu-light .bg-\\[\\#0B1C3B\\] { background-color:#fff !important; }
+        .aichu-light { background:#F4EFF2 !important; color:#07142D !important; }
+        .aichu-light .bg-\\[\\#07142D\\] { background-color:#F4EFF2 !important; }
+        .aichu-light .bg-\\[\\#091932\\], .aichu-light .bg-\\[\\#0B1C3B\\] { background-color:#fff !important; }
         .aichu-light .text-\\[\\#F4EAF0\\], .aichu-light [class*="text-[#F4EAF0]"] { color:#07142D !important; }
         .aichu-light [class*="border-[#F4EAF0]"] { border-color:rgba(7,20,45,.16) !important; }
         .aichu-light [class*="bg-[#F4EAF0]/"] { background-color:rgba(7,20,45,.06) !important; }
@@ -108,7 +109,7 @@ export default function App() {
           label=""
           meta=""
           backToTop={false}
-          palette={theme === "dark" ? { background: "#07142D", ink: "#F4EAF0", warm: "#FA347D" } : { background: "#F6F3F5", ink: "#07142D", warm: "#FA347D" }}
+          palette={theme === "dark" ? { background: "#07142D", ink: "#F4EAF0", warm: "#FA347D" } : { background: "#F4EFF2", ink: "#07142D", warm: "#FA347D" }}
           dotGap={6}
           radius={80}
           crop={0.05}
