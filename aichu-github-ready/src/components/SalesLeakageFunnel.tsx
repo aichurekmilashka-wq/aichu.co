@@ -200,7 +200,7 @@ export default function SalesLeakageFunnel({ language, theme }: { language: Lang
                       aria-pressed={selected}
                       className={"sl-tier " + (selected ? "sl-tier-active" : "")}
                       onClick={() => choose(i)}
-                      onMouseEnter={() => { if (window.matchMedia("(hover: hover)").matches) choose(i) }}
+                      onMouseEnter={event => { if ((event.target as Element).closest(".sl-hole")) return; if (window.matchMedia("(hover: hover)").matches) choose(i) }}
                       onKeyDown={event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); choose(i) } }}
                     >
                       <path d={tier.d} fill="url(#sl-tier-gradient)" stroke={selected ? "#EBA1C9" : "#5A7191"} strokeWidth={selected ? 2 : 1.2} className="sl-tier-face"/>
