@@ -104,20 +104,24 @@ export default function App() {
           <p className="max-w-sm text-sm leading-relaxed text-[#F4EAF0]/60">Четыре B2B SaaS-продукта для решений на основе данных, а не догадок.</p>
         </div>
         <div className="grid grid-cols-1 gap-px overflow-hidden rounded-sm border border-[#F4EAF0]/15 bg-[#F4EAF0]/15 md:grid-cols-2">
-          {[
-            { number: "01", name: "Sales Intelligence Platform", tag: "SALES / KPI", description: "Аналитика продаж, прибыли и ключевых показателей в единой системе.", features: ["Продажи и прибыль", "KPI и динамика", "Разграничение доступа"] },
-            { number: "02", name: "CRM Quality Control", tag: "CRM / PERFORMANCE", description: "Контроль качества работы с клиентами и эффективности воронки продаж.", features: ["Юнит-экономика и цикл сделки", "Скорость обработки заявок", "Воронка и потери лидов"] },
-            { number: "03", name: "Price & Margin Intelligence", tag: "PRICING / MARGIN", description: "Инструменты контроля цен и защиты маржинальности бизнеса.", features: ["Мониторинг цен", "Анализ поставщиков", "Контроль маржинальности"] },
-            { number: "04", name: "AI Conversation Intelligence", tag: "AI / COMMUNICATION", description: "Анализ клиентских переписок для оценки качества коммуникации менеджеров.", features: ["Анализ переписок", "Качество работы менеджеров", "Выявление проблем в коммуникации"] },
+          [
+            { number: "01", name: "Sales Intelligence Platform", tag: "SALES / KPI", problem: "Продажи идут, но непонятно, какие направления и показатели действительно формируют прибыль.", description: "Объединяет аналитику продаж, прибыли и KPI с разграничением доступа.", benefit: "Руководитель видит, где бизнес зарабатывает, где теряет эффективность и на что направить внимание.", features: ["Продажи и прибыль", "KPI и динамика", "Разграничение доступа"] },
+            { number: "02", name: "CRM Quality Control", tag: "CRM / PERFORMANCE", problem: "Заявки теряются, сделки затягиваются, а причины просадки воронки остаются скрытыми.", description: "Анализирует юнит-экономику, цикл сделки, скорость обработки, воронку и потери лидов.", benefit: "Команда понимает, на каком этапе теряет клиентов и какие процессы нужно исправить, чтобы лучше использовать входящие заявки.", features: ["Юнит-экономика и цикл сделки", "Скорость обработки заявок", "Воронка и потери лидов"] },
+            { number: "03", name: "Price & Margin Intelligence", tag: "PRICING / MARGIN", problem: "Изменения цен и условий поставщиков незаметно сокращают маржу.", description: "Помогает отслеживать цены, предложения поставщиков и маржинальность.", benefit: "Коммерческая команда быстрее замечает риски для прибыли и принимает более обоснованные решения о закупках и ценах.", features: ["Мониторинг цен", "Анализ поставщиков", "Контроль маржинальности"] },
+            { number: "04", name: "AI Conversation Intelligence", tag: "AI / COMMUNICATION", problem: "Качество общения менеджеров с клиентами сложно контролировать системно.", description: "Анализирует клиентские переписки и качество работы менеджеров.", benefit: "Руководитель видит повторяющиеся ошибки в диалогах и получает основу для улучшения коммуникации и обучения команды.", features: ["Анализ переписок", "Качество работы менеджеров", "Проблемы в коммуникации"] },
           ].map((product) => (
-            <article key={product.number} className="group flex min-h-[370px] flex-col justify-between bg-[#07142D] p-7 transition-colors duration-300 hover:bg-[#0B1C3B] md:p-10">
+            <article key={product.number} className="group flex min-h-[520px] flex-col justify-between bg-[#07142D] p-7 transition-colors duration-300 hover:bg-[#0B1C3B] md:p-10">
               <div>
                 <div className="mb-10 flex items-center justify-between text-xs tracking-[.2em]">
                   <span className="text-[#FA347D]">{product.number} / 04</span>
                   <span className="text-[#F4EAF0]/40">{product.tag}</span>
                 </div>
                 <h3 className="max-w-md text-2xl font-medium leading-tight tracking-tight md:text-3xl">{product.name}</h3>
-                <p className="mt-5 max-w-md text-sm leading-relaxed text-[#F4EAF0]/65">{product.description}</p>
+                <div className="mt-6 space-y-5">
+                  <div><p className="mb-2 text-[10px] font-semibold uppercase tracking-[.18em] text-[#FA347D]">Проблема</p><p className="max-w-md text-sm leading-relaxed text-[#F4EAF0]/70">{product.problem}</p></div>
+                  <div><p className="mb-2 text-[10px] font-semibold uppercase tracking-[.18em] text-[#FA347D]">Решение</p><p className="max-w-md text-sm leading-relaxed text-[#F4EAF0]/70">{product.description}</p></div>
+                  <div className="border-l-2 border-[#FA347D] bg-[#FA347D]/[.06] px-4 py-3"><p className="mb-2 text-[10px] font-semibold uppercase tracking-[.18em] text-[#FA347D]">Выгода для заказчика</p><p className="max-w-md text-sm leading-relaxed text-[#F4EAF0]">{product.benefit}</p></div>
+                </div>
               </div>
               <div className="mt-10 flex flex-wrap gap-2">
                 {product.features.map((feature) => <span key={feature} className="border border-[#F4EAF0]/20 px-3 py-2 text-[11px] text-[#F4EAF0]/75">{feature}</span>)}
