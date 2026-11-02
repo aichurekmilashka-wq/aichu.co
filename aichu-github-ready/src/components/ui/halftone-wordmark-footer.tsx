@@ -70,7 +70,7 @@ export default function HalftoneWordmarkFooter({
    const mask=document.createElement("canvas");mask.width=w;mask.height=h;
    const m=mask.getContext("2d",{willReadFrequently:true});if(!m)return;
    m.font=o.fontWeight+" 100px "+o.fontFamily;const word=o.wordmark||" ";
-   const fit=hwfFitSize(m.measureText(word).width,w*1.02);m.font=o.fontWeight+" "+fit+"px "+o.fontFamily;
+   const fit=hwfFitSize(m.measureText(word).width,w*0.90);m.font=o.fontWeight+" "+fit+"px "+o.fontFamily;
    const box=m.measureText(word),cap=box.actualBoundingBoxAscent||fit*.72,c=Math.max(0,Math.min(.6,o.crop));
    m.fillStyle="#000";m.textBaseline="alphabetic";m.fillText(word,(w-box.width)/2,h+cap*c);
    const img=m.getImageData(0,0,w,h).data,gap=Math.max(3,o.dotGap),cols=Math.ceil(w/gap),rows=Math.ceil(h/gap),tmp:number[]=[];
