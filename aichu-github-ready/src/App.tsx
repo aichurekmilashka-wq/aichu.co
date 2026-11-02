@@ -1,8 +1,36 @@
+import { useEffect, useState } from "react"
 import HalftoneWordmarkFooter from "@/components/ui/halftone-wordmark-footer"
 
 export default function App() {
+  const [section, setSection] = useState("about")
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    const update = () => {
+      const about = document.getElementById("about")
+      const products = document.getElementById("products")
+      setVisible(Boolean(about && about.getBoundingClientRect().top < window.innerHeight * 0.5))
+      setSection(products && products.getBoundingClientRect().top < window.innerHeight * 0.5 ? "products" : "about")
+    }
+    update()
+    window.addEventListener("scroll", update, { passive: true })
+    window.addEventListener("resize", update)
+    return () => { window.removeEventListener("scroll", update); window.removeEventListener("resize", update) }
+  }, [])
   return (
     <main id="top" className="min-h-screen bg-[#07142D] text-[#F4EAF0]">
+      <aside aria-label="Навигация" className={`fixed left-0 top-0 z-40 hidden h-screen w-56 border-r border-[#F4EAF0]/10 bg-[#07142D]/95 px-5 py-10 backdrop-blur-xl transition-transform duration-500 lg:flex lg:flex-col ${visible ? "translate-x-0" : "-translate-x-full"}`}>
+        <div className="mb-12 text-xl font-semibold tracking-tight">aichu<span className="text-[#FA347D]">.co</span></div>
+        <p className="mb-10 text-xs leading-relaxed text-[#F4EAF0]/45">DIGITAL INTELLIGENCE STUDIO</p>
+        <nav className="flex flex-col gap-2">
+          {[{id:"about",number:"01",label:"Студия"},{id:"products",number:"02",label:"Продукты"}].map(item => (
+            <a key={item.id} href={`#${item.id}`} aria-current={section === item.id ? "location" : undefined}
+              className={`flex items-center gap-4 rounded-lg px-3 py-4 text-sm transition-colors ${section === item.id ? "bg-[#F4EAF0]/10 text-[#F4EAF0]" : "text-[#F4EAF0]/50 hover:bg-[#F4EAF0]/5 hover:text-[#F4EAF0]"}`}>
+              <span className="text-xs text-[#FA347D]">{item.number}</span>{item.label}
+            </a>
+          ))}
+        </nav>
+        <a href="#products" className="mt-auto rounded-full bg-[#FA347D] px-4 py-3 text-center text-sm font-semibold text-[#07142D] transition hover:brightness-110">Наши решения</a>
+      </aside>
       {/* The original interactive halftone wordmark now IS the hero, not a footer below it. */}
       <section aria-label="Интерактивный логотип aichu.co" className="w-full">
         <HalftoneWordmarkFooter
@@ -24,6 +52,7 @@ export default function App() {
         />
       </section>
 
+      <div className="relative lg:pl-56">
       <section id="about" className="mx-auto flex max-w-[1440px] flex-col gap-5 px-6 pb-14 pt-12 md:px-12">
         <span className="text-[11px] uppercase tracking-[.28em] text-[#FA347D]">AICHU.CO / DIGITAL INTELLIGENCE</span>
         <p className="max-w-2xl text-xl leading-relaxed md:text-3xl">
@@ -32,6 +61,19 @@ export default function App() {
         <span className="text-xs uppercase tracking-[.18em] text-[#F4EAF0]/45">4 SaaS-продукта · Индивидуальные решения</span>
       </section>
 
+      <section aria-label="Схема цифровой аналитики" className="mx-auto max-w-[1440px] px-6 pb-16 md:px-12">
+        <div className="relative overflow-hidden rounded-2xl border border-[#F4EAF0]/15 bg-[#091932] p-5 md:p-10" style={{backgroundImage:"linear-gradient(#F4EAF009 1px, transparent 1px), linear-gradient(90deg, #F4EAF009 1px, transparent 1px)",backgroundSize:"32px 32px"}}>
+          <div className="mb-12 flex items-center justify-between gap-3 text-[10px] tracking-[.2em] text-[#FA347D]"><span>INTELLIGENCE / SYSTEM MAP</span><span className="border border-[#FA347D]/50 px-3 py-2">4 MODULES</span></div>
+          <svg viewBox="0 0 900 330" role="img" aria-label="Четыре аналитических модуля соединены потоками данных" className="h-auto w-full">
+            <defs><pattern id="dots" width="13" height="13" patternUnits="userSpaceOnUse"><rect x="3" y="3" width="4" height="8" fill="#FA347D" opacity=".85"/></pattern></defs>
+            <g stroke="#FA347D" strokeWidth="1.5" fill="none" opacity=".7"><path d="M160 90 L450 165 L740 90 M160 240 L450 165 L740 240" strokeDasharray="5 8"/><rect x="340" y="105" width="220" height="120" rx="3"/><path d="M160 90 V240 M740 90 V240"/></g>
+            {[{x:95,y:35,t:"SALES"},{x:675,y:35,t:"CRM"},{x:95,y:215,t:"MARGIN"},{x:675,y:215,t:"AI"}].map(n=><g key={n.t}><rect x={n.x} y={n.y} width="125" height="80" fill="url(#dots)"/><text x={n.x} y={n.y-10} fill="#F4EAF0" fontSize="13" fontFamily="monospace">{n.t}</text></g>)}
+            <text x="450" y="155" textAnchor="middle" fill="#FA347D" fontSize="14" fontFamily="monospace">AICHU.CO</text><text x="450" y="181" textAnchor="middle" fill="#F4EAF0" fontSize="12" fontFamily="monospace">DATA → DECISIONS</text>
+            <circle cx="450" cy="105" r="4" fill="#FA347D"/><circle cx="450" cy="225" r="4" fill="#FA347D"/>
+          </svg>
+          <div className="mt-8 flex flex-wrap justify-between gap-3 border-t border-[#F4EAF0]/15 pt-5 text-[10px] tracking-[.14em] text-[#F4EAF0]/50"><span>01 / COLLECT</span><span>02 / ANALYZE</span><span>03 / OPTIMIZE</span><span>04 / ACT</span></div>
+        </div>
+      </section>
       <section id="products" className="mx-auto max-w-[1440px] px-6 pb-28 pt-8 md:px-12">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6 border-b border-[#F4EAF0]/15 pb-7">
           <div>
@@ -67,6 +109,7 @@ export default function App() {
           <span className="text-[#FA347D]">AICHU.CO / B2B SOFTWARE</span>
         </div>
       </section>
+      </div>
     </main>
   )
 }
