@@ -3,10 +3,6 @@ import HalftoneWordmarkFooter from "@/components/ui/halftone-wordmark-footer"
 export default function App() {
   return (
     <main id="top" className="min-h-screen bg-[#07142D] text-[#F4EAF0]">
-      <header className="mx-auto flex max-w-[1440px] items-center justify-between px-6 py-7 md:px-12">
-        <span className="text-[10px] uppercase tracking-[.2em] text-[#F4EAF0]/65">Digital intelligence studio</span>
-      </header>
-
       {/* The original interactive halftone wordmark now IS the hero, not a footer below it. */}
       <section aria-label="Интерактивный логотип aichu.co" className="w-full">
         <HalftoneWordmarkFooter
