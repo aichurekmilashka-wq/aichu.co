@@ -77,28 +77,28 @@ export default function App() {
       <section id="problem" className="mx-auto max-w-[1440px] px-6 pb-20 md:px-12">
         <span className="text-xs tracking-[.2em] text-[#FA347D]">02 / THE PROBLEM</span>
         <h2 className="mt-5 max-w-3xl text-3xl font-medium md:text-5xl">Когда данные разрознены, решения принимаются вслепую.</h2>
-        <div className="mt-8 grid gap-px bg-[#F4EAF0]/15 md:grid-cols-3">
-          {["Продажи и прибыль без единой картины", "Потери лидов и слабый контроль CRM", "Цены и маржа меняются быстрее отчётов"].map(t=><div key={t} className="bg-[#07142D] p-7 text-sm leading-relaxed text-[#F4EAF0]/70">{t}</div>)}
+        <div className="mt-8 grid gap-px bg-[#F4EAF0]/15 md:grid-cols-2">
+          {["Sales Intelligence: сложно увидеть реальную динамику продаж, прибыли и KPI по одной системе показателей.", "CRM Quality Control: задержки обработки заявок, длинный цикл сделки и потери лидов остаются незаметными.", "Price & Margin Intelligence: изменения цен поставщиков влияют на маржу, пока данные собирают вручную.", "AI Conversation Intelligence: качество переписок менеджеров трудно оценивать последовательно."].map(t=><div key={t} className="bg-[#07142D] p-7 text-sm leading-relaxed text-[#F4EAF0]/70">{t}</div>)}
         </div>
       </section>
       <section id="how" className="mx-auto max-w-[1440px] px-6 pb-20 md:px-12">
         <span className="text-xs tracking-[.2em] text-[#FA347D]">03 / HOW IT FITS</span>
         <h2 className="mt-5 text-3xl font-medium md:text-5xl">От данных к действиям.</h2>
         <div className="mt-8 grid gap-3 md:grid-cols-3">
-          {[["01","Собираем","Объединяем нужные источники и показатели."],["02","Анализируем","Выявляем закономерности, отклонения и потери."],["03","Управляем","Превращаем аналитику в понятные решения."]].map(([n,t,d])=><div key={n} className="border border-[#F4EAF0]/15 p-7"><span className="text-[#FA347D]">{n}</span><h3 className="mt-8 text-xl">{t}</h3><p className="mt-3 text-sm text-[#F4EAF0]/60">{d}</p></div>)}
+          {[["01","Определяем данные","Выбираем необходимые показатели продаж, CRM, цен и коммуникаций под задачи компании."],["02","Настраиваем анализ","Формируем метрики прибыли и KPI, цикл сделки, потери лидов, маржу и качество диалогов."],["03","Применяем результаты","Используем выявленные отклонения для контроля процессов и принятия управленческих решений."]].map(([n,t,d])=><div key={n} className="border border-[#F4EAF0]/15 p-7"><span className="text-[#FA347D]">{n}</span><h3 className="mt-8 text-xl">{t}</h3><p className="mt-3 text-sm text-[#F4EAF0]/60">{d}</p></div>)}
         </div>
       </section>
       <section id="practice" className="mx-auto max-w-[1440px] px-6 pb-20 md:px-12">
         <span className="text-xs tracking-[.2em] text-[#FA347D]">04 / IN PRACTICE</span>
         <h2 className="mt-5 text-3xl font-medium md:text-5xl">Практические сценарии.</h2>
         <div className="mt-8 grid gap-3 md:grid-cols-2">
-          {[["Продажи","Сравнивайте динамику выручки, прибыли и KPI."],["CRM","Находите задержки обработки и точки потери лидов."],["Ценообразование","Следите за ценами поставщиков и маржой."],["Коммуникации","Анализируйте переписки и качество диалогов."]].map(([t,d])=><div key={t} className="border-l-2 border-[#FA347D] bg-[#F4EAF0]/5 p-7"><h3 className="text-xl">{t}</h3><p className="mt-3 text-sm text-[#F4EAF0]/60">{d}</p></div>)}
+          {[["Sales Intelligence Platform","Сопоставляйте продажи, прибыль и KPI. Разграничивайте доступ к показателям для разных ролей."],["CRM Quality Control","Оценивайте юнит-экономику, длительность сделки, скорость обработки заявок и этапы потери лидов."],["Price & Margin Intelligence","Отслеживайте изменения цен и предложения поставщиков, анализируйте влияние на маржинальность."],["AI Conversation Intelligence","Анализируйте клиентские переписки и качество работы менеджеров, находите проблемные диалоги."]].map(([t,d])=><div key={t} className="border-l-2 border-[#FA347D] bg-[#F4EAF0]/5 p-7"><h3 className="text-xl">{t}</h3><p className="mt-3 text-sm text-[#F4EAF0]/60">{d}</p></div>)}
         </div>
       </section>
       <section id="products" className="mx-auto max-w-[1440px] px-6 pb-28 pt-8 md:px-12">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6 border-b border-[#F4EAF0]/15 pb-7">
           <div>
-            <span className="text-[11px] uppercase tracking-[.28em] text-[#FA347D]">01 / НАШИ ПРОДУКТЫ</span>
+            <span className="text-[11px] uppercase tracking-[.28em] text-[#FA347D]">05 / НАШИ ПРОДУКТЫ</span>
             <h2 className="mt-4 text-4xl font-semibold tracking-tight md:text-6xl">Интеллект в каждом решении<span className="text-[#FA347D]">.</span></h2>
           </div>
           <p className="max-w-sm text-sm leading-relaxed text-[#F4EAF0]/60">Четыре B2B SaaS-продукта для решений на основе данных, а не догадок.</p>
@@ -169,15 +169,15 @@ export default function App() {
         </article>
       </section>
       <section id="customers" className="mx-auto max-w-[1440px] px-6 pb-20 md:px-12">
-        <span className="text-xs tracking-[.2em] text-[#FA347D]">06 / CUSTOMERS</span>
+        <span className="text-xs tracking-[.2em] text-[#FA347D]">07 / CUSTOMERS</span>
         <h2 className="mt-5 text-3xl font-medium md:text-5xl">Для команд, которым нужна ясность.</h2>
-        <p className="mt-6 max-w-2xl text-[#F4EAF0]/65">Для собственников, руководителей продаж, коммерческих и операционных команд, которые управляют бизнесом через данные.</p>
+        <p className="mt-6 max-w-2xl text-[#F4EAF0]/65">Для собственников и руководителей, которым важны прибыль и KPI; для отделов продаж, контролирующих воронку и скорость обработки; для коммерческих команд, управляющих ценами и маржой; для руководителей клиентского сервиса, оценивающих качество переписок.</p>
       </section>
       <section id="questions" className="mx-auto max-w-[1440px] px-6 pb-28 md:px-12">
-        <span className="text-xs tracking-[.2em] text-[#FA347D]">07 / QUESTIONS</span>
+        <span className="text-xs tracking-[.2em] text-[#FA347D]">08 / QUESTIONS</span>
         <h2 className="mt-5 text-3xl font-medium md:text-5xl">Частые вопросы.</h2>
         <div className="mt-8 divide-y divide-[#F4EAF0]/15 border-y border-[#F4EAF0]/15">
-          {[["Сколько стоит продукт?","Стоимость индивидуальна и зависит от объёма данных, интеграций и задач."],["Можно ли выбрать одно решение?","Продукты представлены как отдельные направления. Состав внедрения определяется задачами бизнеса."],["Подойдут ли решения под нашу CRM?","Совместимость и необходимые интеграции оцениваются для конкретного проекта."]].map(([q,a])=><details key={q} className="group py-5"><summary className="cursor-pointer list-none text-lg">{q}<span className="float-right text-[#FA347D]">+</span></summary><p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#F4EAF0]/65">{a}</p></details>)}
+          {[["Сколько стоит внедрение?","Стоимость каждого продукта рассчитывается индивидуально и зависит от объёма данных, интеграций и задач."],["Нужно ли подключать все четыре продукта?","Нет. Sales Intelligence, CRM Quality Control, Price & Margin Intelligence и AI Conversation Intelligence представлены как отдельные решения."],["Какие показатели анализирует Sales Intelligence?","Продажи, прибыль, KPI и динамику показателей. Предусмотрено разграничение доступа."],["Что контролирует CRM Quality Control?","Юнит-экономику, цикл сделки, скорость обработки заявок, воронку и потери лидов."],["Что даёт Price & Margin Intelligence?","Мониторинг цен и поставщиков, а также анализ маржинальности."],["Что анализирует AI Conversation Intelligence?","Переписки с клиентами и качество работы менеджеров."],["Можно ли интегрировать решение с нашей CRM?","Совместимость и необходимый состав интеграций определяются при обсуждении конкретного проекта."]].map(([q,a])=><details key={q} className="group py-5"><summary className="cursor-pointer list-none text-lg">{q}<span className="float-right text-[#FA347D]">+</span></summary><p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#F4EAF0]/65">{a}</p></details>)}
         </div>
       </section>
       </div>
