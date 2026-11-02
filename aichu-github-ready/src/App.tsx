@@ -162,8 +162,8 @@ export default function App() {
               </div>
             </div>
             <div className="mt-8">
-              <a href="mailto:hello@aichu.co?subject=%D0%97%D0%B0%D0%BA%D0%B0%D0%B7%20%D0%BB%D0%B5%D0%BD%D0%B4%D0%B8%D0%BD%D0%B3%D0%B0%20%E2%84%96001" className="inline-block rounded-full bg-[#FA347D] px-6 py-4 text-sm font-semibold text-[#07142D] transition hover:brightness-110">Обсудить заказ ↗</a>
-              <p className="mt-4 text-xs leading-relaxed text-[#F4EAF0]/45">Оплата и автоматическая выдача файлов пока не подключены. Заказы обрабатываются индивидуально.</p>
+              <a href="https://aichurekmilashka-wq.github.io/Nurba-brat/" target="_blank" rel="noopener noreferrer" className="inline-block rounded-full bg-[#FA347D] px-6 py-4 text-sm font-semibold text-[#07142D] transition hover:brightness-110">Открыть демонстрацию ↗</a>
+              <p className="mt-4 text-xs leading-relaxed text-[#F4EAF0]/45">Оплата и автоматическая выдача файлов пока не подключены. Контакт для приёма заказов будет добавлен после настройки.</p>
             </div>
           </div>
         </article>
