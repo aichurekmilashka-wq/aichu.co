@@ -7,7 +7,7 @@ export default function App() {
   useEffect(() => {
     const update = () => {
       const about = document.getElementById("about")
-      const ids = ["about", "problem", "how", "practice", "products", "customers", "questions"]
+      const ids = ["about", "problem", "how", "practice", "products", "templates", "customers", "questions"]
       setVisible(Boolean(about && about.getBoundingClientRect().top < window.innerHeight * 0.5))
       setSection([...ids].reverse().find(id => (document.getElementById(id)?.getBoundingClientRect().top ?? Infinity) < window.innerHeight * 0.5) ?? "about")
     }
@@ -22,7 +22,7 @@ export default function App() {
         <div className="mb-12 text-xl font-semibold tracking-tight">aichu<span className="text-[#FA347D]">.co</span></div>
         <p className="mb-10 text-xs leading-relaxed text-[#F4EAF0]/45">DIGITAL INTELLIGENCE STUDIO</p>
         <nav className="flex flex-col gap-2">
-          {[{id:"about",number:"01",label:"Overview"},{id:"problem",number:"02",label:"The problem"},{id:"how",number:"03",label:"How it fits"},{id:"practice",number:"04",label:"In practice"},{id:"products",number:"05",label:"Products"},{id:"customers",number:"06",label:"Customers"},{id:"questions",number:"07",label:"Questions"}].map(item => (
+          {[{id:"about",number:"01",label:"Overview"},{id:"problem",number:"02",label:"The problem"},{id:"how",number:"03",label:"How it fits"},{id:"practice",number:"04",label:"In practice"},{id:"products",number:"05",label:"Products"},{id:"templates",number:"06",label:"Готовые сайты"},{id:"customers",number:"07",label:"Customers"},{id:"questions",number:"08",label:"Questions"}].map(item => (
             <a key={item.id} href={`#${item.id}`} aria-current={section === item.id ? "location" : undefined}
               className={`flex items-center gap-4 rounded-lg px-3 py-4 text-sm transition-colors ${section === item.id ? "bg-[#F4EAF0]/10 text-[#F4EAF0]" : "text-[#F4EAF0]/50 hover:bg-[#F4EAF0]/5 hover:text-[#F4EAF0]"}`}>
               <span className="text-xs text-[#FA347D]">{item.number}</span>{item.label}
@@ -129,6 +129,44 @@ export default function App() {
           <p>Стоимость рассчитывается индивидуально под объём данных, интеграции и задачи.</p>
           <span className="text-[#FA347D]">AICHU.CO / B2B SOFTWARE</span>
         </div>
+      </section>
+      <section id="templates" className="mx-auto max-w-[1440px] px-6 pb-28 md:px-12">
+        <div className="mb-10 flex flex-wrap items-end justify-between gap-6 border-b border-[#F4EAF0]/15 pb-7">
+          <div>
+            <span className="text-[11px] uppercase tracking-[.28em] text-[#FA347D]">06 / READY-MADE WEBSITES</span>
+            <h2 className="mt-4 text-4xl font-semibold tracking-tight md:text-6xl">Готовые сайты<span className="text-[#FA347D]">.</span></h2>
+          </div>
+          <p className="max-w-sm text-sm leading-relaxed text-[#F4EAF0]/60">Выберите готовый дизайн или закажите адаптацию под свой бизнес.</p>
+        </div>
+        <article className="grid overflow-hidden border border-[#F4EAF0]/20 lg:grid-cols-[1.15fr_1fr]">
+          <div className="flex min-h-[310px] flex-col justify-between bg-[#F4EAF0] p-8 text-[#07142D] md:p-12">
+            <div className="flex items-start justify-between gap-4 text-[11px] uppercase tracking-[.2em]">
+              <span>Template 001</span><span className="rounded-full border border-[#07142D]/25 px-3 py-1">Landing page</span>
+            </div>
+            <div>
+              <p className="mb-3 text-sm uppercase tracking-[.2em] text-[#A62D62]">На основе проекта Nurba</p>
+              <h3 className="max-w-lg text-4xl font-semibold leading-tight md:text-5xl">Лендинг для услуг и частной практики</h3>
+              <p className="mt-5 max-w-lg text-sm leading-relaxed text-[#07142D]/65">Адаптивный сайт с блоками услуг, информацией о специалисте и контактами. Демонстрация показывает дизайн; персональные данные исходного проекта не входят в продаваемый шаблон.</p>
+            </div>
+            <a href="https://aichurekmilashka-wq.github.io/Nurba-brat/" target="_blank" rel="noopener noreferrer" className="mt-8 w-fit border-b border-[#07142D] pb-1 text-sm font-semibold transition hover:text-[#A62D62]">Посмотреть демоверсию ↗</a>
+          </div>
+          <div className="flex flex-col justify-between bg-[#0B1C3B] p-8 md:p-12">
+            <div>
+              <p className="text-[11px] uppercase tracking-[.2em] text-[#FA347D]">Цены / RUB</p>
+              <div className="mt-8 flex items-end gap-3"><strong className="text-5xl font-semibold">2 000 ₽</strong><span className="pb-1 text-sm text-[#F4EAF0]/55">готовый шаблон</span></div>
+              <div className="mt-8 divide-y divide-[#F4EAF0]/15 border-y border-[#F4EAF0]/15 text-sm">
+                <div className="flex justify-between gap-4 py-4"><span>Шаблон (файлы сайта)</span><span className="shrink-0">2 000 ₽</span></div>
+                <div className="flex justify-between gap-4 py-4"><span>Замена текста, фото и контактов</span><span className="shrink-0">10 000 ₽</span></div>
+                <div className="flex justify-between gap-4 py-4"><span>Под ключ с доменом и настройками</span><span className="shrink-0">20 000 ₽</span></div>
+                <div className="flex justify-between gap-4 py-4"><span>Индивидуальные доработки</span><span className="shrink-0">от 30 000 ₽</span></div>
+              </div>
+            </div>
+            <div className="mt-8">
+              <a href="mailto:hello@aichu.co?subject=%D0%97%D0%B0%D0%BA%D0%B0%D0%B7%20%D0%BB%D0%B5%D0%BD%D0%B4%D0%B8%D0%BD%D0%B3%D0%B0%20%E2%84%96001" className="inline-block rounded-full bg-[#FA347D] px-6 py-4 text-sm font-semibold text-[#07142D] transition hover:brightness-110">Обсудить заказ ↗</a>
+              <p className="mt-4 text-xs leading-relaxed text-[#F4EAF0]/45">Оплата и автоматическая выдача файлов пока не подключены. Заказы обрабатываются индивидуально.</p>
+            </div>
+          </div>
+        </article>
       </section>
       <section id="customers" className="mx-auto max-w-[1440px] px-6 pb-20 md:px-12">
         <span className="text-xs tracking-[.2em] text-[#FA347D]">06 / CUSTOMERS</span>
