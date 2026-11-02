@@ -78,11 +78,7 @@ export default function App() {
           crop={0.05}
           grain={0.25}
           height="clamp(460px, 74svh, 850px)"
-          columns={[
-            { title: tr("Продукты"), links: [{ label: "Sales Intelligence", href: "#products" }, { label: "CRM Quality Control", href: "#products" }] },
-            { title: tr("Решения"), links: [{ label: "Price & Margin", href: "#products" }, { label: "AI Conversation", href: "#products" }] },
-            { title: tr("Студия"), links: [{ label: tr("Наш подход"), href: "#about" }, { label: tr("Контакты"), href: "#about" }] },
-          ]}
+          columns={[]}
         />
       </section>
 
