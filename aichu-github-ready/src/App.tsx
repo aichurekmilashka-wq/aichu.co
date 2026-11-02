@@ -61,7 +61,7 @@ export default function App() {
         .aichu-light article:not([class*="bg-[#F4EAF0]"]) { background-color:#fff !important; }
         .aichu-light [class*="text-[#F4EAF0]/"] { color:rgba(7,20,45,.72) !important; }
       `}</style>
-      <header className="sticky top-0 z-40 border-b border-[#FA347D]/20 bg-[#07142D] px-4 py-3 text-[#F4EAF0] md:px-8">
+      <header className="sticky top-0 z-40 bg-[#07142D] px-4 py-3 text-[#F4EAF0] md:px-8">
         <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4">
           <a href="#top" className="shrink-0 text-xl font-semibold tracking-tight">aichu<span className="text-[#FA347D]">.co</span></a>
           <nav aria-label="Main navigation" className="hidden items-center gap-2 lg:flex">
