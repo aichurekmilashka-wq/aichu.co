@@ -1,0 +1,47 @@
+/* Scoped theme variables. The original Illos SVG and WebGL animations remain unchanged. */
+.aichu-illos-bento {
+  --illos-section-ink: #F4EAF0;
+  --illos-section-muted: rgba(244,234,240,.65);
+  --illos-section-border: rgba(244,234,240,.17);
+  --illos-section-card: #0B1C36;
+  --illos-section-ground: #0B1C36;
+  color: var(--illos-section-ink);
+}
+.aichu-light .aichu-illos-bento {
+  --illos-section-ink: #07142D;
+  --illos-section-muted: rgba(7,20,45,.68);
+  --illos-section-border: rgba(7,20,45,.15);
+  --illos-section-card: #FFFFFF;
+  --illos-section-ground: #FFFFFF;
+}
+.aichu-illos-bento .aichu-illos-card {
+  background: var(--illos-section-card);
+  border-color: var(--illos-section-border);
+  min-width: 0;
+}
+.aichu-illos-bento .aichu-illos-art-wrap {
+  border-color: var(--illos-section-border);
+  min-width: 0;
+}
+.aichu-illos-bento .aichu-illos-description { color: var(--illos-section-muted); }
+.aichu-illos-bento .aichu-illos-art {
+  --illos-ground: var(--illos-section-ground);
+  --illos-ink: var(--illos-section-ink);
+  --illos-mark: #FA347D;
+  --illos-ramp-1: #FD9CC1;
+  --illos-ramp-2: #FA347D;
+  --illos-ramp-3: #C92C69;
+  --illos-ramp-4: #773051;
+  --illos-spark: #F4EAF0;
+}
+.aichu-light .aichu-illos-bento .aichu-illos-art {
+  --illos-ramp-1: #A71C56;
+  --illos-ramp-2: #FA347D;
+  --illos-ramp-3: #FF93BC;
+  --illos-ramp-4: #FBD8E5;
+  --illos-spark: #07142D;
+}
+.aichu-illos-bento .aichu-illos-art > svg { display: block; width: 100%; height: auto; }
+@media (max-width: 767px) {
+  .aichu-illos-bento .aichu-illos-card { border-radius: 8px; }
+}
