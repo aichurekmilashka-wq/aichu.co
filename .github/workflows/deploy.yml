@@ -8,8 +8,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages
@@ -33,7 +31,11 @@ jobs:
 
       - name: Build React
         working-directory: aichu-github-ready
-        run: npx vite build
+        run: npm run build
+
+      - name: Audit production dependencies
+        working-directory: aichu-github-ready
+        run: npm audit --omit=dev --audit-level=high
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
@@ -45,6 +47,9 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     needs: build
     environment:
       name: github-pages
