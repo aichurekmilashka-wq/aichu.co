@@ -219,8 +219,9 @@ export default function App() {
                 { name: "Threads", address: "@aichuuu.co", href: "https://www.threads.net/@aichuuu.co" },
                 { name: "Telegram", address: "", href: "" },
                 { name: "Email", address: "aichurekmilashka@icloud.com", href: "mailto:aichurekmilashka@icloud.com" },
+                { name: "Телефон", address: "+996 503 030 997", href: "tel:+996503030997" },
               ].map(channel => channel.href ? (
-                <a key={channel.name} href={channel.href} target={channel.name === "Email" ? undefined : "_blank"} rel="noopener noreferrer" className="group flex min-h-[70px] items-center justify-between gap-4 py-5 transition-colors hover:text-[#FA347D]">
+                <a key={channel.name} href={channel.href} target={channel.href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" className="group flex min-h-[70px] items-center justify-between gap-4 py-5 transition-colors hover:text-[#FA347D]">
                   <span className="text-lg font-medium">{channel.name}</span>
                   <span className="text-sm text-[#F4EAF0]/60 group-hover:text-[#FA347D]">{channel.address} ↗</span>
                 </a>
