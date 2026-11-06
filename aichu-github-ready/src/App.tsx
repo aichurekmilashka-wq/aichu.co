@@ -215,7 +215,7 @@ export default function App() {
             <p className="mb-6 text-xs font-semibold uppercase tracking-[.22em] text-[#FA347D]">{language === "ru" ? "Социальные сети и почта" : language === "en" ? "Social channels and email" : "Социалдык тармактар жана почта"}</p>
             <div className="divide-y divide-[#F4EAF0]/15 border-y border-[#F4EAF0]/15">
               {[
-                { name: "Instagram", address: "", href: "" },
+                { name: "Instagram", address: "@aichuuu.co", href: "https://www.instagram.com/aichuuu.co/" },
                 { name: "Threads", address: "@aichuuu.co", href: "https://www.threads.net/@aichuuu.co" },
                 { name: "Telegram", address: "", href: "" },
                 { name: "Email", address: "aichurekmilashka@icloud.com", href: "mailto:aichurekmilashka@icloud.com" },
