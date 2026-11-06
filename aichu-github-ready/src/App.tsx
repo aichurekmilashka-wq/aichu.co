@@ -33,8 +33,8 @@ export default function App() {
     }
   }, [])
   const [mobileOpen, setMobileOpen] = useState(false)
-  const navSections = [{id:"about",number:"01",label:language==="ru"?"Обзор":language==="ky"?"Сереп":"Overview"},{id:"problem",number:"02",label:language==="ru"?"Проблемы":language==="ky"?"Көйгөйлөр":"Challenges"},{id:"how",number:"03",label:language==="ru"?"Подход":language==="ky"?"Ыкма":"Approach"},{id:"practice",number:"04",label:language==="ru"?"Применение":language==="ky"?"Колдонуу":"Use cases"},{id:"products",number:"05",label:language==="ru"?"Продукты":language==="ky"?"Продукттар":"Products"},{id:"templates",number:"06",label:language==="ru"?"Готовые сайты":language==="ky"?"Даяр сайттар":"Templates"},{id:"customers",number:"07",label:language==="ru"?"Клиенты":language==="ky"?"Кардарлар":"Customers"},{id:"questions",number:"08",label:language==="ru"?"Вопросы":language==="ky"?"Суроолор":"FAQ"}]
-  const productsMenu = [{id:"products",name:"Sales Intelligence Platform",ru:"Продажи, прибыль, KPI",en:"Sales, profit and KPIs",ky:"Сатуу, пайда жана KPI"},{id:"products",name:"CRM Quality Control",ru:"Контроль воронки и потерь лидов",en:"Funnel and lead-loss control",ky:"Воронка жана лид жоготуулары"},{id:"products",name:"Price & Margin Intelligence",ru:"Цены и маржинальность",en:"Pricing and margins",ky:"Баалар жана маржа"},{id:"products",name:"AI Conversation Intelligence",ru:"Аналитика клиентских диалогов",en:"Customer conversation analytics",ky:"Кардарлар менен диалогдорду талдоо"}]
+  const navSections = [{id:"about",number:"01",label:language==="ru"?"Обзор":language==="ky"?"Сереп":"Overview"},{id:"problem",number:"02",label:language==="ru"?"Проблемы":language==="ky"?"Көйгөйлөр":"Challenges"},{id:"how",number:"03",label:language==="ru"?"Подход":language==="ky"?"Ыкма":"Approach"},{id:"practice",number:"04",label:language==="ru"?"Применение":language==="ky"?"Колдонуу":"Use cases"},{id:"products",number:"05",label:language==="ru"?"Продукты":language==="ky"?"Продукттар":"Products"},{id:"templates",number:"06",label:language==="ru"?"Готовые сайты":language==="ky"?"Даяр сайттар":"Templates"},{id:"customers",number:"07",label:language==="ru"?"Для кого":language==="ky"?"Кимдер үчүн":"Who it’s for"},{id:"questions",number:"08",label:language==="ru"?"Вопросы":language==="ky"?"Суроолор":"FAQ"}]
+  const productsMenu = [{id:"product-01",name:"Sales Intelligence Platform",ru:"Продажи, прибыль, KPI",en:"Sales, profit and KPIs",ky:"Сатуу, пайда жана KPI"},{id:"product-02",name:"CRM Quality Control",ru:"Контроль воронки и потерь лидов",en:"Funnel and lead-loss control",ky:"Воронка жана лид жоготуулары"},{id:"product-03",name:"Price & Margin Intelligence",ru:"Цены и маржинальность",en:"Pricing and margins",ky:"Баалар жана маржа"},{id:"product-04",name:"AI Conversation Intelligence",ru:"Аналитика клиентских диалогов",en:"Customer conversation analytics",ky:"Кардарлар менен диалогдорду талдоо"}]
   const [section, setSection] = useState("about")
   const [visible, setVisible] = useState(false)
   useEffect(() => {
@@ -51,6 +51,7 @@ export default function App() {
   }, [])
   return (
     <main id="top" className={`min-h-screen bg-[#07142D] text-[#F4EAF0] ${theme === "light" ? "aichu-light" : ""}`}>
+      <h1 className="sr-only">{language === "en" ? "aichu.co — Digital Intelligence Studio. B2B SaaS products in development." : language === "ky" ? "aichu.co — Digital Intelligence Studio. B2B SaaS продукттар иштелип чыгууда." : "aichu.co — Digital Intelligence Studio. Разрабатываем B2B SaaS-продукты для аналитики и автоматизации бизнеса."}</h1>
       <style>{`
         .aichu-light { background:#FFFFFF !important; color:#07142D !important; }
         .aichu-light .bg-\\[\\#07142D\\] { background-color:#FFFFFF !important; }
@@ -67,7 +68,7 @@ export default function App() {
       <header className="sticky top-0 z-40 bg-[#07142D] px-4 py-3 text-[#F4EAF0] md:px-8">
         <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4">
           <nav aria-label="Main navigation" className="hidden items-center gap-2 lg:flex">
-            <a href="#about" className="px-3 py-2 text-sm hover:text-[#FA347D]">{language === "ru" ? "Главная" : language === "ky" ? "Башкы бет" : "Home"}</a>
+            <a href="#top" className="px-3 py-2 text-sm hover:text-[#FA347D]">{language === "ru" ? "Главная" : language === "ky" ? "Башкы бет" : "Home"}</a>
             <div className="group relative">
               <button type="button" className="px-3 py-2 text-sm hover:text-[#FA347D]" aria-haspopup="true">{language === "ru" ? "Решения" : language === "ky" ? "Чечимдер" : "Solutions"} ▾</button>
               <div className="invisible absolute left-0 top-full w-[340px] translate-y-2 border border-[#FA347D]/25 bg-[#07142D] p-3 opacity-0 shadow-2xl transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
@@ -159,7 +160,7 @@ export default function App() {
             <span className="text-[11px] uppercase tracking-[.28em] text-[#FA347D]">{tr("05 / НАШИ ПРОДУКТЫ")}</span>
             <h2 className="mt-4 text-4xl font-semibold tracking-tight md:text-6xl">{tr("Интеллект в каждом решении")}<span className="text-[#FA347D]">.</span></h2>
           </div>
-          <p className="max-w-sm text-sm leading-relaxed text-[#F4EAF0]/60">{tr("Четыре B2B SaaS-продукта для решений на основе данных, а не догадок.")}</p>
+          <p className="max-w-sm text-sm leading-relaxed text-[#F4EAF0]/60">{language === "ru" ? "Четыре направления B2B SaaS. Сейчас разрабатываем концепции и прототипы, условия пилотов обсуждаем индивидуально." : language === "en" ? "Four B2B SaaS directions in concept and prototype stages. Pilot terms are discussed individually." : "Төрт B2B SaaS багыты. Азыр концепциялар жана прототиптер иштелүүдө, пилоттук шарттар жекече талкууланат."}</p>
         </div>
         <div className="grid grid-cols-1 gap-px overflow-hidden rounded-sm border border-[#F4EAF0]/15 bg-[#F4EAF0]/15 md:grid-cols-2">
           {[
@@ -168,7 +169,7 @@ export default function App() {
             { number: "03", name: "Price & Margin Intelligence", tag: "PRICING / PROCUREMENT", challenge: tr("Изменения закупочных и рыночных цен могут ухудшать маржинальность раньше, чем это отражается в итоговой отчётности."), model: tr("Мониторинг цен, анализ поставщиков и контроль показателей маржинальности."), application: tr("Сопоставление ценовых изменений и условий поставщиков с маржинальностью для оценки необходимости пересмотра закупок или ценовой политики."), value: tr("Более оперативный контроль факторов, влияющих на валовую доходность, и аргументированная работа с ценами."), features: [tr("Мониторинг цен"), tr("Анализ поставщиков"), tr("Маржинальность")] },
             { number: "04", name: "AI Conversation Intelligence", tag: "AI / CUSTOMER COMMUNICATION", challenge: tr("Оценка качества клиентских коммуникаций зависит от выборочных проверок и не даёт системной картины работы команды."), model: tr("Анализ переписок с клиентами и качества коммуникации менеджеров."), application: tr("Выявление повторяющихся проблем в диалогах и формирование предметной базы для обратной связи, контроля стандартов и обучения."), value: tr("Более последовательная оценка клиентского взаимодействия и управляемое повышение качества работы команды."), features: [tr("Анализ переписок"), tr("Оценка качества диалогов"), tr("Повторяющиеся ошибки")] },
           ].map((product) => (
-            <article key={product.number} className="group flex min-h-[610px] flex-col justify-between bg-[#07142D] p-7 transition-colors duration-300 hover:bg-[#0B1C3B] md:p-10">
+            <article key={product.number} id={`product-${product.number}`} className="group scroll-mt-28 flex min-h-[610px] flex-col justify-between bg-[#07142D] p-7 transition-colors duration-300 hover:bg-[#0B1C3B] md:p-10">
               <div>
                 <div className="mb-10 flex items-center justify-between text-xs tracking-[.2em]">
                   <span className="text-[#FA347D]">{product.number} / 04</span>
@@ -232,7 +233,7 @@ export default function App() {
         </article>
       </section>
       <section id="customers" className="mx-auto max-w-[1440px] px-6 pb-20 md:px-12">
-        <span className="text-xs tracking-[.2em] text-[#FA347D]">07 / CUSTOMERS</span>
+        <span className="text-xs tracking-[.2em] text-[#FA347D]">07 / WHO IT IS FOR</span>
         <h2 className="mt-5 text-3xl font-medium md:text-5xl">{tr("Для команд, которым нужна ясность.")}</h2>
         <p className="mt-6 max-w-2xl text-[#F4EAF0]/65">{tr("Для собственников и руководителей, которым важны прибыль и KPI; для отделов продаж, контролирующих воронку и скорость обработки; для коммерческих команд, управляющих ценами и маржой; для руководителей клиентского сервиса, оценивающих качество переписок.")}</p>
       </section>
@@ -240,10 +241,20 @@ export default function App() {
         <span className="text-xs tracking-[.2em] text-[#FA347D]">08 / QUESTIONS</span>
         <h2 className="mt-5 text-3xl font-medium md:text-5xl">{tr("Частые вопросы.")}</h2>
         <div className="mt-8 divide-y divide-[#F4EAF0]/15 border-y border-[#F4EAF0]/15">
-          {[[tr("Сколько стоит внедрение?"),tr("Стоимость каждого продукта рассчитывается индивидуально и зависит от объёма данных, интеграций и задач.")],[tr("Нужно ли подключать все четыре продукта?"),tr("Нет. Sales Intelligence, CRM Quality Control, Price & Margin Intelligence и AI Conversation Intelligence представлены как отдельные решения.")],[tr("Какие показатели анализирует Sales Intelligence?"),tr("Продажи, прибыль, KPI и динамику показателей. Предусмотрено разграничение доступа.")],[tr("Что контролирует CRM Quality Control?"),tr("Юнит-экономику, цикл сделки, скорость обработки заявок, воронку и потери лидов.")],[tr("Что даёт Price & Margin Intelligence?"),tr("Мониторинг цен и поставщиков, а также анализ маржинальности.")],[tr("Что анализирует AI Conversation Intelligence?"),tr("Переписки с клиентами и качество работы менеджеров.")],[tr("Можно ли интегрировать решение с нашей CRM?"),tr("Совместимость и необходимый состав интеграций определяются при обсуждении конкретного проекта.")]].map(([q,a])=><details key={q} className="group py-5"><summary className="cursor-pointer list-none text-lg">{q}<span className="float-right text-[#FA347D]">+</span></summary><p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#F4EAF0]/65">{a}</p></details>)}
+          {[[language === "ru" ? "На какой стадии продукты?" : language === "en" ? "What is the current product stage?" : "Продукттар кайсы этапта?", language === "ru" ? "Сейчас мы разрабатываем концепции и прототипы. Возможность пилотного проекта и конкретные интеграции обсуждаются индивидуально." : language === "en" ? "We are currently developing concepts and prototypes. Pilot availability and integrations are assessed individually." : "Азыр концепциялар жана прототиптер иштелүүдө. Пилоттук долбоор жана интеграциялар жекече талкууланат."],[tr("Сколько стоит внедрение?"),tr("Стоимость каждого продукта рассчитывается индивидуально и зависит от объёма данных, интеграций и задач.")],[tr("Нужно ли подключать все четыре продукта?"),tr("Нет. Sales Intelligence, CRM Quality Control, Price & Margin Intelligence и AI Conversation Intelligence представлены как отдельные решения.")],[tr("Какие показатели анализирует Sales Intelligence?"),tr("Продажи, прибыль, KPI и динамику показателей. Предусмотрено разграничение доступа.")],[tr("Что контролирует CRM Quality Control?"),tr("Юнит-экономику, цикл сделки, скорость обработки заявок, воронку и потери лидов.")],[tr("Что даёт Price & Margin Intelligence?"),tr("Мониторинг цен и поставщиков, а также анализ маржинальности.")],[tr("Что анализирует AI Conversation Intelligence?"),tr("Переписки с клиентами и качество работы менеджеров.")],[tr("Можно ли интегрировать решение с нашей CRM?"),tr("Совместимость и необходимый состав интеграций определяются при обсуждении конкретного проекта.")]].map(([q,a])=><details key={q} className="group py-5"><summary className="cursor-pointer list-none text-lg">{q}<span className="float-right text-[#FA347D]">+</span></summary><p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#F4EAF0]/65">{a}</p></details>)}
         </div>
       </section>
       </div>
+      <footer className="border-t border-[#F4EAF0]/15 px-6 py-10 md:px-12">
+        <div className="mx-auto flex max-w-[1440px] flex-col justify-between gap-5 text-sm md:flex-row md:items-center">
+          <div><p className="font-medium">aichu.co <span className="text-[#FA347D]">/</span> Digital Intelligence Studio</p><p className="mt-2 text-[#F4EAF0]/55">© {new Date().getFullYear()} aichu.co</p></div>
+          <nav aria-label={language === "ru" ? "Навигация по странице" : language === "ky" ? "Барактын навигациясы" : "Page navigation"} className="flex flex-wrap gap-x-6 gap-y-3 text-[#F4EAF0]/70">
+            <a href="#products" className="transition-colors hover:text-[#FA347D]">{language === "ru" ? "Продукты" : language === "ky" ? "Продукттар" : "Products"}</a>
+            <a href="#questions" className="transition-colors hover:text-[#FA347D]">{language === "ru" ? "Вопросы" : language === "ky" ? "Суроолор" : "FAQ"}</a>
+            <a href="#top" className="transition-colors hover:text-[#FA347D]">{language === "ru" ? "Наверх ↑" : language === "ky" ? "Жогору ↑" : "Back to top ↑"}</a>
+          </nav>
+        </div>
+      </footer>
     </main>
   )
 }
