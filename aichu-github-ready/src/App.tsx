@@ -66,13 +66,12 @@ export default function App() {
       `}</style>
       <header className="sticky top-0 z-40 bg-[#07142D] px-4 py-3 text-[#F4EAF0] md:px-8">
         <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4">
-          <a href="#top" className="shrink-0 text-xl font-semibold tracking-tight">aichu<span className="text-[#FA347D]">.co</span></a>
           <nav aria-label="Main navigation" className="hidden items-center gap-2 lg:flex">
             <a href="#about" className="px-3 py-2 text-sm hover:text-[#FA347D]">{language === "ru" ? "Главная" : language === "ky" ? "Башкы бет" : "Home"}</a>
             <div className="group relative">
               <button type="button" className="px-3 py-2 text-sm hover:text-[#FA347D]" aria-haspopup="true">{language === "ru" ? "Решения" : language === "ky" ? "Чечимдер" : "Solutions"} ▾</button>
               <div className="invisible absolute left-0 top-full w-[340px] translate-y-2 border border-[#FA347D]/25 bg-[#07142D] p-3 opacity-0 shadow-2xl transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
-                {productsMenu.map(item => <a key={item.id} href={`#${item.id}`} className="block border-b border-white/10 px-3 py-3 last:border-0 hover:bg-white/10"><span className="block text-sm font-medium">{item.name}</span><span className="mt-1 block text-xs text-white/55">{language === "ru" ? item.ru : language === "ky" ? item.ky : item.en}</span></a>)}
+                {productsMenu.map(item => <a key={item.name} href={`#${item.id}`} className="block border-b border-white/10 px-3 py-3 last:border-0 hover:bg-white/10"><span className="block text-sm font-medium">{item.name}</span><span className="mt-1 block text-xs text-white/55">{language === "ru" ? item.ru : language === "ky" ? item.ky : item.en}</span></a>)}
               </div>
             </div>
             <div className="group relative">
