@@ -218,9 +218,9 @@ export default function App() {
                 { name: "Instagram", address: "", href: "" },
                 { name: "Threads", address: "@aichuuu.co", href: "https://www.threads.net/@aichuuu.co" },
                 { name: "Telegram", address: "", href: "" },
-                { name: "Email", address: "", href: "" },
+                { name: "Email", address: "aichurekmilashka@icloud.com", href: "mailto:aichurekmilashka@icloud.com" },
               ].map(channel => channel.href ? (
-                <a key={channel.name} href={channel.href} target="_blank" rel="noopener noreferrer" className="group flex min-h-[70px] items-center justify-between gap-4 py-5 transition-colors hover:text-[#FA347D]">
+                <a key={channel.name} href={channel.href} target={channel.name === "Email" ? undefined : "_blank"} rel="noopener noreferrer" className="group flex min-h-[70px] items-center justify-between gap-4 py-5 transition-colors hover:text-[#FA347D]">
                   <span className="text-lg font-medium">{channel.name}</span>
                   <span className="text-sm text-[#F4EAF0]/60 group-hover:text-[#FA347D]">{channel.address} ↗</span>
                 </a>
