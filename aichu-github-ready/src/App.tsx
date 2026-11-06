@@ -72,13 +72,13 @@ export default function App() {
             <div className="group relative">
               <button type="button" className="px-3 py-2 text-sm hover:text-[#FA347D]" aria-haspopup="true">{language === "ru" ? "Решения" : language === "ky" ? "Чечимдер" : "Solutions"} ▾</button>
               <div className="invisible absolute left-0 top-full w-[340px] translate-y-2 border border-[#FA347D]/25 bg-[#07142D] p-3 opacity-0 shadow-2xl transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
-                {productsMenu.map(item => <a key={item.name} href={`#${item.id}`} className="block border-b border-white/10 px-3 py-3 last:border-0 hover:bg-white/10"><span className="block text-sm font-medium">{item.name}</span><span className="mt-1 block text-xs text-white/55">{language === "ru" ? item.ru : language === "ky" ? item.ky : item.en}</span></a>)}
+                {productsMenu.map(item => <a key={item.name} href={`#${item.id}`} className="block border-b border-[#F4EAF0]/15 px-3 py-3 last:border-0 hover:bg-[#FA347D]/10"><span className="block text-sm font-medium">{item.name}</span><span className="mt-1 block text-xs text-[#F4EAF0]/55">{language === "ru" ? item.ru : language === "ky" ? item.ky : item.en}</span></a>)}
               </div>
             </div>
             <div className="group relative">
               <button type="button" className="px-3 py-2 text-sm hover:text-[#FA347D]" aria-haspopup="true">{language === "ru" ? "О студии" : language === "ky" ? "Студия жөнүндө" : "Studio"} ▾</button>
               <div className="invisible absolute left-0 top-full w-56 translate-y-2 border border-[#FA347D]/25 bg-[#07142D] p-2 opacity-0 shadow-2xl transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
-                {navSections.filter(item => !["products","templates"].includes(item.id)).map(item => <a key={item.id} href={`#${item.id}`} className="block px-3 py-2 text-sm hover:bg-white/10">{item.number} / {item.label}</a>)}
+                {navSections.filter(item => !["products","templates"].includes(item.id)).map(item => <a key={item.id} href={`#${item.id}`} className="block px-3 py-2 text-sm hover:bg-[#FA347D]/10">{item.number} / {item.label}</a>)}
               </div>
             </div>
             <a href="#templates" className="px-3 py-2 text-sm hover:text-[#FA347D]">{language === "ru" ? "Готовые сайты" : language === "ky" ? "Даяр сайттар" : "Website templates"}</a>
@@ -101,7 +101,7 @@ export default function App() {
             <button type="button" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu" aria-expanded={mobileOpen} className="px-3 py-2 text-sm lg:hidden">{mobileOpen ? "✕" : "☰"}</button>
           </div>
         </div>
-        {mobileOpen && <nav aria-label="Mobile navigation" className="mt-3 grid gap-1 border-t border-white/15 pt-3 lg:hidden">{navSections.map(item => <a key={item.id} href={`#${item.id}`} onClick={() => setMobileOpen(false)} className="px-3 py-3 text-sm hover:bg-white/10">{item.number} / {item.label}</a>)}</nav>}
+        {mobileOpen && <nav aria-label="Mobile navigation" className="mt-3 grid gap-1 border-t border-[#F4EAF0]/15 pt-3 lg:hidden">{navSections.map(item => <a key={item.id} href={`#${item.id}`} onClick={() => setMobileOpen(false)} className="px-3 py-3 text-sm hover:bg-[#FA347D]/10">{item.number} / {item.label}</a>)}</nav>}
       </header>
       {/* The original interactive halftone wordmark now IS the hero, not a footer below it. */}
       <section aria-label="Интерактивный логотип aichu.co" className="w-full">
