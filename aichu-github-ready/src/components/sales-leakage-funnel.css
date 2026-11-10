@@ -48,6 +48,13 @@
   background: radial-gradient(ellipse 52% 48% at 50% 44%, #152A4B 0%, #0B1B35 54%, #08152C 100%);
   border: 1px solid rgba(177, 199, 230, .17); border-radius: 14px; min-height: 0;
 }
+.sl-root.sl-light .sl-visual {
+  background: #FFFFFF;
+  border-color: rgba(7, 20, 45, .12);
+}
+.sl-root.sl-light .sl-visual::before {
+  display: none;
+}
 .sl-visual::before {
   content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
   background-image: linear-gradient(rgba(140,168,209,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(140,168,209,.045) 1px,transparent 1px);
