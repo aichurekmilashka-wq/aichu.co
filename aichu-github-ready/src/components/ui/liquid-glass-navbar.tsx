@@ -9,6 +9,7 @@ import "./liquid-glass-navbar.css"
 export type NimbusFx = "plane" | "drop" | "spin" | "glow" | "wave" | "pop" | "none"
 export type LiquidNavItem = {
   label: string
+  iconOnly?: boolean
   href?: string
   icon?: React.ReactNode
   fx?: NimbusFx
@@ -496,7 +497,7 @@ export function LiquidNavbar({
                 {item.icon}
               </span>
             )}
-            <span className="nimbus-label">{item.label}</span>
+            {!item.iconOnly && <span className="nimbus-label">{item.label}</span>}
           </>
         )
         return item.href ? (
