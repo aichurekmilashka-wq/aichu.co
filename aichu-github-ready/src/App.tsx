@@ -66,6 +66,19 @@ export default function App() {
     setAnalyticsConsent(choice)
     cookiePolicyRef.current?.close()
   }
+  const applicationDialogRef = useRef<HTMLDialogElement>(null)
+  const [applicationName, setApplicationName] = useState("")
+  const [applicationPhone, setApplicationPhone] = useState("")
+  const [applicationTeamSize, setApplicationTeamSize] = useState("")
+  const [applicationPrepared, setApplicationPrepared] = useState(false)
+  const openApplication = () => { setApplicationPrepared(false); applicationDialogRef.current?.showModal() }
+  const submitApplication = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const subject = encodeURIComponent("Заявка с сайта aichuuu.co")
+    const body = encodeURIComponent(`Имя: ${applicationName.trim()}\nТелефон: ${applicationPhone.trim()}\nКоличество человек в организации: ${applicationTeamSize}\n\nИсточник: aichuuu.co`)
+    setApplicationPrepared(true)
+    window.location.href = `mailto:aichurekmilashka@icloud.com?subject=${subject}&body=${body}`
+  }
   const cookiePolicyRef = useRef<HTMLDialogElement>(null)
   const openCookieSettings = () => cookiePolicyRef.current?.showModal()
   const analyticsServices = [
@@ -145,12 +158,12 @@ export default function App() {
             tone={theme}
             sound={false}
             active={!visible ? 0 : section === "about" || section === "problem" ? 1 : section === "products" ? 2 : 3}
-            onChange={(index) => setSection(["about", "problem", "products", "contacts"][index])}
+            onChange={(index) => { if (index === 3) openApplication(); else setSection(["about", "problem", "products"][index]) }}
             items={[
               { label: language === "ru" ? "Главная" : language === "ky" ? "Башкы бет" : "Home", href: "#top", icon: <Home size={18} strokeWidth={1.8} />, fx: "glow" },
               { label: language === "ru" ? "Воронка" : language === "ky" ? "Воронка" : "Funnel", href: "#problem", icon: <ChartNoAxesCombined size={18} strokeWidth={1.8} />, fx: "drop" },
               { label: "REZON", href: "#products", icon: <Layers size={18} strokeWidth={1.8} />, fx: "plane" },
-              { label: language === "ru" ? "Контакты" : language === "ky" ? "Байланыш" : "Contacts", href: "#contacts", icon: <Mail size={18} strokeWidth={1.8} />, fx: "wave" },
+              { label: language === "ru" ? "Заявка" : language === "ky" ? "Өтүнмө" : "Apply", icon: <Mail size={18} strokeWidth={1.8} />, fx: "wave" },
             ]}
             endContent={
               <>
@@ -229,6 +242,30 @@ export default function App() {
       </section>
 
       </div>
+      <dialog ref={applicationDialogRef} aria-labelledby="application-heading" onClick={(event) => { if (event.target === applicationDialogRef.current) applicationDialogRef.current?.close() }} className="w-[calc(100%-2rem)] max-w-lg rounded-2xl border border-[#FDC21E]/30 bg-[#07142D] p-0 text-[#F4EAF0] shadow-2xl backdrop:bg-[#07142D]/75">
+        <div className="relative p-6 sm:p-9">
+          <button type="button" onClick={() => applicationDialogRef.current?.close()} aria-label={rezText("Закрыть", "Close", "Жабуу")} className="absolute right-5 top-4 rounded-lg px-2 py-1 text-2xl text-[#F4EAF0]/70 hover:text-[#FDC21E]">×</button>
+          <h2 id="application-heading" className="pr-8 text-2xl font-semibold">{rezText("Обсудим вашу задачу", "Tell us about your business", "Бизнесиңиз тууралуу айтып бериңиз")}</h2>
+          <p className="mt-2 text-sm text-[#F4EAF0]/65">{rezText("Заполните короткую анкету для обращения в студию.", "Fill out this short request form.", "Кыскача өтүнмөнү толтуруңуз.")}</p>
+          <form onSubmit={submitApplication} className="mt-7 space-y-5">
+            <label className="block text-sm">
+              <span className="mb-2 block">{rezText("Ваше имя", "Your name", "Атыңыз")}</span>
+              <input required maxLength={100} autoComplete="name" value={applicationName} onChange={(e) => setApplicationName(e.target.value)} className="w-full rounded-xl border border-[#F4EAF0]/25 bg-white/5 px-4 py-3 text-base text-[#F4EAF0] outline-none focus:border-[#FDC21E]" placeholder={rezText("Как к вам обращаться", "Your name", "Атыңыз")} />
+            </label>
+            <label className="block text-sm">
+              <span className="mb-2 block">{rezText("Номер телефона", "Phone number", "Телефон номери")}</span>
+              <input required type="tel" minLength={7} maxLength={30} autoComplete="tel" value={applicationPhone} onChange={(e) => setApplicationPhone(e.target.value)} className="w-full rounded-xl border border-[#F4EAF0]/25 bg-white/5 px-4 py-3 text-base text-[#F4EAF0] outline-none focus:border-[#FDC21E]" placeholder="+996 ..." />
+            </label>
+            <label className="block text-sm">
+              <span className="mb-2 block">{rezText("Количество человек в организации", "Number of employees", "Уюмдагы кызматкерлердин саны")}</span>
+              <input required type="number" min="1" max="1000000" step="1" value={applicationTeamSize} onChange={(e) => setApplicationTeamSize(e.target.value)} className="w-full rounded-xl border border-[#F4EAF0]/25 bg-white/5 px-4 py-3 text-base text-[#F4EAF0] outline-none focus:border-[#FDC21E]" placeholder="10" />
+            </label>
+            <p className="text-xs leading-relaxed text-[#F4EAF0]/55">{rezText("При нажатии откроется почтовое приложение с заполненной заявкой. Для отправки подтвердите отправку письма.", "Your email app will open with a prefilled request. Send the email there to finish.", "Даяр өтүнмө менен почта колдонмосу ачылат. Жөнөтүүнү почтадан ырастаңыз.")}</p>
+            <button type="submit" className="w-full rounded-xl bg-[#FDC21E] px-5 py-3 font-semibold text-[#07142D] transition-opacity hover:opacity-90">{rezText("Отправить", "Send request", "Жөнөтүү")}</button>
+            {applicationPrepared && <p role="status" className="text-sm text-[#FDC21E]">{rezText("Если почтовое приложение не открылось, проверьте его настройку. Заявка ещё не отправлена автоматически.", "If your email app did not open, check its configuration. The request has not been sent automatically.", "Почта ачылбаса, анын жөндөөлөрүн текшериңиз. Өтүнмө автоматтык түрдө жөнөтүлгөн жок.")}</p>}
+          </form>
+        </div>
+      </dialog>
       <footer id="contacts" className="scroll-mt-28 border-t border-[#F4EAF0]/15 px-6 py-10 md:px-12">
         <div className="mx-auto grid max-w-[1440px] grid-cols-1 items-center gap-10 text-sm md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-6">
           <div className="text-center md:text-left">
