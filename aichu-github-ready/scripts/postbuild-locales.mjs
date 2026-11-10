@@ -47,7 +47,7 @@ for (const [lang, meta] of Object.entries(pages)) {
     ${verificationMeta}
   </head>`)
   // Vite uses base "./". Nested pages must refer one directory up for assets.
-  html = html.replace(/(src|href)="\.\/(assets\/|favicon\.svg)/g, (_, attr, file) => `${attr}="../${file}`)
+  html = html.replace(/(src|href)="\.\/(assets\/|favicon\.svg|favicon-32\.png)/g, (_, attr, file) => `${attr}="../${file}`)
   // Asset paths in nested pages must not point at ./assets/.
   if (/\b(?:src|href)="\.\/assets\//.test(html)) throw new Error(`Bad asset path on ${lang}`)
   const localeDir = path.join(out, lang)
@@ -74,6 +74,7 @@ const rootHtml = `<!doctype html>
   <meta http-equiv="refresh" content="0; url=./ru/" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>aichuuu.co | Digital Intelligence Studio</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png" />
   <link rel="canonical" href="${origin}/ru/" />
   ${alternates}
   ${verificationMeta}
