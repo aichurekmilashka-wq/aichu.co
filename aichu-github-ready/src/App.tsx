@@ -162,9 +162,9 @@ export default function App() {
         </div>
       </header>
       {/* The original interactive halftone wordmark now IS the hero, not a footer below it. */}
-      <section aria-label="Интерактивный логотип aichuuu.co" className="w-full">
+      <section aria-label="Интерактивный логотип AICHU" className="w-full">
         <HalftoneWordmarkFooter
-          wordmark="aichuuu.co"
+          wordmark="AICHU"
           label=""
           meta=""
           backToTop={false}
