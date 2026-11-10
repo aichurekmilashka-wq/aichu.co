@@ -44,7 +44,7 @@ const text: Record<Language, Content> = {
     next: "Следующий этап",
     previous: "Назад",
     restart: "Новый цикл",
-    legend: "Розовые потоки обозначают возможные потери, а не реальные показатели компании.",
+    legend: "Жёлтые потоки обозначают возможные потери, а не реальные показатели компании.",
     leakHints: ["Долгий ответ менеджера", "Скрытые мотивы не выявлены", "Не предложены нужные услуги", "Неудобный способ оплаты", "Покупатель не вернулся"],
     stages: [
       { title: "Первый контакт", shortLines: ["Первый контакт"], task: "Принять обращение, понять первоначальный запрос и ответить на вопросы покупателя.", risk: "Запрос обработан неправильно. Открытые вопросы остаются без ответа.", metric: "Скорость и качество обработки обращения, полнота ответов." },
@@ -69,7 +69,7 @@ const text: Record<Language, Content> = {
     next: "Next stage",
     previous: "Back",
     restart: "New cycle",
-    legend: "Pink streams illustrate potential leakage, not actual company performance.",
+    legend: "Yellow streams illustrate potential leakage, not actual company performance.",
     leakHints: ["Manager responds too slowly", "Underlying motivations missed", "Relevant services not offered", "Inconvenient payment options", "Customer does not return"],
     stages: [
       { title: "First contact", shortLines: ["First contact"], task: "Handle the enquiry, understand the initial request and answer the buyer's questions.", risk: "The request is handled poorly and questions remain unanswered.", metric: "Response speed, handling quality and completeness of answers." },
@@ -94,7 +94,7 @@ const text: Record<Language, Content> = {
     next: "Кийинки этап",
     previous: "Артка",
     restart: "Жаңы цикл",
-    legend: "Кызгылт агымдар компаниянын чыныгы көрсөткүчтөрүн эмес, мүмкүн болгон жоготууларды билдирет.",
+    legend: "Сары агымдар компаниянын чыныгы көрсөткүчтөрүн эмес, мүмкүн болгон жоготууларды билдирет.",
     leakHints: ["Менеджер кеч жооп берет", "Жашыруун мотивдер аныкталган эмес", "Керектүү кызматтар сунушталбайт", "Төлөм ыкмасы ыңгайсыз", "Кардар кайра келген жок"],
     stages: [
       { title: "Биринчи байланыш", shortLines: ["Биринчи", "байланыш"], task: "Кайрылууну туура кабыл алып, алгачкы суроо-талапты түшүнүп, сатып алуучунун суроолоруна жооп берүү.", risk: "Суроо-талап туура иштелбейт, кардардын суроолору жоопсуз калат.", metric: "Жооп берүү ылдамдыгы, кайрылууну иштетүү сапаты жана жооптордун толуктугу." },
@@ -173,18 +173,18 @@ export default function SalesLeakageFunnel({ language, theme }: { language: Lang
                   <linearGradient id="sl-flow-gradient" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0" stopColor="#D6E9FF" stopOpacity="0" />
                     <stop offset=".35" stopColor="#AFC5EA" stopOpacity=".75" />
-                    <stop offset="1" stopColor="#FA347D" stopOpacity=".3" />
+                    <stop offset="1" stopColor="#FDC21E" stopOpacity=".3" />
                   </linearGradient>
                   <radialGradient id="sl-hole-gradient">
                     <stop offset="0" stopColor="#050C1D"/>
                     <stop offset=".68" stopColor="#070D1F"/>
-                    <stop offset="1" stopColor="#FA347D" stopOpacity=".8"/>
+                    <stop offset="1" stopColor="#FDC21E" stopOpacity=".8"/>
                   </radialGradient>
                 </defs>
                 <text x="350" y="37" className="sl-svg-overline" textAnchor="middle">{copy.incoming}</text>
                 <g className="sl-incoming" aria-hidden="true">
                   {[-46, -24, 0, 24, 46].map((delta, i) => (
-                    <line key={delta} x1={350 + delta} y1="48" x2={350 + delta * .55} y2="134" stroke={i === 2 ? "#FA347D" : "#AFC9F2"} strokeWidth={i === 2 ? 2 : 1} strokeDasharray="7 13" opacity=".7"/>
+                    <line key={delta} x1={350 + delta} y1="48" x2={350 + delta * .55} y2="134" stroke={i === 2 ? "#FDC21E" : "#AFC9F2"} strokeWidth={i === 2 ? 2 : 1} strokeDasharray="7 13" opacity=".7"/>
                   ))}
                 </g>
                 <path d="M350 135 C350 300 350 520 350 710" className="sl-inner-flow" stroke="url(#sl-flow-gradient)" fill="none" strokeWidth="2" strokeDasharray="7 15" aria-hidden="true"/>
@@ -203,14 +203,14 @@ export default function SalesLeakageFunnel({ language, theme }: { language: Lang
                       onMouseEnter={event => { if ((event.target as Element).closest(".sl-hole")) return; if (window.matchMedia("(hover: hover)").matches) choose(i) }}
                       onKeyDown={event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); choose(i) } }}
                     >
-                      <path d={tier.d} fill="url(#sl-tier-gradient)" stroke={selected ? "#EBA1C9" : "#5A7191"} strokeWidth={selected ? 2 : 1.2} className="sl-tier-face"/>
+                      <path d={tier.d} fill="url(#sl-tier-gradient)" stroke={selected ? "#FFE1A0" : "#5A7191"} strokeWidth={selected ? 2 : 1.2} className="sl-tier-face"/>
                       <ellipse cx="350" cy={tier.top} rx={tier.rx} ry={i === 0 ? 20 : 13} fill="#0B1A33" fillOpacity=".92" stroke="url(#sl-rim-gradient)" strokeWidth="1.8"/>
-                      <path d={tier.d} fill="none" stroke={selected ? "#FA347D" : "#B2C9ED"} strokeOpacity={selected ? ".38" : ".13"} strokeWidth="5" className="sl-tier-glow"/>
+                      <path d={tier.d} fill="none" stroke={selected ? "#FDC21E" : "#B2C9ED"} strokeOpacity={selected ? ".38" : ".13"} strokeWidth="5" className="sl-tier-glow"/>
                       <text x="350" y={tier.labelY - (stage.shortLines.length > 1 ? 15 : 12)} textAnchor="middle" className="sl-tier-number">0{i + 1}</text>
                       <text x="350" y={tier.labelY + (stage.shortLines.length > 1 ? 6 : 12)} className="sl-svg-stage" textAnchor="middle">
                         {stage.shortLines.map((line, j) => <tspan key={j} x="350" dy={j === 0 ? 0 : 20}>{line}</tspan>)}
                       </text>
-                      <path d={tier.leak} fill="none" stroke="#FA347D" strokeWidth={selected ? 3 : 1.6} strokeOpacity={selected ? ".92" : ".4"} strokeLinecap="round" className="sl-leak-line"/>
+                      <path d={tier.leak} fill="none" stroke="#FDC21E" strokeWidth={selected ? 3 : 1.6} strokeOpacity={selected ? ".92" : ".4"} strokeLinecap="round" className="sl-leak-line"/>
                       <g
                         className={"sl-hole " + (hoveredLeak === i ? "sl-hole-hovered" : "")}
                         role="button"
@@ -224,7 +224,7 @@ export default function SalesLeakageFunnel({ language, theme }: { language: Lang
                         onClick={event => { event.stopPropagation(); showLeak(i) }}
                         onKeyDown={event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); event.stopPropagation(); showLeak(i) } }}
                       >
-                        <ellipse cx={tier.holeX} cy={tier.holeY} rx="10" ry="15" transform={"rotate(" + (tier.holeSide * 18) + " " + tier.holeX + " " + tier.holeY + ")"} fill="url(#sl-hole-gradient)" stroke={hoveredLeak === i ? "#FFC0D8" : selected ? "#FA347D" : "#A43C70"} strokeWidth={hoveredLeak === i ? 3 : selected ? 2.5 : 1.5} className="sl-hole-visual"/>
+                        <ellipse cx={tier.holeX} cy={tier.holeY} rx="10" ry="15" transform={"rotate(" + (tier.holeSide * 18) + " " + tier.holeX + " " + tier.holeY + ")"} fill="url(#sl-hole-gradient)" stroke={hoveredLeak === i ? "#FFE8AF" : selected ? "#FDC21E" : "#A77A18"} strokeWidth={hoveredLeak === i ? 3 : selected ? 2.5 : 1.5} className="sl-hole-visual"/>
                         <ellipse cx={tier.holeX} cy={tier.holeY} rx="32" ry="34" fill="transparent" className="sl-hole-target"/>
                       </g>
                     </g>
@@ -232,13 +232,13 @@ export default function SalesLeakageFunnel({ language, theme }: { language: Lang
                 })}
                 <g aria-hidden="true">
                   {!reducedMotion && tiers.flatMap((tier, i) => Array.from({ length: 4 }, (_, j) => (
-                    <circle key={i + "-" + j} r={j % 2 ? 2 : 1.45} fill={i === active ? "#FF8CB7" : "#FA347D"} opacity={i === active ? ".95" : ".58"}>
+                    <circle key={i + "-" + j} r={j % 2 ? 2 : 1.45} fill={i === active ? "#FFD76B" : "#FDC21E"} opacity={i === active ? ".95" : ".58"}>
                       <animateMotion path={tier.leak} dur={(2.5 + j * .42).toFixed(2) + "s"} begin={(-j * .66).toFixed(2) + "s"} repeatCount="indefinite" />
                     </circle>
                   )))}
                 </g>
-                <path d="M350 697 L350 721" stroke="#FA347D" strokeOpacity=".6" strokeWidth="1.5" strokeDasharray="3 5"/>
-                <circle cx="350" cy="723" r="4" fill="#FA347D" className="sl-exit-dot"/>
+                <path d="M350 697 L350 721" stroke="#FDC21E" strokeOpacity=".6" strokeWidth="1.5" strokeDasharray="3 5"/>
+                <circle cx="350" cy="723" r="4" fill="#FDC21E" className="sl-exit-dot"/>
                 <text x="350" y="752" textAnchor="middle" className="sl-svg-overline">{copy.result}</text>
               </svg>
               {hoveredLeak !== null && (
