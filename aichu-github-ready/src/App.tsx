@@ -51,7 +51,7 @@ export default function App() {
   }, [])
   return (
     <main id="top" className={`min-h-screen bg-[#07142D] text-[#F4EAF0] ${theme === "light" ? "aichu-light" : ""}`}>
-      <h1 className="sr-only">{language === "en" ? "aichu.co — Digital Intelligence Studio. B2B SaaS products in development." : language === "ky" ? "aichu.co — Digital Intelligence Studio. B2B SaaS продукттар иштелип чыгууда." : "aichu.co — Digital Intelligence Studio. Разрабатываем B2B SaaS-продукты для аналитики и автоматизации бизнеса."}</h1>
+      <h1 className="sr-only">{language === "en" ? "aichuuu.co — Digital Intelligence Studio. B2B SaaS products in development." : language === "ky" ? "aichuuu.co — Digital Intelligence Studio. B2B SaaS продукттар иштелип чыгууда." : "aichuuu.co — Digital Intelligence Studio. Разрабатываем B2B SaaS-продукты для аналитики и автоматизации бизнеса."}</h1>
       <style>{`
         .aichu-light { background:#FFFFFF !important; color:#07142D !important; }
         .aichu-light .bg-\\[\\#07142D\\] { background-color:#FFFFFF !important; }
@@ -107,9 +107,9 @@ export default function App() {
         {mobileOpen && <nav aria-label="Mobile navigation" className="mt-3 grid gap-1 border-t border-[#F4EAF0]/15 pt-3 lg:hidden">{navSections.map(item => <a key={item.id} href={`#${item.id}`} onClick={() => setMobileOpen(false)} className="px-3 py-3 text-sm hover:bg-[#FDC21E]/10">{item.number} / {item.label}</a>)}</nav>}
       </header>
       {/* The original interactive halftone wordmark now IS the hero, not a footer below it. */}
-      <section aria-label="Интерактивный логотип aichu.co" className="w-full">
+      <section aria-label="Интерактивный логотип aichuuu.co" className="w-full">
         <HalftoneWordmarkFooter
-          wordmark="aichu.co"
+          wordmark="aichuuu.co"
           label=""
           meta=""
           backToTop={false}
@@ -194,7 +194,7 @@ export default function App() {
         </div>
         <div className="mt-7 flex flex-wrap items-center justify-between gap-3 text-sm text-[#F4EAF0]/60">
           <p>{language === "ru" ? "Некоммерческий исследовательский проект. Представленные решения находятся в стадии концепций и прототипов." : language === "en" ? "A non-commercial research project. The solutions shown are concepts and prototypes." : "Коммерциялык эмес изилдөө долбоору. Көрсөтүлгөн чечимдер концепция жана прототип баскычында."}</p>
-          <span className="text-[#FDC21E]">AICHU.CO / B2B SOFTWARE</span>
+          <span className="text-[#FDC21E]">AICHUUU.CO / B2B SOFTWARE</span>
         </div>
       </section>
       <section id="contacts" className="mx-auto max-w-[1440px] scroll-mt-28 px-6 pb-28 md:px-12">
@@ -203,7 +203,7 @@ export default function App() {
             <span className="text-[11px] uppercase tracking-[.28em] text-[#FDC21E]">06 / CONTACT</span>
             <h2 className="mt-4 text-4xl font-semibold tracking-tight md:text-6xl">{language === "ru" ? "Контакты" : language === "en" ? "Contacts" : "Байланыш"}<span className="text-[#FDC21E]">.</span></h2>
           </div>
-          <p className="max-w-md text-sm leading-relaxed text-[#F4EAF0]/60">{language === "ru" ? "AICHU.CO развивается как некоммерческий технологический проект. Следите за нашими исследованиями и прототипами в официальных каналах." : language === "en" ? "AICHU.CO is currently a non-commercial technology project. Follow our research and prototypes through official channels." : "AICHU.CO азыр коммерциялык эмес технологиялык долбоор. Биздин изилдөөлөрдү жана прототиптерди расмий каналдардан көрө аласыз."}</p>
+          <p className="max-w-md text-sm leading-relaxed text-[#F4EAF0]/60">{language === "ru" ? "AICHUUU.CO развивается как некоммерческий технологический проект. Следите за нашими исследованиями и прототипами в официальных каналах." : language === "en" ? "AICHUUU.CO is currently a non-commercial technology project. Follow our research and prototypes through official channels." : "AICHUUU.CO азыр коммерциялык эмес технологиялык долбоор. Биздин изилдөөлөрдү жана прототиптерди расмий каналдардан көрө аласыз."}</p>
         </div>
         <div className="grid overflow-hidden border border-[#F4EAF0]/20 md:grid-cols-[1fr_1.2fr]">
           <div className="flex flex-col justify-between bg-[#F4EAF0] p-8 text-[#07142D] md:p-12">
@@ -212,7 +212,7 @@ export default function App() {
               <h3 className="mt-8 max-w-lg text-3xl font-medium leading-tight tracking-tight md:text-4xl">{language === "ru" ? "Остаёмся на связи." : language === "en" ? "Stay in touch." : "Байланышта бололу."}</h3>
               <p className="mt-6 max-w-md text-sm leading-relaxed text-[#07142D]/70">{language === "ru" ? "Изучаем аналитику, CRM и автоматизацию бизнеса. Сейчас на сайте нет продаж, оплаты или платных подписок." : language === "en" ? "Exploring analytics, CRM and business automation. No paid subscriptions, checkout or sales are offered here." : "Аналитика, CRM жана бизнести автоматташтырууну изилдейбиз. Сайтта азыр сатуу же төлөм жок."}</p>
             </div>
-            <p className="mt-12 text-xs tracking-[.13em] text-[#07142D]/50">AICHU.CO / RESEARCH & PROTOTYPES</p>
+            <p className="mt-12 text-xs tracking-[.13em] text-[#07142D]/50">AICHUUU.CO / RESEARCH & PROTOTYPES</p>
           </div>
           <div className="bg-[#0B1C3B] p-8 md:p-12">
             <p className="mb-6 text-xs font-semibold uppercase tracking-[.22em] text-[#FDC21E]">{language === "ru" ? "Социальные сети и почта" : language === "en" ? "Social channels and email" : "Социалдык тармактар жана почта"}</p>
@@ -254,7 +254,7 @@ export default function App() {
       </div>
       <footer className="border-t border-[#F4EAF0]/15 px-6 py-10 md:px-12">
         <div className="mx-auto flex max-w-[1440px] flex-col justify-between gap-5 text-sm md:flex-row md:items-center">
-          <div><p className="font-medium">aichu.co <span className="text-[#FDC21E]">/</span> Digital Intelligence Studio</p><p className="mt-2 text-[#F4EAF0]/55">© {new Date().getFullYear()} aichu.co</p></div>
+          <div><p className="font-medium">aichuuu.co <span className="text-[#FDC21E]">/</span> Digital Intelligence Studio</p><p className="mt-2 text-[#F4EAF0]/55">© {new Date().getFullYear()} aichuuu.co</p></div>
           <nav aria-label={language === "ru" ? "Навигация по странице" : language === "ky" ? "Барактын навигациясы" : "Page navigation"} className="flex flex-wrap gap-x-6 gap-y-3 text-[#F4EAF0]/70">
             <a href="#contacts" className="transition-colors hover:text-[#FDC21E]">{language === "ru" ? "Контакты" : language === "ky" ? "Байланыш" : "Contacts"}</a>
             <a href="#products" className="transition-colors hover:text-[#FDC21E]">{language === "ru" ? "Продукты" : language === "ky" ? "Продукттар" : "Products"}</a>
