@@ -103,7 +103,8 @@ export default function HalftoneWordmarkFooter({
     ctx.beginPath();ctx.arc(x,y,dots[j+6],0,6.2832);ctx.fill();
    }
    if(grainTile&&o.grain>0){ctx.globalAlpha=Math.min(1,o.grain)*.09;ctx.globalCompositeOperation="overlay";const pattern=ctx.createPattern(grainTile,"repeat");if(pattern){ctx.fillStyle=pattern;ctx.fillRect(0,0,w,h)}ctx.globalAlpha=1;ctx.globalCompositeOperation="source-over"}
-   awake=moving||ringAge<900||px> -1e4;
+   // Stop drawing after the spring and ripple settle; pointer events wake the loop again.
+   awake=moving||ringAge<900;
   }
   const loop=(now:number)=>{raf=0;if(!visible)return;draw(now);if(awake)raf=requestAnimationFrame(loop)};
   const wake=()=>{awake=true;if(!raf&&visible)raf=requestAnimationFrame(loop)};
