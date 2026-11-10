@@ -40,6 +40,10 @@ jobs:
           GOOGLE_SITE_VERIFICATION: ${{ vars.GOOGLE_SITE_VERIFICATION }}
         run: npm run build
 
+      - name: Generate high-quality social preview
+        working-directory: aichu-github-ready
+        run: python3 scripts/render-og-preview.py
+
       - name: Verify localized pages and translations
         working-directory: aichu-github-ready
         env:
