@@ -220,7 +220,7 @@ export default function App() {
               {[
                 { name: "Instagram", address: "@aichuuu.co", href: "https://www.instagram.com/aichuuu.co/" },
                 { name: "Threads", address: "@aichuuu.co", href: "https://www.threads.net/@aichuuu.co" },
-                { name: "Telegram", address: "@aichuuu.co", href: "" },
+                { name: "Telegram", address: "@Aichuuuco", href: "https://t.me/Aichuuuco" },
                 { name: "Email", address: "aichurekmilashka@icloud.com", href: "mailto:aichurekmilashka@icloud.com" },
                 { name: "Телефон", address: "+996 503 030 997", href: "tel:+996503030997" },
               ].map(channel => channel.href ? (
