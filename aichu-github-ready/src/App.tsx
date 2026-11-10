@@ -201,16 +201,31 @@ export default function App() {
             tone={theme}
             sound={false}
             active={!visible ? 0 : section === "about" || section === "problem" ? 1 : 2}
-            onChange={(index) => { if (index === 4) openApplication(); else if (index < 3) setSection(["about", "problem", "products"][index]) }}
+            onChange={(index) => setSection(["about", "problem", "products"][index])}
             items={[
               { label: language === "ru" ? "Главная" : language === "ky" ? "Башкы бет" : "Home", href: "#top", icon: <Home size={18} strokeWidth={1.8} />, fx: "glow" },
               { label: language === "ru" ? "Воронка" : language === "ky" ? "Воронка" : "Funnel", href: "#problem", icon: <ChartNoAxesCombined size={18} strokeWidth={1.8} />, fx: "drop" },
               { label: "REZON", href: "#products", icon: <Layers size={18} strokeWidth={1.8} />, fx: "plane" },
-              { label: language === "ru" ? "Позвонить" : language === "ky" ? "Чалуу" : "Call", href: "tel:+996503030997", iconOnly: true, icon: <Phone size={18} strokeWidth={1.8} />, fx: "wave" },
-              { label: language === "ru" ? "Заявка" : language === "ky" ? "Өтүнмө" : "Apply", icon: <Mail size={18} strokeWidth={1.8} />, fx: "wave" },
             ]}
             endContent={
               <>
+                <a
+                  href="tel:+996503030997"
+                  className="nimbus-action"
+                  aria-label={rezText("Позвонить", "Call", "Чалуу")}
+                  title={rezText("Позвонить", "Call", "Чалуу")}
+                >
+                  <Phone size={19} strokeWidth={1.8} aria-hidden="true" />
+                </a>
+                <button
+                  type="button"
+                  className="nimbus-action"
+                  onClick={openApplication}
+                  aria-label={rezText("Открыть анкету", "Open request form", "Өтүнмө формасын ачуу")}
+                  title={rezText("Открыть анкету", "Open request form", "Өтүнмө формасын ачуу")}
+                >
+                  <Mail size={19} strokeWidth={1.8} aria-hidden="true" />
+                </button>
                 <button
                   type="button"
                   className="nimbus-action"
