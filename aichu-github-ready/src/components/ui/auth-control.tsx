@@ -134,7 +134,7 @@ export default function AuthControl({ language, theme }: { language: Language; t
       setError(t.passwordMismatch)
       return
     }
-    if (mode !== "forgot" && password.length < 8) {
+    if ((mode === "signup" || mode === "update") && password.length < 8) {
       setError(t.passwordShort)
       return
     }
@@ -265,7 +265,7 @@ export default function AuthControl({ language, theme }: { language: Language; t
                       <span className={"mb-2 block text-xs font-medium " + muted}>{t.password}</span>
                       <span className="relative block">
                         <input ref={mode === "update" ? firstField : undefined} type={showPassword ? "text" : "password"} name="password"
-                          autoComplete={mode === "login" ? "current-password" : "new-password"} required minLength={8} maxLength={256}
+                          autoComplete={mode === "login" ? "current-password" : "new-password"} required minLength={mode === "login" ? 1 : 8} maxLength={256}
                           value={password} onChange={event => setPassword(event.target.value)}
                           className={"w-full rounded-xl border px-4 py-3 pr-12 text-base outline-none transition-colors focus:border-[#FDC21E] " + inputStyle} />
                         <button type="button" onClick={() => setShowPassword(!showPassword)} aria-label={showPassword ? t.hidePassword : t.showPassword}
