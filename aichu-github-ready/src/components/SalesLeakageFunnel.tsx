@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import "./sales-leakage-funnel.css"
 
 type Language = "ru" | "en" | "ky"
@@ -111,10 +111,14 @@ const tiers = [
 ]
 
 export default function SalesLeakageFunnel({ language, theme }: { language: Language; theme: "dark" | "light" }) {
+  const rootRef = useRef<HTMLElement | null>(null)
+  const [inView, setInView] = useState(false)
+  const [pageVisible, setPageVisible] = useState(() => typeof document === "undefined" || !document.hidden)
   const [active, setActive] = useState(0)
   const [hoveredLeak, setHoveredLeak] = useState<number | null>(null)
   const [manual, setManual] = useState(false)
   const [reducedMotion, setReducedMotion] = useState(false)
+  const animationsPlaying = inView && pageVisible && !reducedMotion
   const copy = text[language]
 
   useEffect(() => {
@@ -126,10 +130,24 @@ export default function SalesLeakageFunnel({ language, theme }: { language: Lang
   }, [])
 
   useEffect(() => {
-    if (manual || reducedMotion) return
+    const node = rootRef.current
+    if (!node) return
+    const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), { threshold: 0.01 })
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    const update = () => setPageVisible(!document.hidden)
+    document.addEventListener("visibilitychange", update)
+    return () => document.removeEventListener("visibilitychange", update)
+  }, [])
+
+  useEffect(() => {
+    if (manual || reducedMotion || !inView || !pageVisible) return
     const id = window.setInterval(() => setActive(current => (current + 1) % 5), 6000)
     return () => window.clearInterval(id)
-  }, [manual, reducedMotion])
+  }, [manual, reducedMotion, inView, pageVisible])
 
   function choose(index: number) {
     setActive((index + 5) % 5)
@@ -144,7 +162,7 @@ export default function SalesLeakageFunnel({ language, theme }: { language: Lang
   }
 
   return (
-    <section id="problem" aria-labelledby="sales-leakage-title" className={"sl-root " + (theme === "light" ? "sl-light" : "sl-dark")}>
+    <section ref={rootRef} id="problem" aria-labelledby="sales-leakage-title" className={"sl-root " + (theme === "light" ? "sl-light" : "sl-dark") + (animationsPlaying ? "" : " sl-paused")}>
       <div className="sl-shell">
         <div className="sl-heading-row">
           <h2 id="sales-leakage-title" className="sl-headline">{copy.headline}<br /><strong>{copy.emphasis}</strong></h2>
@@ -225,7 +243,7 @@ export default function SalesLeakageFunnel({ language, theme }: { language: Lang
                   )
                 })}
                 <g aria-hidden="true">
-                  {!reducedMotion && tiers.flatMap((tier, i) => Array.from({ length: 4 }, (_, j) => (
+                  {animationsPlaying && tiers.flatMap((tier, i) => Array.from({ length: 4 }, (_, j) => (
                     <circle key={i + "-" + j} r={j % 2 ? 2 : 1.45} fill={i === active ? "#FFD76B" : "#FDC21E"} opacity={i === active ? ".95" : ".58"}>
                       <animateMotion path={tier.leak} dur={(2.5 + j * .42).toFixed(2) + "s"} begin={(-j * .66).toFixed(2) + "s"} repeatCount="indefinite" />
                     </circle>
