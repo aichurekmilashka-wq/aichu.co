@@ -66,18 +66,61 @@ export default function App() {
     setAnalyticsConsent(choice)
     cookiePolicyRef.current?.close()
   }
+
   const applicationDialogRef = useRef<HTMLDialogElement>(null)
   const [applicationName, setApplicationName] = useState("")
   const [applicationPhone, setApplicationPhone] = useState("")
   const [applicationTeamSize, setApplicationTeamSize] = useState("")
-  const [applicationPrepared, setApplicationPrepared] = useState(false)
-  const openApplication = () => { setApplicationPrepared(false); applicationDialogRef.current?.showModal() }
-  const submitApplication = (event: FormEvent<HTMLFormElement>) => {
+  const [applicationStatus, setApplicationStatus] = useState<"idle" | "sending" | "sent" | "error" | "manual">("idle")
+  const web3FormsAccessKey = (import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || "").trim()
+  const openApplication = () => {
+    setApplicationStatus("idle")
+    applicationDialogRef.current?.showModal()
+  }
+  const submitApplication = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const subject = encodeURIComponent("Заявка с сайта aichuuu.co")
-    const body = encodeURIComponent(`Имя: ${applicationName.trim()}\nТелефон: ${applicationPhone.trim()}\nКоличество человек в организации: ${applicationTeamSize}\n\nИсточник: aichuuu.co`)
-    setApplicationPrepared(true)
-    window.location.href = `mailto:aichurekmilashka@icloud.com?subject=${subject}&body=${body}`
+    if (applicationStatus === "sending") return
+    const name = applicationName.trim()
+    const phone = applicationPhone.trim()
+    const teamSize = Number(applicationTeamSize)
+    if (!name || !phone || !Number.isInteger(teamSize) || teamSize < 1 || teamSize > 1000000) {
+      setApplicationStatus("error")
+      return
+    }
+    // Preserve email fallback until the Web3Forms public access key is supplied.
+    if (!web3FormsAccessKey) {
+      const subject = encodeURIComponent("Заявка с сайта aichuuu.co")
+      const body = encodeURIComponent("Имя: " + name + "\nТелефон: " + phone + "\nКоличество человек в организации: " + teamSize + "\n\nИсточник: aichuuu.co")
+      setApplicationStatus("manual")
+      window.location.href = "mailto:aichurekmilashka@icloud.com?subject=" + subject + "&body=" + body
+      return
+    }
+    const formData = new FormData()
+    formData.set("access_key", web3FormsAccessKey)
+    formData.set("subject", "Новая заявка с aichuuu.co")
+    formData.set("from_name", "aichuuu.co")
+    formData.set("name", name)
+    formData.set("phone", phone)
+    formData.set("team_size", String(teamSize))
+    formData.set("source", "aichuuu.co")
+    if (new FormData(event.currentTarget).has("botcheck")) formData.set("botcheck", "true")
+    setApplicationStatus("sending")
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData,
+        headers: { Accept: "application/json" },
+      })
+      const result = (await response.json()) as { success?: boolean }
+      if (!response.ok || result.success !== true) throw new Error("Web3Forms submission failed")
+      setApplicationStatus("sent")
+      setApplicationName("")
+      setApplicationPhone("")
+      setApplicationTeamSize("")
+      trackEvent("lead_submit_success", { form: "application", page_language: language })
+    } catch {
+      setApplicationStatus("error")
+    }
   }
   const cookiePolicyRef = useRef<HTMLDialogElement>(null)
   const openCookieSettings = () => cookiePolicyRef.current?.showModal()
@@ -260,9 +303,19 @@ export default function App() {
               <span className="mb-2 block">{rezText("Количество человек в организации", "Number of employees", "Уюмдагы кызматкерлердин саны")}</span>
               <input required type="number" min="1" max="1000000" step="1" value={applicationTeamSize} onChange={(e) => setApplicationTeamSize(e.target.value)} className="w-full rounded-xl border border-[#F4EAF0]/25 bg-white/5 px-4 py-3 text-base text-[#F4EAF0] outline-none focus:border-[#FDC21E]" placeholder="10" />
             </label>
-            <p className="text-xs leading-relaxed text-[#F4EAF0]/55">{rezText("При нажатии откроется почтовое приложение с заполненной заявкой. Для отправки подтвердите отправку письма.", "Your email app will open with a prefilled request. Send the email there to finish.", "Даяр өтүнмө менен почта колдонмосу ачылат. Жөнөтүүнү почтадан ырастаңыз.")}</p>
-            <button type="submit" className="w-full rounded-xl bg-[#FDC21E] px-5 py-3 font-semibold text-[#07142D] transition-opacity hover:opacity-90">{rezText("Отправить", "Send request", "Жөнөтүү")}</button>
-            {applicationPrepared && <p role="status" className="text-sm text-[#FDC21E]">{rezText("Если почтовое приложение не открылось, проверьте его настройку. Заявка ещё не отправлена автоматически.", "If your email app did not open, check its configuration. The request has not been sent automatically.", "Почта ачылбаса, анын жөндөөлөрүн текшериңиз. Өтүнмө автоматтык түрдө жөнөтүлгөн жок.")}</p>}
+
+            <input type="checkbox" name="botcheck" tabIndex={-1} aria-hidden="true" autoComplete="off" className="pointer-events-none absolute h-0 w-0 opacity-0" />
+            <p className="text-xs leading-relaxed text-[#F4EAF0]/55">
+              {web3FormsAccessKey
+                ? rezText("Нажимая «Отправить», вы предоставляете данные для ответа на ваше обращение.", "By submitting, you provide these details so we can respond to your request.", "Жөнөтүү менен сиз кайрылууңузга жооп берүү үчүн маалыматыңызды бересиз.")
+                : rezText("Пока отправка через сайт не активирована, откроется почтовое приложение с готовой заявкой.", "Until website submissions are activated, a prefilled email will open.", "Сайт аркылуу жөнөтүү иштетилгенге чейин даяр кат менен почта тиркемеси ачылат.")}
+            </p>
+            <button type="submit" disabled={applicationStatus === "sending" || applicationStatus === "sent"} className="w-full rounded-xl bg-[#FDC21E] px-5 py-3 font-semibold text-[#07142D] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-55">
+              {applicationStatus === "sending" ? rezText("Отправляем…", "Sending…", "Жөнөтүлүүдө…") : rezText("Отправить", "Send request", "Жөнөтүү")}
+            </button>
+            {applicationStatus === "sent" && <p role="status" className="text-sm text-[#FDC21E]">{rezText("Заявка отправлена. Мы свяжемся с вами по указанному номеру.", "Request sent. We will contact you at the phone number provided.", "Өтүнмө жөнөтүлдү. Көрсөтүлгөн номер боюнча байланышабыз.")}</p>}
+            {applicationStatus === "error" && <p role="alert" className="text-sm text-red-300">{rezText("Не удалось отправить заявку. Проверьте данные и попробуйте снова.", "We couldn't send the request. Check your details and try again.", "Өтүнмө жөнөтүлгөн жок. Маалыматтарды текшерип, кайра аракет кылыңыз.")}</p>}
+            {applicationStatus === "manual" && <p role="status" className="text-sm text-[#FDC21E]">{rezText("Отправьте подготовленное письмо в почтовом приложении. Автоматическая отправка пока не подключена.", "Send the prepared email in your mail app. Automated submission is not configured yet.", "Даяр катты почта колдонмосунан жөнөтүңүз. Автоматтык жөнөтүү азырынча туташтырылган жок.")}</p>}
           </form>
         </div>
       </dialog>
