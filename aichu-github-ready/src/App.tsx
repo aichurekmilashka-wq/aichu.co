@@ -140,6 +140,7 @@ export default function App() {
       <header className="sticky top-0 z-40 bg-[#07142D] px-2 py-2 text-[#F4EAF0] sm:px-4 md:px-8 lg:py-3">
         <div className="mx-auto flex max-w-[1440px] items-center justify-center">
           <LiquidNavbar
+            compact={true}
             tone={theme}
             sound={false}
             active={!visible ? 0 : section === "about" || section === "problem" ? 1 : section === "products" ? 2 : 3}
