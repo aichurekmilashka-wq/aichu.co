@@ -227,27 +227,25 @@ export default function App() {
         </div>
         <p className="mt-7 text-xs leading-relaxed text-[#F4EAF0]/50">{rezText("REZON разрабатывается как концепция и прототип. Описанные функции пока не являются доступным коммерческим сервисом.", "REZON is in concept and prototype development. These planned features are not yet a commercially available service.", "REZON азыр концепция жана прототип баскычында. Бул пландалган функциялар азырынча коммерциялык сервис эмес.")}</p>
       </section>
-      <section id="contacts" className="mx-auto max-w-[1440px] scroll-mt-28 px-6 pb-28 md:px-12">
-        <div className="mb-10 flex flex-wrap items-end justify-between gap-6 border-b border-[#F4EAF0]/15 pb-7">
-          <h2 className="text-4xl font-semibold tracking-tight md:text-6xl">{language === "ru" ? "Контакты" : language === "en" ? "Contacts" : "Байланыш"}<span className="text-[#FDC21E]">.</span></h2>
-        </div>
-        <div className="rounded-xl border border-current/15 px-5 py-14 sm:px-10 sm:py-16">
-          <SocialTooltip items={[
-            { icon: "instagram", ariaLabel: "Instagram", tooltip: "@aichuuu.co", href: "https://www.instagram.com/aichuuu.co/" },
-            { icon: "threads", ariaLabel: "Threads", tooltip: "Threads · @aichuuu.co", href: "https://www.threads.net/@aichuuu.co" },
-            { icon: "telegram", ariaLabel: "Telegram", tooltip: "@Aichuuuco", href: "https://t.me/Aichuuuco" },
-            { icon: "email", ariaLabel: "Email", tooltip: "aichurekmilashka@icloud.com", href: "mailto:aichurekmilashka@icloud.com" },
-            { icon: "phone", ariaLabel: language === "ru" ? "Телефон" : language === "ky" ? "Телефон" : "Phone", tooltip: "+996 503 030 997", href: "tel:+996503030997" },
-          ]} />
-        </div>
-      </section>
+
       </div>
-      <footer className="border-t border-[#F4EAF0]/15 px-6 py-10 md:px-12">
-        <div className="mx-auto flex max-w-[1440px] flex-col justify-between gap-5 text-sm md:flex-row md:items-center">
-          <div><p className="font-medium">aichuuu.co <span className="text-[#FDC21E]">/</span> Digital Intelligence Studio</p><p className="mt-2 text-[#F4EAF0]/55">© {new Date().getFullYear()} aichuuu.co</p>{isAnalyticsConfigured() && <button type="button" onClick={openCookieSettings} className="mt-2 text-xs text-[#F4EAF0]/60 underline underline-offset-4 hover:text-[#FDC21E]">{language === "ru" ? "Настройки cookie" : language === "ky" ? "Cookie жөндөөлөрү" : "Cookie preferences"}</button>}</div>
-          <nav aria-label={language === "ru" ? "Навигация по странице" : language === "ky" ? "Барактын навигациясы" : "Page navigation"} className="flex flex-wrap gap-x-6 gap-y-3 text-[#F4EAF0]/70">
-            <a href="#contacts" className="transition-colors hover:text-[#FDC21E]">{language === "ru" ? "Контакты" : language === "ky" ? "Байланыш" : "Contacts"}</a>
-            <a href="#products" className="transition-colors hover:text-[#FDC21E]">{language === "ru" ? "Продукты" : language === "ky" ? "Продукттар" : "Products"}</a>
+      <footer id="contacts" className="scroll-mt-28 border-t border-[#F4EAF0]/15 px-6 py-10 md:px-12">
+        <div className="mx-auto grid max-w-[1440px] grid-cols-1 items-center gap-10 text-sm md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-6">
+          <div className="text-center md:text-left">
+            <p className="font-medium">aichuuu.co <span className="text-[#FDC21E]">/</span> Digital Intelligence Studio</p>
+            <p className="mt-2 text-[#F4EAF0]/55">© {new Date().getFullYear()} aichuuu.co</p>
+            {isAnalyticsConfigured() && <button type="button" onClick={openCookieSettings} className="mt-2 text-xs text-[#F4EAF0]/60 underline underline-offset-4 hover:text-[#FDC21E]">{language === "ru" ? "Настройки cookie" : language === "ky" ? "Cookie жөндөөлөрү" : "Cookie preferences"}</button>}
+          </div>
+          <div className="flex justify-center">
+            <SocialTooltip items={[
+              { icon: "instagram", ariaLabel: "Instagram", tooltip: "@aichuuu.co", href: "https://www.instagram.com/aichuuu.co/" },
+              { icon: "threads", ariaLabel: "Threads", tooltip: "Threads · @aichuuu.co", href: "https://www.threads.net/@aichuuu.co" },
+              { icon: "telegram", ariaLabel: "Telegram", tooltip: "@Aichuuuco", href: "https://t.me/Aichuuuco" },
+              { icon: "email", ariaLabel: "Email", tooltip: "aichurekmilashka@icloud.com", href: "mailto:aichurekmilashka@icloud.com" },
+              { icon: "phone", ariaLabel: language === "ru" ? "Телефон" : language === "ky" ? "Телефон" : "Phone", tooltip: "+996 503 030 997", href: "tel:+996503030997" },
+            ]} />
+          </div>
+          <nav aria-label={language === "ru" ? "Навигация по странице" : language === "ky" ? "Барактын навигациясы" : "Page navigation"} className="flex justify-center text-[#F4EAF0]/70 md:justify-end">
             <a href="#top" className="transition-colors hover:text-[#FDC21E]">{language === "ru" ? "Наверх ↑" : language === "ky" ? "Жогору ↑" : "Back to top ↑"}</a>
           </nav>
         </div>
