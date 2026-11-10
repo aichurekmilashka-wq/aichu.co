@@ -8,7 +8,7 @@ const langs = ["ru", "en", "ky"]
 const titles = new Set()
 const descriptions = new Set()
 const generated = readFileSync(path.join(root, "scripts", "postbuild-locales.mjs"), "utf8")
-const origin = process.env.SITE_ORIGIN?.replace(/\/$/, "") || "https://aichuuu.co"
+const origin = process.env.SITE_ORIGIN?.replace(/\/$/, "") || "https://aichuuu.com"
 
 for (const lang of langs) {
   const html = readFileSync(path.join(dist, lang, "index.html"), "utf8")
