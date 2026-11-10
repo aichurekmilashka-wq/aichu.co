@@ -13,7 +13,6 @@ type Content = {
   eyebrow: string
   headline: string
   emphasis: string
-  introduction: string
   incoming: string
   result: string
   overview: string
@@ -33,7 +32,6 @@ const text: Record<Language, Content> = {
     eyebrow: "02 / SALES LEAKAGE",
     headline: "Куда утекает",
     emphasis: "ваша прибыль?",
-    introduction: "Потери возникают на каждом этапе взаимодействия с покупателем. Важно видеть не только итог сделки, но и причины, по которым клиент не дошёл до покупки или не вернулся.",
     incoming: "ПОТОК ОБРАЩЕНИЙ",
     result: "ПОКУПКА И ВОЗВРАТ",
     overview: "Пять точек контроля",
@@ -58,7 +56,6 @@ const text: Record<Language, Content> = {
     eyebrow: "02 / SALES LEAKAGE",
     headline: "Where does your",
     emphasis: "profit leak?",
-    introduction: "Losses occur at every stage of the buyer journey. The goal is to understand not just the final outcome, but why people fail to purchase or return.",
     incoming: "INCOMING ENQUIRIES",
     result: "PURCHASE & RETURN",
     overview: "Five control points",
@@ -83,7 +80,6 @@ const text: Record<Language, Content> = {
     eyebrow: "02 / САТУУДАГЫ ЖОГОТУУЛАР",
     headline: "Пайдаңыз",
     emphasis: "кайда жоголууда?",
-    introduction: "Жоготуулар сатып алуучу менен иштөөнүн ар бир этабында пайда болушу мүмкүн. Бүтүмдүн жыйынтыгын гана эмес, кардар эмне үчүн сатып албаганын же кайтып келбегенин да түшүнүү маанилүү.",
     incoming: "КЕЛГЕН КАЙРЫЛУУЛАР",
     result: "САТЫП АЛУУ ЖАНА КАЙТУУ",
     overview: "Беш көзөмөл чекити",
@@ -152,7 +148,6 @@ export default function SalesLeakageFunnel({ language, theme }: { language: Lang
       <div className="sl-shell">
         <div className="sl-heading-row">
           <h2 id="sales-leakage-title" className="sl-headline">{copy.headline}<br /><strong>{copy.emphasis}</strong></h2>
-          <p className="sl-introduction">{copy.introduction}</p>
         </div>
         <div className="sl-stage-layout">
           <div className="sl-visual-column">
