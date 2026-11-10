@@ -46,7 +46,7 @@
 .sl-visual {
   position: relative; isolation: isolate; overflow: hidden;
   background: radial-gradient(ellipse 52% 48% at 50% 44%, #152A4B 0%, #0B1B35 54%, #08152C 100%);
-  border: 1px solid rgba(177, 199, 230, .17); min-height: 0;
+  border: 1px solid rgba(177, 199, 230, .17); border-radius: 14px; min-height: 0;
 }
 .sl-visual::before {
   content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
@@ -85,6 +85,7 @@
   width: max-content; max-width: min(244px, 64%);
   padding: 13px 16px;
   border: 1px solid rgba(253,194,30,.78);
+  border-radius: 10px;
   background: rgba(5,15,34,.97);
   box-shadow: 0 12px 30px rgba(1,8,21,.44);
   color: #F4EAF0;
@@ -115,7 +116,7 @@
 @keyframes sl-glow { 50% { opacity: .45; } }
 .sl-card {
   display: flex; flex-direction: column; min-width: 0; background: var(--sl-card);
-  border: 1px solid var(--sl-border); padding: clamp(23px, 3vw, 44px);
+  border: 1px solid var(--sl-border); border-radius: 14px; padding: clamp(23px, 3vw, 44px);
   color: var(--sl-text);
 }
 .sl-card-top {
@@ -143,6 +144,7 @@
   font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer;
   padding: 12px 15px; transition: background .2s ease, color .2s ease, border-color .2s ease;
   min-height: 44px;
+  border-radius: 9px;
 }
 .sl-prev { background: transparent; border: 1px solid var(--sl-outline); color: var(--sl-text); }
 .sl-next { background: #FDC21E; border: 1px solid #FDC21E; color: #07142D; }
@@ -178,7 +180,7 @@
   }
   .sl-stage-tabs button {
     border: 1px solid var(--sl-border); background: transparent; color: var(--sl-muted);
-    padding: 10px; font: inherit; font-size: 11px; min-height: 42px; cursor: pointer;
+    padding: 10px; font: inherit; font-size: 11px; min-height: 42px; border-radius: 8px; cursor: pointer;
   }
   .sl-stage-tabs button[aria-pressed="true"] { border-color: #FDC21E; color: #FDC21E; background: rgba(253,194,30,.07); }
   .sl-card { min-height: 0; }
