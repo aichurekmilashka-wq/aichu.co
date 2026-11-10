@@ -37,6 +37,12 @@ jobs:
           GOOGLE_SITE_VERIFICATION: ${{ vars.GOOGLE_SITE_VERIFICATION }}
         run: npm run build
 
+      - name: Verify localized pages and translations
+        working-directory: aichu-github-ready
+        env:
+          SITE_ORIGIN: https://aichuuu.co
+        run: node scripts/check-locales.mjs
+
       - name: Audit production dependencies
         working-directory: aichu-github-ready
         run: npm audit --omit=dev --audit-level=high
