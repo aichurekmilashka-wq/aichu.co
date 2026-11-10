@@ -220,7 +220,7 @@ export default function App() {
               {[
                 { name: "Instagram", address: "@aichuuu.co", href: "https://www.instagram.com/aichuuu.co/" },
                 { name: "Threads", address: "@aichuuu.co", href: "https://www.threads.net/@aichuuu.co" },
-                { name: "Telegram", address: "", href: "" },
+                { name: "Telegram", address: "@aichuuu.co", href: "" },
                 { name: "Email", address: "aichurekmilashka@icloud.com", href: "mailto:aichurekmilashka@icloud.com" },
                 { name: "Телефон", address: "+996 503 030 997", href: "tel:+996503030997" },
               ].map(channel => channel.href ? (
@@ -231,7 +231,7 @@ export default function App() {
               ) : (
                 <div key={channel.name} className="flex min-h-[70px] items-center justify-between gap-4 py-5">
                   <span className="text-lg font-medium">{channel.name}</span>
-                  <span className="text-xs text-[#F4EAF0]/40">{language === "ru" ? "Адрес уточняется" : language === "en" ? "Link pending" : "Дарек такталууда"}</span>
+                  <span className="text-sm text-[#F4EAF0]/60">{channel.address || (language === "ru" ? "Адрес уточняется" : language === "en" ? "Link pending" : "Дарек такталууда")}</span>
                 </div>
               ))}
             </div>
