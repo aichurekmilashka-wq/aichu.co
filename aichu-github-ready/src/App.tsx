@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useRef, useState } from "react"
+import { lazy, Suspense, useEffect, useRef, useState, type FormEvent } from "react"
 import HalftoneWordmarkFooter from "@/components/ui/halftone-wordmark-footer"
 import SalesLeakageFunnel from "./components/SalesLeakageFunnel"
 import { initAnalytics, pauseAnalytics, isAnalyticsConfigured, isYandexMetricaConfigured, isGoogleAnalyticsConfigured, trackEvent } from "./analytics"
@@ -72,7 +72,7 @@ export default function App() {
   const [applicationTeamSize, setApplicationTeamSize] = useState("")
   const [applicationPrepared, setApplicationPrepared] = useState(false)
   const openApplication = () => { setApplicationPrepared(false); applicationDialogRef.current?.showModal() }
-  const submitApplication = (event: React.FormEvent<HTMLFormElement>) => {
+  const submitApplication = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const subject = encodeURIComponent("Заявка с сайта aichuuu.co")
     const body = encodeURIComponent(`Имя: ${applicationName.trim()}\nТелефон: ${applicationPhone.trim()}\nКоличество человек в организации: ${applicationTeamSize}\n\nИсточник: aichuuu.co`)
@@ -157,7 +157,7 @@ export default function App() {
             compact={true}
             tone={theme}
             sound={false}
-            active={!visible ? 0 : section === "about" || section === "problem" ? 1 : section === "products" ? 2 : 3}
+            active={!visible ? 0 : section === "about" || section === "problem" ? 1 : 2}
             onChange={(index) => { if (index === 3) openApplication(); else setSection(["about", "problem", "products"][index]) }}
             items={[
               { label: language === "ru" ? "Главная" : language === "ky" ? "Башкы бет" : "Home", href: "#top", icon: <Home size={18} strokeWidth={1.8} />, fx: "glow" },
