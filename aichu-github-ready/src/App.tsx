@@ -34,7 +34,11 @@ export default function App() {
   }, [])
   const [mobileOpen, setMobileOpen] = useState(false)
   const navSections = [{id:"about",number:"01",label:language==="ru"?"Обзор":language==="ky"?"Сереп":"Overview"},{id:"problem",number:"02",label:language==="ru"?"Проблемы":language==="ky"?"Көйгөйлөр":"Challenges"},{id:"how",number:"03",label:language==="ru"?"Подход":language==="ky"?"Ыкма":"Approach"},{id:"practice",number:"04",label:language==="ru"?"Применение":language==="ky"?"Колдонуу":"Use cases"},{id:"products",number:"05",label:language==="ru"?"Продукты":language==="ky"?"Продукттар":"Products"},{id:"contacts",number:"06",label:language==="ru"?"Контакты":language==="ky"?"Байланыш":"Contacts"},{id:"customers",number:"07",label:language==="ru"?"Для кого":language==="ky"?"Кимдер үчүн":"Who it’s for"},{id:"questions",number:"08",label:language==="ru"?"Вопросы":language==="ky"?"Суроолор":"FAQ"}]
-  const productsMenu = [{id:"product-01",name:"Sales Intelligence Platform",ru:"Продажи, прибыль, KPI",en:"Sales, profit and KPIs",ky:"Сатуу, пайда жана KPI"},{id:"product-02",name:"CRM Quality Control",ru:"Контроль воронки и потерь лидов",en:"Funnel and lead-loss control",ky:"Воронка жана лид жоготуулары"},{id:"product-03",name:"Price & Margin Intelligence",ru:"Цены и маржинальность",en:"Pricing and margins",ky:"Баалар жана маржа"},{id:"product-04",name:"AI Conversation Intelligence",ru:"Аналитика клиентских диалогов",en:"Customer conversation analytics",ky:"Кардарлар менен диалогдорду талдоо"}]
+  const productsMenu = [
+    {id:"product-01",name:"REZON / CRM",ru:"Клиенты, сделки, задачи, автоматизация",en:"Clients, deals, tasks, automation",ky:"Кардарлар, бүтүмдөр, тапшырмалар, автоматташтыруу"},
+    {id:"product-02",name:"REZON / Intelligence",ru:"Конверсия, прибыль, причины потерь",en:"Conversion, profit and loss drivers",ky:"Конверсия, пайда, жоготуулардын себептери"}
+  ]
+  const rezText = (ru: string, en: string, ky: string) => language === "ru" ? ru : language === "en" ? en : ky
   const [section, setSection] = useState("about")
   const [visible, setVisible] = useState(false)
   useEffect(() => {
@@ -157,45 +161,62 @@ export default function App() {
           },
         ]}
       />
-      <section id="products" className="mx-auto max-w-[1440px] px-6 pb-28 pt-8 md:px-12">
+      <section id="products" className="mx-auto max-w-[1440px] scroll-mt-28 px-6 pb-28 pt-8 md:px-12">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6 border-b border-[#F4EAF0]/15 pb-7">
           <div>
-            <span className="text-[11px] uppercase tracking-[.28em] text-[#FDC21E]">{tr("05 / НАШИ ПРОДУКТЫ")}</span>
-            <h2 className="mt-4 text-4xl font-semibold tracking-tight md:text-6xl">{tr("Интеллект в каждом решении")}<span className="text-[#FDC21E]">.</span></h2>
+            <span className="text-[11px] uppercase tracking-[.28em] text-[#FDC21E]">05 / REZON</span>
+            <h2 className="mt-4 text-5xl font-semibold tracking-[-.04em] md:text-7xl">REZON<span className="text-[#FDC21E]">.</span></h2>
+            <p className="mt-4 text-base font-medium tracking-wide md:text-xl">CRM &amp; Business Intelligence</p>
           </div>
-          <p className="max-w-sm text-sm leading-relaxed text-[#F4EAF0]/60">{language === "ru" ? "Четыре направления B2B SaaS. Сейчас это некоммерческий исследовательский проект: мы изучаем задачи бизнеса и создаём прототипы." : language === "en" ? "Four B2B SaaS directions in development. This is currently a non-commercial research project focused on business problems and prototypes." : "Төрт B2B SaaS багыты. Азыр бул коммерциялык эмес изилдөө долбоору: биз бизнес маселелерин изилдеп, прототиптерди иштеп чыгуудабыз."}</p>
+          <p className="max-w-md text-sm leading-relaxed text-[#F4EAF0]/65">{rezText("Система управления и интеллектуальной аналитики бизнеса. Два равнозначных направления в одной платформе.", "Business management and intelligence in one platform. Two equally important capabilities.", "Бир платформада бизнести башкаруу жана интеллектуалдык талдоо. Эки тең маанилүү багыт.")}</p>
         </div>
-        <div className="grid grid-cols-1 gap-px overflow-hidden rounded-sm border border-[#F4EAF0]/15 bg-[#F4EAF0]/15 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-px overflow-hidden border border-[#F4EAF0]/15 bg-[#F4EAF0]/15 md:grid-cols-2">
           {[
-            { number: "01", name: "Sales Intelligence Platform", tag: "SALES / PROFITABILITY", challenge: tr("Выручка растёт, но её динамика сама по себе не объясняет изменение прибыли и результативность коммерческой команды."), model: tr("Единая система показателей продаж, прибыли и KPI с разграничением доступа к управленческой информации."), application: tr("Сопоставление коммерческих результатов и ключевых метрик по доступным срезам данных; выявление отклонений для управленческого разбора."), value: tr("Прозрачность финансово-коммерческой результативности и более обоснованная приоритизация решений."), features: [tr("Продажи и прибыль"), tr("KPI и динамика"), tr("Разграничение доступа")] },
-            { number: "02", name: "CRM Quality Control", tag: "REVENUE OPERATIONS", challenge: tr("Формальное ведение CRM не гарантирует контроля над потерями лидов, скоростью реакции и экономикой сделки."), model: tr("Аналитика юнит-экономики, длительности цикла сделки, скорости обработки обращений и конверсии по этапам воронки."), application: tr("Локализация этапов потери лидов, анализ задержек и сопоставление операционных показателей с экономикой продаж."), value: tr("Основа для точечных изменений в процессе продаж вместо решений на уровне субъективных оценок."), features: [tr("Юнит-экономика"), tr("Цикл сделки и скорость реакции"), tr("Воронка и потери лидов")] },
-            { number: "03", name: "Price & Margin Intelligence", tag: "PRICING / PROCUREMENT", challenge: tr("Изменения закупочных и рыночных цен могут ухудшать маржинальность раньше, чем это отражается в итоговой отчётности."), model: tr("Мониторинг цен, анализ поставщиков и контроль показателей маржинальности."), application: tr("Сопоставление ценовых изменений и условий поставщиков с маржинальностью для оценки необходимости пересмотра закупок или ценовой политики."), value: tr("Более оперативный контроль факторов, влияющих на валовую доходность, и аргументированная работа с ценами."), features: [tr("Мониторинг цен"), tr("Анализ поставщиков"), tr("Маржинальность")] },
-            { number: "04", name: "AI Conversation Intelligence", tag: "AI / CUSTOMER COMMUNICATION", challenge: tr("Оценка качества клиентских коммуникаций зависит от выборочных проверок и не даёт системной картины работы команды."), model: tr("Анализ переписок с клиентами и качества коммуникации менеджеров."), application: tr("Выявление повторяющихся проблем в диалогах и формирование предметной базы для обратной связи, контроля стандартов и обучения."), value: tr("Более последовательная оценка клиентского взаимодействия и управляемое повышение качества работы команды."), features: [tr("Анализ переписок"), tr("Оценка качества диалогов"), tr("Повторяющиеся ошибки")] },
-          ].map((product) => (
-            <article key={product.number} id={`product-${product.number}`} className="group scroll-mt-28 flex min-h-[610px] flex-col justify-between bg-[#07142D] p-7 transition-colors duration-300 hover:bg-[#0B1C3B] md:p-10">
+            {
+              number:"01",
+              name:"CRM",
+              label:rezText("Управление продажами", "Sales management", "Сатууну башкаруу"),
+              intro:rezText("Клиенты, сделки, задачи и работа менеджеров в единой системе. Меньше ручной рутины, больше контроля над процессами.", "Customers, deals, tasks and sales teams in one system. Less manual work and more control over operations.", "Кардарлар, бүтүмдөр, тапшырмалар жана менеджерлер бир системада. Кол менен иштөө азыраак, процесстерди башкаруу оңой."),
+              features:[
+                rezText("Клиенты и история взаимодействия", "Customers and interaction history", "Кардарлар жана байланыш тарыхы"),
+                rezText("Сделки и этапы продаж", "Deals and pipeline stages", "Бүтүмдөр жана сатуу этаптары"),
+                rezText("Задачи и менеджеры", "Tasks and sales team", "Тапшырмалар жана менеджерлер"),
+                rezText("Автоматизация процессов", "Workflow automation", "Процесстерди автоматташтыруу")
+              ]
+            },
+            {
+              number:"02",
+              name:"Intelligence",
+              label:rezText("Интеллектуальная аналитика", "Intelligent analytics", "Интеллектуалдык аналитика"),
+              intro:rezText("Анализируем результаты, потери и причины отклонений. Находим точки роста, которые не видны в стандартных отчётах CRM.", "Analyze performance, losses and reasons for variance to uncover improvements beyond standard CRM reports.", "Натыйжаларды, жоготууларды жана четтөөлөрдүн себептерин талдап, CRM отчетторунда көрүнбөгөн өсүү мүмкүнчүлүктөрүн табуу."),
+              features:[
+                rezText("Воронка и конверсия", "Funnel and conversion", "Воронка жана конверсия"),
+                rezText("Прибыль и маржинальность", "Profit and margin", "Пайда жана маржа"),
+                rezText("Эффективность сотрудников", "Employee performance", "Кызматкерлердин натыйжалуулугу"),
+                rezText("Потери и причины отклонений", "Losses and root causes", "Жоготуулар жана четтөөлөрдүн себептери")
+              ]
+            }
+          ].map(item=>(
+            <article key={item.number} id={`product-${item.number}`} className="group flex scroll-mt-28 flex-col justify-between bg-[#07142D] p-7 transition-colors duration-300 hover:bg-[#0B1C3B] md:min-h-[450px] md:p-10">
               <div>
                 <div className="mb-10 flex items-center justify-between text-xs tracking-[.2em]">
-                  <span className="text-[#FDC21E]">{product.number} / 04</span>
-                  <span className="text-[#F4EAF0]/40">{product.tag}</span>
+                  <span className="text-[#FDC21E]">{item.number} / 02</span>
+                  <span className="text-[#F4EAF0]/40">REZON / {item.name.toUpperCase()}</span>
                 </div>
-                <h3 className="max-w-md text-2xl font-medium leading-tight tracking-tight md:text-3xl">{product.name}</h3>
-                <div className="mt-7 space-y-6">
-                  {[[ tr("Бизнес-контекст"), product.challenge ], [ tr("Аналитическая модель"), product.model ], [ tr("Применение"), product.application ]].map(([label, copy]) => (
-                    <div key={label}><p className="mb-2 text-[10px] font-medium uppercase tracking-[.18em] text-[#F4EAF0]/40">{label}</p><p className="max-w-lg text-sm leading-relaxed text-[#F4EAF0]/75">{copy}</p></div>
-                  ))}
-                  <div className="border-t border-[#FDC21E]/50 pt-5"><p className="mb-2 text-[10px] font-medium uppercase tracking-[.18em] text-[#FDC21E]">{tr("Управленческая ценность")}</p><p className="max-w-lg text-base leading-relaxed text-[#F4EAF0]">{product.value}</p></div>
-                </div>
+                <h3 className="text-3xl font-medium tracking-tight md:text-4xl">{item.name}</h3>
+                <p className="mt-3 text-xs font-medium uppercase tracking-[.15em] text-[#FDC21E]">{item.label}</p>
+                <p className="mt-7 max-w-lg text-sm leading-relaxed text-[#F4EAF0]/75">{item.intro}</p>
               </div>
-              <div className="mt-10 flex flex-wrap gap-2">
-                {product.features.map((feature) => <span key={feature} className="border border-[#F4EAF0]/20 px-3 py-2 text-[11px] text-[#F4EAF0]/75">{feature}</span>)}
-              </div>
+              <ul className="mt-9 space-y-3 border-t border-[#F4EAF0]/15 pt-6">
+                {item.features.map(feature=><li key={feature} className="flex gap-3 text-sm text-[#F4EAF0]/80"><span aria-hidden="true" className="text-[#FDC21E]">↗</span>{feature}</li>)}
+              </ul>
             </article>
           ))}
         </div>
-        <div className="mt-7 flex flex-wrap items-center justify-between gap-3 text-sm text-[#F4EAF0]/60">
-          <p>{language === "ru" ? "Некоммерческий исследовательский проект. Представленные решения находятся в стадии концепций и прототипов." : language === "en" ? "A non-commercial research project. The solutions shown are concepts and prototypes." : "Коммерциялык эмес изилдөө долбоору. Көрсөтүлгөн чечимдер концепция жана прототип баскычында."}</p>
-          <span className="text-[#FDC21E]">AICHUUU.CO / B2B SOFTWARE</span>
+        <div className="mt-8 border-l-2 border-[#FDC21E] pl-5 md:pl-7">
+          <p className="max-w-4xl text-xl font-medium leading-relaxed tracking-tight md:text-3xl">{rezText("Не просто показываем, что происходит в продажах. Помогаем понять почему и что нужно улучшить.", "Not just what is happening in sales, but why and what needs improving.", "Сатууда эмне болуп жатканын гана эмес, анын себептерин жана эмнени жакшыртуу керектигин түшүнүүгө жардам беребиз.")}</p>
         </div>
+        <p className="mt-7 text-xs leading-relaxed text-[#F4EAF0]/50">{rezText("REZON разрабатывается как концепция и прототип. Описанные функции пока не являются доступным коммерческим сервисом.", "REZON is in concept and prototype development. These planned features are not yet a commercially available service.", "REZON азыр концепция жана прототип баскычында. Бул пландалган функциялар азырынча коммерциялык сервис эмес.")}</p>
       </section>
       <section id="contacts" className="mx-auto max-w-[1440px] scroll-mt-28 px-6 pb-28 md:px-12">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6 border-b border-[#F4EAF0]/15 pb-7">
@@ -248,7 +269,13 @@ export default function App() {
         <span className="text-xs tracking-[.2em] text-[#FDC21E]">08 / QUESTIONS</span>
         <h2 className="mt-5 text-3xl font-medium md:text-5xl">{tr("Частые вопросы.")}</h2>
         <div className="mt-8 divide-y divide-[#F4EAF0]/15 border-y border-[#F4EAF0]/15">
-          {[[language === "ru" ? "На какой стадии продукты?" : language === "en" ? "What is the current product stage?" : "Продукттар кайсы этапта?", language === "ru" ? "Сейчас мы разрабатываем концепции и прототипы. Мы публикуем концепции и прототипы; продажи и платные внедрения через сайт не осуществляются." : language === "en" ? "We are currently developing concepts and prototypes. The website presents concepts and prototypes, with no paid services or sales." : "Азыр концепциялар жана прототиптер иштелүүдө. Бул сайтта концепциялар жана прототиптер көрсөтүлгөн, акы төлөнүүчү кызматтар сунушталбайт."],[tr("Нужно ли подключать все четыре продукта?"),tr("Нет. Sales Intelligence, CRM Quality Control, Price & Margin Intelligence и AI Conversation Intelligence представлены как отдельные решения.")],[tr("Какие показатели анализирует Sales Intelligence?"),tr("Продажи, прибыль, KPI и динамику показателей. Предусмотрено разграничение доступа.")],[tr("Что контролирует CRM Quality Control?"),tr("Юнит-экономику, цикл сделки, скорость обработки заявок, воронку и потери лидов.")],[tr("Что даёт Price & Margin Intelligence?"),tr("Мониторинг цен и поставщиков, а также анализ маржинальности.")],[tr("Что анализирует AI Conversation Intelligence?"),tr("Переписки с клиентами и качество работы менеджеров.")],[tr("Можно ли интегрировать решение с нашей CRM?"),tr("Совместимость и необходимый состав интеграций определяются при обсуждении конкретного проекта.")]].map(([q,a])=><details key={q} className="group py-5"><summary className="cursor-pointer list-none text-lg">{q}<span className="float-right text-[#FDC21E]">+</span></summary><p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#F4EAF0]/65">{a}</p></details>)}
+          {[
+            [rezText("На какой стадии REZON?", "What stage is REZON at?", "REZON кайсы этапта?"), rezText("Разрабатываем концепцию и прототипы. Продажи и платные внедрения через сайт пока не осуществляются.", "The concept and prototypes are in development. No paid services are sold through this site.", "Азыр концепция жана прототиптер иштелүүдө. Сайт аркылуу азырынча акы төлөнүүчү кызматтар көрсөтүлбөйт.")],
+            [rezText("Чем REZON отличается от обычной CRM?", "How is REZON different from a typical CRM?", "REZON кадимки CRMден эмнеси менен айырмаланат?"), rezText("REZON объединяет управление продажами с аналитикой конверсии, прибыли и причин потерь, чтобы находить конкретные возможности улучшения.", "REZON combines sales management with analytics for conversions, profit and reasons for losses to identify improvements.", "REZON сатууну башкарууну конверсияны, пайданы жана жоготуулардын себептерин талдоо менен айкалыштырат.")],
+            [rezText("Что входит в CRM?", "What is included in CRM?", "CRM эмнелерди камтыйт?"), rezText("Клиенты, сделки, этапы продаж, задачи, менеджеры и автоматизация процессов.", "Customers, deals, pipeline stages, tasks, sales teams and automation.", "Кардарлар, бүтүмдөр, сатуу этаптары, тапшырмалар, менеджерлер жана автоматташтыруу.")],
+            [rezText("Что анализирует Intelligence?", "What does Intelligence analyze?", "Intelligence эмнени талдайт?"), rezText("Воронку, конверсию, прибыль, эффективность сотрудников, потери и причины отклонений.", "Funnels, conversions, profit, team performance, losses and reasons for variance.", "Воронканы, конверсияны, пайданы, кызматкерлердин натыйжалуулугун, жоготууларды жана четтөөлөрдүн себептерин.")],
+            [rezText("Нужна ли отдельная CRM?", "Is a separate CRM required?", "Өзүнчө CRM керекпи?"), rezText("REZON задуман как единая CRM и аналитическая система. Возможность интеграции с другими платформами уточняется отдельно.", "REZON is designed as a unified CRM and analytics platform. Integrations with other systems will be evaluated separately.", "REZON бирдиктүү CRM жана аналитика платформасы катары пландалган. Башка системалар менен интеграция өзүнчө каралат.")]
+          ].map(([q,a])=><details key={q} className="group py-5"><summary className="cursor-pointer list-none text-lg">{q}<span className="float-right text-[#FDC21E]">+</span></summary><p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#F4EAF0]/65">{a}</p></details>)}
         </div>
       </section>
       </div>
