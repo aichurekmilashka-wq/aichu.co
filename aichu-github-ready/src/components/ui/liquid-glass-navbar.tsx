@@ -504,7 +504,7 @@ export function LiquidNavbar({
           <button key={item.label + i} {...props} type="button" aria-label={item.label}>{content}</button>
         )
       })}
-      {endContent && <span className="nimbus-actions">{endContent}</span>}
+      {endContent && <div className="nimbus-actions">{endContent}</div>}
     </nav>
   )
 }
