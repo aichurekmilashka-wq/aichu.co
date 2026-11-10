@@ -113,12 +113,13 @@ const tiers = [
 export default function SalesLeakageFunnel({ language, theme }: { language: Language; theme: "dark" | "light" }) {
   const rootRef = useRef<HTMLElement | null>(null)
   const [inView, setInView] = useState(false)
+  const [engaged, setEngaged] = useState(false)
   const [pageVisible, setPageVisible] = useState(() => typeof document === "undefined" || !document.hidden)
   const [active, setActive] = useState(0)
   const [hoveredLeak, setHoveredLeak] = useState<number | null>(null)
   const [manual, setManual] = useState(false)
   const [reducedMotion, setReducedMotion] = useState(false)
-  const animationsPlaying = inView && pageVisible && !reducedMotion
+  const animationsPlaying = engaged && inView && pageVisible && !reducedMotion
   const copy = text[language]
 
   useEffect(() => {
@@ -144,10 +145,10 @@ export default function SalesLeakageFunnel({ language, theme }: { language: Lang
   }, [])
 
   useEffect(() => {
-    if (manual || reducedMotion || !inView || !pageVisible) return
+    if (manual || !animationsPlaying) return
     const id = window.setInterval(() => setActive(current => (current + 1) % 5), 6000)
     return () => window.clearInterval(id)
-  }, [manual, reducedMotion, inView, pageVisible])
+  }, [manual, animationsPlaying])
 
   function choose(index: number) {
     setActive((index + 5) % 5)
@@ -169,7 +170,16 @@ export default function SalesLeakageFunnel({ language, theme }: { language: Lang
         </div>
         <div className="sl-stage-layout">
           <div className="sl-visual-column">
-            <div className="sl-visual">
+            <div
+              className="sl-visual"
+              onPointerEnter={(event) => { if (event.pointerType !== "touch") setEngaged(true) }}
+              onPointerLeave={(event) => { if (event.pointerType !== "touch") setEngaged(false) }}
+              onPointerDown={(event) => { if (event.pointerType === "touch") setEngaged(true) }}
+              onFocusCapture={() => setEngaged(true)}
+              onBlurCapture={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setEngaged(false)
+              }}
+            >
               <svg viewBox="0 0 700 790" role="group" aria-label={copy.overview} className="sl-funnel-svg">
                 <defs>
                   <linearGradient id="sl-tier-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
