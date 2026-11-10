@@ -183,14 +183,13 @@ export default function App() {
       <div id="about" className="relative">
       <SalesLeakageFunnel language={language} theme={theme} />
       <section id="how" className="mx-auto max-w-[1440px] px-6 pb-20 md:px-12">
-        <span className="text-xs tracking-[.2em] text-[#FDC21E]">03 / HOW IT FITS</span>
-        <h2 className="mt-5 text-3xl font-medium md:text-5xl">{tr("От данных к действиям.")}</h2>
+        <h2 className="text-3xl font-medium md:text-5xl">{tr("От данных к действиям.")}</h2>
         <div className="mt-8 grid gap-3 md:grid-cols-3">
           {[["01",tr("Определяем данные"),tr("Выбираем необходимые показатели продаж, CRM, цен и коммуникаций под задачи компании.")],["02",tr("Настраиваем анализ"),tr("Формируем метрики прибыли и KPI, цикл сделки, потери лидов, маржу и качество диалогов.")],["03",tr("Применяем результаты"),tr("Используем выявленные отклонения для контроля процессов и принятия управленческих решений.")]].map(([n,t,d])=><div key={n} className="rounded-xl border border-[#F4EAF0]/15 p-7"><span className="text-[#FDC21E]">{n}</span><h3 className="mt-8 text-xl">{t}</h3><p className="mt-3 text-sm text-[#F4EAF0]/60">{d}</p></div>)}
         </div>
       </section>
       <IllosShaderFeatureBento
-        eyebrow="04 / IN PRACTICE"
+        eyebrow=""
         title={tr("Практические сценарии.")}
         items={[
           {
@@ -217,8 +216,7 @@ export default function App() {
       <section id="products" className="mx-auto max-w-[1440px] scroll-mt-28 px-6 pb-28 pt-8 md:px-12">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6 border-b border-[#F4EAF0]/15 pb-7">
           <div>
-            <span className="text-[11px] uppercase tracking-[.28em] text-[#FDC21E]">05 / REZON</span>
-            <h2 className="mt-4 text-5xl font-semibold tracking-[-.04em] md:text-7xl">REZON<span className="text-[#FDC21E]">.</span></h2>
+            <h2 className="text-5xl font-semibold tracking-[-.04em] md:text-7xl">REZON<span className="text-[#FDC21E]">.</span></h2>
             <p className="mt-4 text-base font-medium tracking-wide md:text-xl">CRM &amp; Business Intelligence</p>
           </div>
           <p className="max-w-md text-sm leading-relaxed text-[#F4EAF0]/65">{rezText("Система управления и интеллектуальной аналитики бизнеса. Два равнозначных направления в одной платформе.", "Business management and intelligence in one platform. Two equally important capabilities.", "Бир платформада бизнести башкаруу жана интеллектуалдык талдоо. Эки тең маанилүү багыт.")}</p>
@@ -234,22 +232,11 @@ export default function App() {
       <section id="contacts" className="mx-auto max-w-[1440px] scroll-mt-28 px-6 pb-28 md:px-12">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6 border-b border-[#F4EAF0]/15 pb-7">
           <div>
-            <span className="text-[11px] uppercase tracking-[.28em] text-[#FDC21E]">06 / CONTACT</span>
-            <h2 className="mt-4 text-4xl font-semibold tracking-tight md:text-6xl">{language === "ru" ? "Контакты" : language === "en" ? "Contacts" : "Байланыш"}<span className="text-[#FDC21E]">.</span></h2>
+            <h2 className="text-4xl font-semibold tracking-tight md:text-6xl">{language === "ru" ? "Контакты" : language === "en" ? "Contacts" : "Байланыш"}<span className="text-[#FDC21E]">.</span></h2>
           </div>
-          <p className="max-w-md text-sm leading-relaxed text-[#F4EAF0]/60">{language === "ru" ? "AICHUUU.CO развивается как некоммерческий технологический проект. Следите за нашими исследованиями и прототипами в официальных каналах." : language === "en" ? "AICHUUU.CO is currently a non-commercial technology project. Follow our research and prototypes through official channels." : "AICHUUU.CO азыр коммерциялык эмес технологиялык долбоор. Биздин изилдөөлөрдү жана прототиптерди расмий каналдардан көрө аласыз."}</p>
         </div>
-        <div className="grid overflow-hidden rounded-xl border border-[#F4EAF0]/20 md:grid-cols-[1fr_1.2fr]">
-          <div className="flex flex-col justify-between bg-[#F4EAF0] p-8 text-[#07142D] md:p-12">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[.22em] text-[#9A6B00]">DIGITAL INTELLIGENCE STUDIO</p>
-              <h3 className="mt-8 max-w-lg text-3xl font-medium leading-tight tracking-tight md:text-4xl">{language === "ru" ? "Остаёмся на связи." : language === "en" ? "Stay in touch." : "Байланышта бололу."}</h3>
-              <p className="mt-6 max-w-md text-sm leading-relaxed text-[#07142D]/70">{language === "ru" ? "Изучаем аналитику, CRM и автоматизацию бизнеса. Сейчас на сайте нет продаж, оплаты или платных подписок." : language === "en" ? "Exploring analytics, CRM and business automation. No paid subscriptions, checkout or sales are offered here." : "Аналитика, CRM жана бизнести автоматташтырууну изилдейбиз. Сайтта азыр сатуу же төлөм жок."}</p>
-            </div>
-            <p className="mt-12 text-xs tracking-[.13em] text-[#07142D]/50">AICHUUU.CO / RESEARCH & PROTOTYPES</p>
-          </div>
+        <div className="overflow-hidden rounded-xl border border-[#F4EAF0]/20">
           <div className="bg-[#0B1C3B] p-8 md:p-12">
-            <p className="mb-6 text-xs font-semibold uppercase tracking-[.22em] text-[#FDC21E]">{language === "ru" ? "Социальные сети и почта" : language === "en" ? "Social channels and email" : "Социалдык тармактар жана почта"}</p>
             <div className="divide-y divide-[#F4EAF0]/15 border-y border-[#F4EAF0]/15">
               {[
                 { name: "Instagram", address: "@aichuuu.co", href: "https://www.instagram.com/aichuuu.co/" },
