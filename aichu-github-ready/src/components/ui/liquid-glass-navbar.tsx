@@ -305,8 +305,9 @@ export function LiquidNavbar({
       s.last = now
       step(dt, now)
       draw()
-      const busy = s.moving || s.rips.length > 0 || s.sats.length > 0 || s.mouse.s > .01
-      if (s.visible && (!s.reduce || busy)) s.raf = requestAnimationFrame(tick)
+      const mouseTransitioning = Math.abs(s.mouse.s - (s.mouse.on ? 1 : 0)) > .01
+      const busy = s.moving || s.rips.length > 0 || s.sats.length > 0 || mouseTransitioning || Math.abs(s.q - s.t.q) > .01
+      if (s.visible && busy) s.raf = requestAnimationFrame(tick)
       else s.raf = 0
     }
     s.raf = requestAnimationFrame(tick)
