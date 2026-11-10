@@ -260,24 +260,6 @@ export default function App() {
           </div>
         </div>
       </section>
-      <section id="customers" className="mx-auto max-w-[1440px] px-6 pb-20 md:px-12">
-        <span className="text-xs tracking-[.2em] text-[#FDC21E]">07 / WHO IT IS FOR</span>
-        <h2 className="mt-5 text-3xl font-medium md:text-5xl">{tr("Для команд, которым нужна ясность.")}</h2>
-        <p className="mt-6 max-w-2xl text-[#F4EAF0]/65">{tr("Для собственников и руководителей, которым важны прибыль и KPI; для отделов продаж, контролирующих воронку и скорость обработки; для коммерческих команд, управляющих ценами и маржой; для руководителей клиентского сервиса, оценивающих качество переписок.")}</p>
-      </section>
-      <section id="questions" className="mx-auto max-w-[1440px] px-6 pb-28 md:px-12">
-        <span className="text-xs tracking-[.2em] text-[#FDC21E]">08 / QUESTIONS</span>
-        <h2 className="mt-5 text-3xl font-medium md:text-5xl">{tr("Частые вопросы.")}</h2>
-        <div className="mt-8 divide-y divide-[#F4EAF0]/15 rounded-xl border border-[#F4EAF0]/15 px-5">
-          {[
-            [rezText("На какой стадии REZON?", "What stage is REZON at?", "REZON кайсы этапта?"), rezText("Разрабатываем концепцию и прототипы. Продажи и платные внедрения через сайт пока не осуществляются.", "The concept and prototypes are in development. No paid services are sold through this site.", "Азыр концепция жана прототиптер иштелүүдө. Сайт аркылуу азырынча акы төлөнүүчү кызматтар көрсөтүлбөйт.")],
-            [rezText("Чем REZON отличается от обычной CRM?", "How is REZON different from a typical CRM?", "REZON кадимки CRMден эмнеси менен айырмаланат?"), rezText("REZON объединяет управление продажами с аналитикой конверсии, прибыли и причин потерь, чтобы находить конкретные возможности улучшения.", "REZON combines sales management with analytics for conversions, profit and reasons for losses to identify improvements.", "REZON сатууну башкарууну конверсияны, пайданы жана жоготуулардын себептерин талдоо менен айкалыштырат.")],
-            [rezText("Что входит в CRM?", "What is included in CRM?", "CRM эмнелерди камтыйт?"), rezText("Клиенты, сделки, этапы продаж, задачи, менеджеры и автоматизация процессов.", "Customers, deals, pipeline stages, tasks, sales teams and automation.", "Кардарлар, бүтүмдөр, сатуу этаптары, тапшырмалар, менеджерлер жана автоматташтыруу.")],
-            [rezText("Что анализирует Intelligence?", "What does Intelligence analyze?", "Intelligence эмнени талдайт?"), rezText("Воронку, конверсию, прибыль, эффективность сотрудников, потери и причины отклонений.", "Funnels, conversions, profit, team performance, losses and reasons for variance.", "Воронканы, конверсияны, пайданы, кызматкерлердин натыйжалуулугун, жоготууларды жана четтөөлөрдүн себептерин.")],
-            [rezText("Нужна ли отдельная CRM?", "Is a separate CRM required?", "Өзүнчө CRM керекпи?"), rezText("REZON задуман как единая CRM и аналитическая система. Возможность интеграции с другими платформами уточняется отдельно.", "REZON is designed as a unified CRM and analytics platform. Integrations with other systems will be evaluated separately.", "REZON бирдиктүү CRM жана аналитика платформасы катары пландалган. Башка системалар менен интеграция өзүнчө каралат.")]
-          ].map(([q,a])=><details key={q} className="group py-5"><summary className="cursor-pointer list-none text-lg">{q}<span className="float-right text-[#FDC21E]">+</span></summary><p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#F4EAF0]/65">{a}</p></details>)}
-        </div>
-      </section>
       </div>
       <footer className="border-t border-[#F4EAF0]/15 px-6 py-10 md:px-12">
         <div className="mx-auto flex max-w-[1440px] flex-col justify-between gap-5 text-sm md:flex-row md:items-center">
@@ -285,7 +267,6 @@ export default function App() {
           <nav aria-label={language === "ru" ? "Навигация по странице" : language === "ky" ? "Барактын навигациясы" : "Page navigation"} className="flex flex-wrap gap-x-6 gap-y-3 text-[#F4EAF0]/70">
             <a href="#contacts" className="transition-colors hover:text-[#FDC21E]">{language === "ru" ? "Контакты" : language === "ky" ? "Байланыш" : "Contacts"}</a>
             <a href="#products" className="transition-colors hover:text-[#FDC21E]">{language === "ru" ? "Продукты" : language === "ky" ? "Продукттар" : "Products"}</a>
-            <a href="#questions" className="transition-colors hover:text-[#FDC21E]">{language === "ru" ? "Вопросы" : language === "ky" ? "Суроолор" : "FAQ"}</a>
             <a href="#top" className="transition-colors hover:text-[#FDC21E]">{language === "ru" ? "Наверх ↑" : language === "ky" ? "Жогору ↑" : "Back to top ↑"}</a>
           </nav>
         </div>
