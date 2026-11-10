@@ -222,7 +222,7 @@ export default function App() {
         />
       </section>
 
-      <div id="about" className="relative">
+      <div id="about" className="relative pt-8 md:pt-12">
       <SalesLeakageFunnel language={language} theme={theme} />
       <section id="products" className="mx-auto max-w-[1440px] scroll-mt-28 px-6 pb-28 pt-8 md:px-12">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6 border-b border-[#F4EAF0]/15 pb-7">
