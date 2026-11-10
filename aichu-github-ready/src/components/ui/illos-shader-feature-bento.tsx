@@ -41,7 +41,7 @@ export function IllosShaderFeatureBento({
     <section id="practice" className={cx("aichu-illos-bento w-full", className)}>
       <div className="mx-auto flex max-w-[1440px] flex-col gap-9 px-6 pb-20 pt-0 md:px-12">
         <div className="flex max-w-4xl flex-col gap-4 border-t border-current/15 pt-7">
-          <span className="text-[11px] font-medium tracking-[.2em] text-[#FA347D]">{eyebrow}</span>
+          <span className="text-[11px] font-medium tracking-[.2em] text-[#FDC21E]">{eyebrow}</span>
           <h2 className="text-3xl font-medium tracking-tight sm:text-5xl">{title}</h2>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
