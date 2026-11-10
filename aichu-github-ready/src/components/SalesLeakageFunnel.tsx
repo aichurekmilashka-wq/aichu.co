@@ -150,7 +150,6 @@ export default function SalesLeakageFunnel({ language, theme }: { language: Lang
   return (
     <section id="problem" aria-labelledby="sales-leakage-title" className={"sl-root " + (theme === "light" ? "sl-light" : "sl-dark")}>
       <div className="sl-shell">
-        <div className="sl-eyebrow"><span>{copy.eyebrow}</span><span className="sl-eyebrow-end">CRM / REVENUE OPERATIONS</span></div>
         <div className="sl-heading-row">
           <h2 id="sales-leakage-title" className="sl-headline">{copy.headline}<br /><strong>{copy.emphasis}</strong></h2>
           <p className="sl-introduction">{copy.introduction}</p>
@@ -274,7 +273,6 @@ export default function SalesLeakageFunnel({ language, theme }: { language: Lang
             </div>
           </div>
         </div>
-        <div className="sl-footer"><span className="sl-legend-mark" /><span>{copy.legend}</span></div>
       </div>
     </section>
   )
