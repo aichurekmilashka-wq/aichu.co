@@ -58,7 +58,7 @@ export function initAnalytics(): void {
 
     const script = document.createElement("script")
     script.async = true
-    script.src = "https://mc.yandex.ru/metrika/tag.js"
+    script.src = "https://mc.yandex.ru/metrika/tag.js?id=" + metrikaId
     document.head.appendChild(script)
     // Webvisor and click maps are intentionally off: we only need visits and named goals.
     window.ym(metrikaId, "init", {
