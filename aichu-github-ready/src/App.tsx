@@ -224,7 +224,7 @@ export default function App() {
 
       <div id="about" className="relative pt-8 md:pt-12">
       <SalesLeakageFunnel language={language} theme={theme} />
-      <section id="products" className="mx-auto max-w-[1440px] scroll-mt-28 px-6 pb-28 pt-8 md:px-12">
+      <section id="products" className="mx-auto max-w-[1440px] scroll-mt-28 px-6 pb-28 pt-16 md:px-12 md:pt-20">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6 border-b border-[#F4EAF0]/15 pb-7">
           <div>
             <h2 className="text-5xl font-semibold tracking-[-.04em] md:text-7xl">REZON<span className="text-[#FDC21E]">.</span></h2>
@@ -266,7 +266,7 @@ export default function App() {
           </form>
         </div>
       </dialog>
-      <footer id="contacts" className="scroll-mt-28 border-t border-[#F4EAF0]/15 px-6 py-10 md:px-12">
+      <footer id="contacts" className="mt-8 scroll-mt-28 border-t border-[#F4EAF0]/15 px-6 py-10 md:mt-12 md:px-12">
         <div className="mx-auto grid max-w-[1440px] grid-cols-1 items-center gap-10 text-sm md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-6">
           <div className="text-center md:text-left">
             <p className="font-medium">aichuuu.co <span className="text-[#FDC21E]">/</span> Digital Intelligence Studio</p>
