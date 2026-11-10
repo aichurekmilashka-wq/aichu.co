@@ -206,7 +206,7 @@ export default function App() {
               { label: language === "ru" ? "Главная" : language === "ky" ? "Башкы бет" : "Home", href: "#top", icon: <Home size={18} strokeWidth={1.8} />, fx: "glow" },
               { label: language === "ru" ? "Воронка" : language === "ky" ? "Воронка" : "Funnel", href: "#problem", icon: <ChartNoAxesCombined size={18} strokeWidth={1.8} />, fx: "drop" },
               { label: "REZON", href: "#products", icon: <Layers size={18} strokeWidth={1.8} />, fx: "plane" },
-              { label: language === "ru" ? "Позвонить" : language === "ky" ? "Чалуу" : "Call", href: "tel:+996503030997", icon: <Phone size={18} strokeWidth={1.8} />, fx: "wave" },
+              { label: language === "ru" ? "Позвонить" : language === "ky" ? "Чалуу" : "Call", href: "tel:+996503030997", iconOnly: true, icon: <Phone size={18} strokeWidth={1.8} />, fx: "wave" },
               { label: language === "ru" ? "Заявка" : language === "ky" ? "Өтүнмө" : "Apply", icon: <Mail size={18} strokeWidth={1.8} />, fx: "wave" },
             ]}
             endContent={
