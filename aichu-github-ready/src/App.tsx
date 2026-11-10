@@ -62,37 +62,40 @@ export default function App() {
         .aichu-light .bg-\\[\\#F4EAF0\\] { background-color:#FFFFFF !important; }
         .aichu-light .text-\\[\\#07142D\\] { color:#07142D !important; }
         .aichu-light .hwf-root { color:#07142D !important; }
+        .aichu-light .text-\\[\\#FDC21E\\] { color:#9A6B00 !important; }
+        .aichu-light .hover\\:text-\\[\\#FDC21E\\]:hover { color:#9A6B00 !important; }
+        .aichu-light .group:hover .group-hover\\:text-\\[\\#FDC21E\\] { color:#9A6B00 !important; }
         .aichu-light article:not([class*="bg-[#F4EAF0]"]) { background-color:#fff !important; }
         .aichu-light [class*="text-[#F4EAF0]/"] { color:rgba(7,20,45,.72) !important; }
       `}</style>
       <header className="sticky top-0 z-40 bg-[#07142D] px-4 py-3 text-[#F4EAF0] md:px-8">
         <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4">
           <nav aria-label="Main navigation" className="hidden items-center gap-2 lg:flex">
-            <a href="#top" className="px-3 py-2 text-sm hover:text-[#FA347D]">{language === "ru" ? "Главная" : language === "ky" ? "Башкы бет" : "Home"}</a>
+            <a href="#top" className="px-3 py-2 text-sm hover:text-[#FDC21E]">{language === "ru" ? "Главная" : language === "ky" ? "Башкы бет" : "Home"}</a>
             <div className="group relative">
-              <button type="button" className="px-3 py-2 text-sm hover:text-[#FA347D]" aria-haspopup="true">{language === "ru" ? "Решения" : language === "ky" ? "Чечимдер" : "Solutions"} ▾</button>
-              <div className="invisible absolute left-0 top-full w-[340px] translate-y-2 border border-[#FA347D]/25 bg-[#07142D] p-3 opacity-0 shadow-2xl transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
-                {productsMenu.map(item => <a key={item.name} href={`#${item.id}`} className="block border-b border-[#F4EAF0]/15 px-3 py-3 last:border-0 hover:bg-[#FA347D]/10"><span className="block text-sm font-medium">{item.name}</span><span className="mt-1 block text-xs text-[#F4EAF0]/55">{language === "ru" ? item.ru : language === "ky" ? item.ky : item.en}</span></a>)}
+              <button type="button" className="px-3 py-2 text-sm hover:text-[#FDC21E]" aria-haspopup="true">{language === "ru" ? "Решения" : language === "ky" ? "Чечимдер" : "Solutions"} ▾</button>
+              <div className="invisible absolute left-0 top-full w-[340px] translate-y-2 border border-[#FDC21E]/25 bg-[#07142D] p-3 opacity-0 shadow-2xl transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+                {productsMenu.map(item => <a key={item.name} href={`#${item.id}`} className="block border-b border-[#F4EAF0]/15 px-3 py-3 last:border-0 hover:bg-[#FDC21E]/10"><span className="block text-sm font-medium">{item.name}</span><span className="mt-1 block text-xs text-[#F4EAF0]/55">{language === "ru" ? item.ru : language === "ky" ? item.ky : item.en}</span></a>)}
               </div>
             </div>
             <div className="group relative">
-              <button type="button" className="px-3 py-2 text-sm hover:text-[#FA347D]" aria-haspopup="true">{language === "ru" ? "О студии" : language === "ky" ? "Студия жөнүндө" : "Studio"} ▾</button>
-              <div className="invisible absolute left-0 top-full w-56 translate-y-2 border border-[#FA347D]/25 bg-[#07142D] p-2 opacity-0 shadow-2xl transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
-                {navSections.filter(item => !["products","contacts"].includes(item.id)).map(item => <a key={item.id} href={`#${item.id}`} className="block px-3 py-2 text-sm hover:bg-[#FA347D]/10">{item.number} / {item.label}</a>)}
+              <button type="button" className="px-3 py-2 text-sm hover:text-[#FDC21E]" aria-haspopup="true">{language === "ru" ? "О студии" : language === "ky" ? "Студия жөнүндө" : "Studio"} ▾</button>
+              <div className="invisible absolute left-0 top-full w-56 translate-y-2 border border-[#FDC21E]/25 bg-[#07142D] p-2 opacity-0 shadow-2xl transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+                {navSections.filter(item => !["products","contacts"].includes(item.id)).map(item => <a key={item.id} href={`#${item.id}`} className="block px-3 py-2 text-sm hover:bg-[#FDC21E]/10">{item.number} / {item.label}</a>)}
               </div>
             </div>
-            <a href="#contacts" className="px-3 py-2 text-sm hover:text-[#FA347D]">{language === "ru" ? "Контакты" : language === "ky" ? "Байланыш" : "Contacts"}</a>
+            <a href="#contacts" className="px-3 py-2 text-sm hover:text-[#FDC21E]">{language === "ru" ? "Контакты" : language === "ky" ? "Байланыш" : "Contacts"}</a>
           </nav>
           <div className="flex items-center gap-2">
-            <button type="button" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label={theme === "dark" ? "Light mode" : "Dark mode"} className="px-3 py-2 text-sm transition-colors hover:text-[#FA347D]">{theme === "dark" ? "☀" : "☾"}</button>
+            <button type="button" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label={theme === "dark" ? "Light mode" : "Dark mode"} className="px-3 py-2 text-sm transition-colors hover:text-[#FDC21E]">{theme === "dark" ? "☀" : "☾"}</button>
             <details ref={languageMenuRef} className="group relative">
-              <summary aria-label={language === "ru" ? "Выбрать язык" : language === "ky" ? "Тилди тандоо" : "Choose language"} className="flex cursor-pointer list-none items-center gap-2 px-3 py-2 text-xs font-semibold tracking-wider text-[#F4EAF0] transition-colors hover:text-[#FA347D] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#FA347D] [&::-webkit-details-marker]:hidden">
+              <summary aria-label={language === "ru" ? "Выбрать язык" : language === "ky" ? "Тилди тандоо" : "Choose language"} className="flex cursor-pointer list-none items-center gap-2 px-3 py-2 text-xs font-semibold tracking-wider text-[#F4EAF0] transition-colors hover:text-[#FDC21E] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#FDC21E] [&::-webkit-details-marker]:hidden">
                 <span>{language.toUpperCase()}</span>
                 <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true" className="transition-transform duration-200 group-open:rotate-180"><path d="m2.5 4.5 3.5 3.5 3.5-3.5" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="1.5" /></svg>
               </summary>
               <div className="absolute right-0 top-full z-50 mt-2 min-w-[160px] border border-[#F4EAF0]/15 bg-[#07142D] py-1 text-[#F4EAF0] shadow-xl">
                 {([["ru","Русский"],["en","English"],["ky","Кыргызча"]] as const).map(([code,label]) => (
-                  <button type="button" key={code} lang={code} onClick={() => { setLanguage(code); languageMenuRef.current?.removeAttribute("open") }} aria-current={language === code ? "true" : undefined} className={`flex w-full items-center justify-between gap-5 px-4 py-3 text-left text-sm transition-colors hover:bg-[#F4EAF0]/10 ${language === code ? "text-[#FA347D]" : "text-[#F4EAF0]"}`}>
+                  <button type="button" key={code} lang={code} onClick={() => { setLanguage(code); languageMenuRef.current?.removeAttribute("open") }} aria-current={language === code ? "true" : undefined} className={`flex w-full items-center justify-between gap-5 px-4 py-3 text-left text-sm transition-colors hover:bg-[#F4EAF0]/10 ${language === code ? "text-[#FDC21E]" : "text-[#F4EAF0]"}`}>
                     <span>{label}</span>{language === code && <span aria-hidden="true">✓</span>}
                   </button>
                 ))}
@@ -101,7 +104,7 @@ export default function App() {
             <button type="button" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu" aria-expanded={mobileOpen} className="px-3 py-2 text-sm lg:hidden">{mobileOpen ? "✕" : "☰"}</button>
           </div>
         </div>
-        {mobileOpen && <nav aria-label="Mobile navigation" className="mt-3 grid gap-1 border-t border-[#F4EAF0]/15 pt-3 lg:hidden">{navSections.map(item => <a key={item.id} href={`#${item.id}`} onClick={() => setMobileOpen(false)} className="px-3 py-3 text-sm hover:bg-[#FA347D]/10">{item.number} / {item.label}</a>)}</nav>}
+        {mobileOpen && <nav aria-label="Mobile navigation" className="mt-3 grid gap-1 border-t border-[#F4EAF0]/15 pt-3 lg:hidden">{navSections.map(item => <a key={item.id} href={`#${item.id}`} onClick={() => setMobileOpen(false)} className="px-3 py-3 text-sm hover:bg-[#FDC21E]/10">{item.number} / {item.label}</a>)}</nav>}
       </header>
       {/* The original interactive halftone wordmark now IS the hero, not a footer below it. */}
       <section aria-label="Интерактивный логотип aichu.co" className="w-full">
@@ -110,7 +113,7 @@ export default function App() {
           label=""
           meta=""
           backToTop={false}
-          palette={theme === "dark" ? { background: "#07142D", ink: "#F4EAF0", warm: "#FA347D" } : { background: "#FFFFFF", ink: "#07142D", warm: "#FA347D" }}
+          palette={theme === "dark" ? { background: "#07142D", ink: "#F4EAF0", warm: "#FDC21E" } : { background: "#FFFFFF", ink: "#07142D", warm: "#FDC21E" }}
           dotGap={6}
           radius={80}
           crop={0.05}
@@ -123,10 +126,10 @@ export default function App() {
       <div id="about" className="relative">
       <SalesLeakageFunnel language={language} theme={theme} />
       <section id="how" className="mx-auto max-w-[1440px] px-6 pb-20 md:px-12">
-        <span className="text-xs tracking-[.2em] text-[#FA347D]">03 / HOW IT FITS</span>
+        <span className="text-xs tracking-[.2em] text-[#FDC21E]">03 / HOW IT FITS</span>
         <h2 className="mt-5 text-3xl font-medium md:text-5xl">{tr("От данных к действиям.")}</h2>
         <div className="mt-8 grid gap-3 md:grid-cols-3">
-          {[["01",tr("Определяем данные"),tr("Выбираем необходимые показатели продаж, CRM, цен и коммуникаций под задачи компании.")],["02",tr("Настраиваем анализ"),tr("Формируем метрики прибыли и KPI, цикл сделки, потери лидов, маржу и качество диалогов.")],["03",tr("Применяем результаты"),tr("Используем выявленные отклонения для контроля процессов и принятия управленческих решений.")]].map(([n,t,d])=><div key={n} className="border border-[#F4EAF0]/15 p-7"><span className="text-[#FA347D]">{n}</span><h3 className="mt-8 text-xl">{t}</h3><p className="mt-3 text-sm text-[#F4EAF0]/60">{d}</p></div>)}
+          {[["01",tr("Определяем данные"),tr("Выбираем необходимые показатели продаж, CRM, цен и коммуникаций под задачи компании.")],["02",tr("Настраиваем анализ"),tr("Формируем метрики прибыли и KPI, цикл сделки, потери лидов, маржу и качество диалогов.")],["03",tr("Применяем результаты"),tr("Используем выявленные отклонения для контроля процессов и принятия управленческих решений.")]].map(([n,t,d])=><div key={n} className="border border-[#F4EAF0]/15 p-7"><span className="text-[#FDC21E]">{n}</span><h3 className="mt-8 text-xl">{t}</h3><p className="mt-3 text-sm text-[#F4EAF0]/60">{d}</p></div>)}
         </div>
       </section>
       <IllosShaderFeatureBento
@@ -157,8 +160,8 @@ export default function App() {
       <section id="products" className="mx-auto max-w-[1440px] px-6 pb-28 pt-8 md:px-12">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6 border-b border-[#F4EAF0]/15 pb-7">
           <div>
-            <span className="text-[11px] uppercase tracking-[.28em] text-[#FA347D]">{tr("05 / НАШИ ПРОДУКТЫ")}</span>
-            <h2 className="mt-4 text-4xl font-semibold tracking-tight md:text-6xl">{tr("Интеллект в каждом решении")}<span className="text-[#FA347D]">.</span></h2>
+            <span className="text-[11px] uppercase tracking-[.28em] text-[#FDC21E]">{tr("05 / НАШИ ПРОДУКТЫ")}</span>
+            <h2 className="mt-4 text-4xl font-semibold tracking-tight md:text-6xl">{tr("Интеллект в каждом решении")}<span className="text-[#FDC21E]">.</span></h2>
           </div>
           <p className="max-w-sm text-sm leading-relaxed text-[#F4EAF0]/60">{language === "ru" ? "Четыре направления B2B SaaS. Сейчас это некоммерческий исследовательский проект: мы изучаем задачи бизнеса и создаём прототипы." : language === "en" ? "Four B2B SaaS directions in development. This is currently a non-commercial research project focused on business problems and prototypes." : "Төрт B2B SaaS багыты. Азыр бул коммерциялык эмес изилдөө долбоору: биз бизнес маселелерин изилдеп, прототиптерди иштеп чыгуудабыз."}</p>
         </div>
@@ -172,7 +175,7 @@ export default function App() {
             <article key={product.number} id={`product-${product.number}`} className="group scroll-mt-28 flex min-h-[610px] flex-col justify-between bg-[#07142D] p-7 transition-colors duration-300 hover:bg-[#0B1C3B] md:p-10">
               <div>
                 <div className="mb-10 flex items-center justify-between text-xs tracking-[.2em]">
-                  <span className="text-[#FA347D]">{product.number} / 04</span>
+                  <span className="text-[#FDC21E]">{product.number} / 04</span>
                   <span className="text-[#F4EAF0]/40">{product.tag}</span>
                 </div>
                 <h3 className="max-w-md text-2xl font-medium leading-tight tracking-tight md:text-3xl">{product.name}</h3>
@@ -180,7 +183,7 @@ export default function App() {
                   {[[ tr("Бизнес-контекст"), product.challenge ], [ tr("Аналитическая модель"), product.model ], [ tr("Применение"), product.application ]].map(([label, copy]) => (
                     <div key={label}><p className="mb-2 text-[10px] font-medium uppercase tracking-[.18em] text-[#F4EAF0]/40">{label}</p><p className="max-w-lg text-sm leading-relaxed text-[#F4EAF0]/75">{copy}</p></div>
                   ))}
-                  <div className="border-t border-[#FA347D]/50 pt-5"><p className="mb-2 text-[10px] font-medium uppercase tracking-[.18em] text-[#FA347D]">{tr("Управленческая ценность")}</p><p className="max-w-lg text-base leading-relaxed text-[#F4EAF0]">{product.value}</p></div>
+                  <div className="border-t border-[#FDC21E]/50 pt-5"><p className="mb-2 text-[10px] font-medium uppercase tracking-[.18em] text-[#FDC21E]">{tr("Управленческая ценность")}</p><p className="max-w-lg text-base leading-relaxed text-[#F4EAF0]">{product.value}</p></div>
                 </div>
               </div>
               <div className="mt-10 flex flex-wrap gap-2">
@@ -191,28 +194,28 @@ export default function App() {
         </div>
         <div className="mt-7 flex flex-wrap items-center justify-between gap-3 text-sm text-[#F4EAF0]/60">
           <p>{language === "ru" ? "Некоммерческий исследовательский проект. Представленные решения находятся в стадии концепций и прототипов." : language === "en" ? "A non-commercial research project. The solutions shown are concepts and prototypes." : "Коммерциялык эмес изилдөө долбоору. Көрсөтүлгөн чечимдер концепция жана прототип баскычында."}</p>
-          <span className="text-[#FA347D]">AICHU.CO / B2B SOFTWARE</span>
+          <span className="text-[#FDC21E]">AICHU.CO / B2B SOFTWARE</span>
         </div>
       </section>
       <section id="contacts" className="mx-auto max-w-[1440px] scroll-mt-28 px-6 pb-28 md:px-12">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6 border-b border-[#F4EAF0]/15 pb-7">
           <div>
-            <span className="text-[11px] uppercase tracking-[.28em] text-[#FA347D]">06 / CONTACT</span>
-            <h2 className="mt-4 text-4xl font-semibold tracking-tight md:text-6xl">{language === "ru" ? "Контакты" : language === "en" ? "Contacts" : "Байланыш"}<span className="text-[#FA347D]">.</span></h2>
+            <span className="text-[11px] uppercase tracking-[.28em] text-[#FDC21E]">06 / CONTACT</span>
+            <h2 className="mt-4 text-4xl font-semibold tracking-tight md:text-6xl">{language === "ru" ? "Контакты" : language === "en" ? "Contacts" : "Байланыш"}<span className="text-[#FDC21E]">.</span></h2>
           </div>
           <p className="max-w-md text-sm leading-relaxed text-[#F4EAF0]/60">{language === "ru" ? "AICHU.CO развивается как некоммерческий технологический проект. Следите за нашими исследованиями и прототипами в официальных каналах." : language === "en" ? "AICHU.CO is currently a non-commercial technology project. Follow our research and prototypes through official channels." : "AICHU.CO азыр коммерциялык эмес технологиялык долбоор. Биздин изилдөөлөрдү жана прототиптерди расмий каналдардан көрө аласыз."}</p>
         </div>
         <div className="grid overflow-hidden border border-[#F4EAF0]/20 md:grid-cols-[1fr_1.2fr]">
           <div className="flex flex-col justify-between bg-[#F4EAF0] p-8 text-[#07142D] md:p-12">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[.22em] text-[#A62D62]">DIGITAL INTELLIGENCE STUDIO</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[.22em] text-[#9A6B00]">DIGITAL INTELLIGENCE STUDIO</p>
               <h3 className="mt-8 max-w-lg text-3xl font-medium leading-tight tracking-tight md:text-4xl">{language === "ru" ? "Остаёмся на связи." : language === "en" ? "Stay in touch." : "Байланышта бололу."}</h3>
               <p className="mt-6 max-w-md text-sm leading-relaxed text-[#07142D]/70">{language === "ru" ? "Изучаем аналитику, CRM и автоматизацию бизнеса. Сейчас на сайте нет продаж, оплаты или платных подписок." : language === "en" ? "Exploring analytics, CRM and business automation. No paid subscriptions, checkout or sales are offered here." : "Аналитика, CRM жана бизнести автоматташтырууну изилдейбиз. Сайтта азыр сатуу же төлөм жок."}</p>
             </div>
             <p className="mt-12 text-xs tracking-[.13em] text-[#07142D]/50">AICHU.CO / RESEARCH & PROTOTYPES</p>
           </div>
           <div className="bg-[#0B1C3B] p-8 md:p-12">
-            <p className="mb-6 text-xs font-semibold uppercase tracking-[.22em] text-[#FA347D]">{language === "ru" ? "Социальные сети и почта" : language === "en" ? "Social channels and email" : "Социалдык тармактар жана почта"}</p>
+            <p className="mb-6 text-xs font-semibold uppercase tracking-[.22em] text-[#FDC21E]">{language === "ru" ? "Социальные сети и почта" : language === "en" ? "Social channels and email" : "Социалдык тармактар жана почта"}</p>
             <div className="divide-y divide-[#F4EAF0]/15 border-y border-[#F4EAF0]/15">
               {[
                 { name: "Instagram", address: "@aichuuu.co", href: "https://www.instagram.com/aichuuu.co/" },
@@ -221,9 +224,9 @@ export default function App() {
                 { name: "Email", address: "aichurekmilashka@icloud.com", href: "mailto:aichurekmilashka@icloud.com" },
                 { name: "Телефон", address: "+996 503 030 997", href: "tel:+996503030997" },
               ].map(channel => channel.href ? (
-                <a key={channel.name} href={channel.href} target={channel.href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" className="group flex min-h-[70px] items-center justify-between gap-4 py-5 transition-colors hover:text-[#FA347D]">
+                <a key={channel.name} href={channel.href} target={channel.href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" className="group flex min-h-[70px] items-center justify-between gap-4 py-5 transition-colors hover:text-[#FDC21E]">
                   <span className="text-lg font-medium">{channel.name}</span>
-                  <span className="text-sm text-[#F4EAF0]/60 group-hover:text-[#FA347D]">{channel.address} ↗</span>
+                  <span className="text-sm text-[#F4EAF0]/60 group-hover:text-[#FDC21E]">{channel.address} ↗</span>
                 </a>
               ) : (
                 <div key={channel.name} className="flex min-h-[70px] items-center justify-between gap-4 py-5">
@@ -237,26 +240,26 @@ export default function App() {
         </div>
       </section>
       <section id="customers" className="mx-auto max-w-[1440px] px-6 pb-20 md:px-12">
-        <span className="text-xs tracking-[.2em] text-[#FA347D]">07 / WHO IT IS FOR</span>
+        <span className="text-xs tracking-[.2em] text-[#FDC21E]">07 / WHO IT IS FOR</span>
         <h2 className="mt-5 text-3xl font-medium md:text-5xl">{tr("Для команд, которым нужна ясность.")}</h2>
         <p className="mt-6 max-w-2xl text-[#F4EAF0]/65">{tr("Для собственников и руководителей, которым важны прибыль и KPI; для отделов продаж, контролирующих воронку и скорость обработки; для коммерческих команд, управляющих ценами и маржой; для руководителей клиентского сервиса, оценивающих качество переписок.")}</p>
       </section>
       <section id="questions" className="mx-auto max-w-[1440px] px-6 pb-28 md:px-12">
-        <span className="text-xs tracking-[.2em] text-[#FA347D]">08 / QUESTIONS</span>
+        <span className="text-xs tracking-[.2em] text-[#FDC21E]">08 / QUESTIONS</span>
         <h2 className="mt-5 text-3xl font-medium md:text-5xl">{tr("Частые вопросы.")}</h2>
         <div className="mt-8 divide-y divide-[#F4EAF0]/15 border-y border-[#F4EAF0]/15">
-          {[[language === "ru" ? "На какой стадии продукты?" : language === "en" ? "What is the current product stage?" : "Продукттар кайсы этапта?", language === "ru" ? "Сейчас мы разрабатываем концепции и прототипы. Мы публикуем концепции и прототипы; продажи и платные внедрения через сайт не осуществляются." : language === "en" ? "We are currently developing concepts and prototypes. The website presents concepts and prototypes, with no paid services or sales." : "Азыр концепциялар жана прототиптер иштелүүдө. Бул сайтта концепциялар жана прототиптер көрсөтүлгөн, акы төлөнүүчү кызматтар сунушталбайт."],[tr("Нужно ли подключать все четыре продукта?"),tr("Нет. Sales Intelligence, CRM Quality Control, Price & Margin Intelligence и AI Conversation Intelligence представлены как отдельные решения.")],[tr("Какие показатели анализирует Sales Intelligence?"),tr("Продажи, прибыль, KPI и динамику показателей. Предусмотрено разграничение доступа.")],[tr("Что контролирует CRM Quality Control?"),tr("Юнит-экономику, цикл сделки, скорость обработки заявок, воронку и потери лидов.")],[tr("Что даёт Price & Margin Intelligence?"),tr("Мониторинг цен и поставщиков, а также анализ маржинальности.")],[tr("Что анализирует AI Conversation Intelligence?"),tr("Переписки с клиентами и качество работы менеджеров.")],[tr("Можно ли интегрировать решение с нашей CRM?"),tr("Совместимость и необходимый состав интеграций определяются при обсуждении конкретного проекта.")]].map(([q,a])=><details key={q} className="group py-5"><summary className="cursor-pointer list-none text-lg">{q}<span className="float-right text-[#FA347D]">+</span></summary><p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#F4EAF0]/65">{a}</p></details>)}
+          {[[language === "ru" ? "На какой стадии продукты?" : language === "en" ? "What is the current product stage?" : "Продукттар кайсы этапта?", language === "ru" ? "Сейчас мы разрабатываем концепции и прототипы. Мы публикуем концепции и прототипы; продажи и платные внедрения через сайт не осуществляются." : language === "en" ? "We are currently developing concepts and prototypes. The website presents concepts and prototypes, with no paid services or sales." : "Азыр концепциялар жана прототиптер иштелүүдө. Бул сайтта концепциялар жана прототиптер көрсөтүлгөн, акы төлөнүүчү кызматтар сунушталбайт."],[tr("Нужно ли подключать все четыре продукта?"),tr("Нет. Sales Intelligence, CRM Quality Control, Price & Margin Intelligence и AI Conversation Intelligence представлены как отдельные решения.")],[tr("Какие показатели анализирует Sales Intelligence?"),tr("Продажи, прибыль, KPI и динамику показателей. Предусмотрено разграничение доступа.")],[tr("Что контролирует CRM Quality Control?"),tr("Юнит-экономику, цикл сделки, скорость обработки заявок, воронку и потери лидов.")],[tr("Что даёт Price & Margin Intelligence?"),tr("Мониторинг цен и поставщиков, а также анализ маржинальности.")],[tr("Что анализирует AI Conversation Intelligence?"),tr("Переписки с клиентами и качество работы менеджеров.")],[tr("Можно ли интегрировать решение с нашей CRM?"),tr("Совместимость и необходимый состав интеграций определяются при обсуждении конкретного проекта.")]].map(([q,a])=><details key={q} className="group py-5"><summary className="cursor-pointer list-none text-lg">{q}<span className="float-right text-[#FDC21E]">+</span></summary><p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#F4EAF0]/65">{a}</p></details>)}
         </div>
       </section>
       </div>
       <footer className="border-t border-[#F4EAF0]/15 px-6 py-10 md:px-12">
         <div className="mx-auto flex max-w-[1440px] flex-col justify-between gap-5 text-sm md:flex-row md:items-center">
-          <div><p className="font-medium">aichu.co <span className="text-[#FA347D]">/</span> Digital Intelligence Studio</p><p className="mt-2 text-[#F4EAF0]/55">© {new Date().getFullYear()} aichu.co</p></div>
+          <div><p className="font-medium">aichu.co <span className="text-[#FDC21E]">/</span> Digital Intelligence Studio</p><p className="mt-2 text-[#F4EAF0]/55">© {new Date().getFullYear()} aichu.co</p></div>
           <nav aria-label={language === "ru" ? "Навигация по странице" : language === "ky" ? "Барактын навигациясы" : "Page navigation"} className="flex flex-wrap gap-x-6 gap-y-3 text-[#F4EAF0]/70">
-            <a href="#contacts" className="transition-colors hover:text-[#FA347D]">{language === "ru" ? "Контакты" : language === "ky" ? "Байланыш" : "Contacts"}</a>
-            <a href="#products" className="transition-colors hover:text-[#FA347D]">{language === "ru" ? "Продукты" : language === "ky" ? "Продукттар" : "Products"}</a>
-            <a href="#questions" className="transition-colors hover:text-[#FA347D]">{language === "ru" ? "Вопросы" : language === "ky" ? "Суроолор" : "FAQ"}</a>
-            <a href="#top" className="transition-colors hover:text-[#FA347D]">{language === "ru" ? "Наверх ↑" : language === "ky" ? "Жогору ↑" : "Back to top ↑"}</a>
+            <a href="#contacts" className="transition-colors hover:text-[#FDC21E]">{language === "ru" ? "Контакты" : language === "ky" ? "Байланыш" : "Contacts"}</a>
+            <a href="#products" className="transition-colors hover:text-[#FDC21E]">{language === "ru" ? "Продукты" : language === "ky" ? "Продукттар" : "Products"}</a>
+            <a href="#questions" className="transition-colors hover:text-[#FDC21E]">{language === "ru" ? "Вопросы" : language === "ky" ? "Суроолор" : "FAQ"}</a>
+            <a href="#top" className="transition-colors hover:text-[#FDC21E]">{language === "ru" ? "Наверх ↑" : language === "ky" ? "Жогору ↑" : "Back to top ↑"}</a>
           </nav>
         </div>
       </footer>
