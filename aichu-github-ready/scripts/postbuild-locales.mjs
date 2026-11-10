@@ -2,7 +2,7 @@ import { readFile, mkdir, writeFile } from "node:fs/promises"
 import path from "node:path"
 
 const out = path.resolve("dist")
-const origin = (process.env.SITE_ORIGIN || "https://aichuuu.co").replace(/\/$/, "")
+const origin = (process.env.SITE_ORIGIN || "https://aichuuu.com").replace(/\/$/, "")
 const verification = (process.env.GOOGLE_SITE_VERIFICATION || "").trim()
 const pages = {
   ru: {
