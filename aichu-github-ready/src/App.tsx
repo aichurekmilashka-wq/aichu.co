@@ -120,34 +120,34 @@ export default function App() {
             <a href="#top" className="px-3 py-2 text-sm hover:text-[#FDC21E]">{language === "ru" ? "Главная" : language === "ky" ? "Башкы бет" : "Home"}</a>
             <div className="group relative">
               <button type="button" className="px-3 py-2 text-sm hover:text-[#FDC21E]" aria-haspopup="true">{language === "ru" ? "Решения" : language === "ky" ? "Чечимдер" : "Solutions"} ▾</button>
-              <div className="invisible absolute left-0 top-full w-[340px] translate-y-2 border border-[#FDC21E]/25 bg-[#07142D] p-3 opacity-0 shadow-2xl transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+              <div className="invisible absolute left-0 top-full w-[340px] translate-y-2 rounded-xl border border-[#FDC21E]/25 bg-[#07142D] p-3 opacity-0 shadow-2xl transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
                 {productsMenu.map(item => <a key={item.name} href={`#${item.id}`} className="block border-b border-[#F4EAF0]/15 px-3 py-3 last:border-0 hover:bg-[#FDC21E]/10"><span className="block text-sm font-medium">{item.name}</span><span className="mt-1 block text-xs text-[#F4EAF0]/55">{language === "ru" ? item.ru : language === "ky" ? item.ky : item.en}</span></a>)}
               </div>
             </div>
             <div className="group relative">
               <button type="button" className="px-3 py-2 text-sm hover:text-[#FDC21E]" aria-haspopup="true">{language === "ru" ? "О студии" : language === "ky" ? "Студия жөнүндө" : "Studio"} ▾</button>
-              <div className="invisible absolute left-0 top-full w-56 translate-y-2 border border-[#FDC21E]/25 bg-[#07142D] p-2 opacity-0 shadow-2xl transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+              <div className="invisible absolute left-0 top-full w-56 translate-y-2 rounded-xl border border-[#FDC21E]/25 bg-[#07142D] p-2 opacity-0 shadow-2xl transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
                 {navSections.filter(item => !["products","contacts"].includes(item.id)).map(item => <a key={item.id} href={`#${item.id}`} className="block px-3 py-2 text-sm hover:bg-[#FDC21E]/10">{item.number} / {item.label}</a>)}
               </div>
             </div>
             <a href="#contacts" className="px-3 py-2 text-sm hover:text-[#FDC21E]">{language === "ru" ? "Контакты" : language === "ky" ? "Байланыш" : "Contacts"}</a>
           </nav>
-          <div className="flex items-center gap-2">
-            <button type="button" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label={theme === "dark" ? "Light mode" : "Dark mode"} className="px-3 py-2 text-sm transition-colors hover:text-[#FDC21E]">{theme === "dark" ? "☀" : "☾"}</button>
+          <div className="ml-auto flex items-center gap-2">
+            <button type="button" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label={theme === "dark" ? "Light mode" : "Dark mode"} className="min-h-11 min-w-11 rounded-lg px-3 py-2 text-sm transition-colors hover:text-[#FDC21E]">{theme === "dark" ? "☀" : "☾"}</button>
             <details ref={languageMenuRef} className="group relative">
-              <summary aria-label={language === "ru" ? "Выбрать язык" : language === "ky" ? "Тилди тандоо" : "Choose language"} className="flex cursor-pointer list-none items-center gap-2 px-3 py-2 text-xs font-semibold tracking-wider text-[#F4EAF0] transition-colors hover:text-[#FDC21E] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#FDC21E] [&::-webkit-details-marker]:hidden">
+              <summary aria-label={language === "ru" ? "Выбрать язык" : language === "ky" ? "Тилди тандоо" : "Choose language"} className="flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold tracking-wider text-[#F4EAF0] transition-colors hover:text-[#FDC21E] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#FDC21E] [&::-webkit-details-marker]:hidden">
                 <span>{language.toUpperCase()}</span>
                 <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true" className="transition-transform duration-200 group-open:rotate-180"><path d="m2.5 4.5 3.5 3.5 3.5-3.5" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="1.5" /></svg>
               </summary>
-              <div className="absolute right-0 top-full z-50 mt-2 min-w-[160px] border border-[#F4EAF0]/15 bg-[#07142D] py-1 text-[#F4EAF0] shadow-xl">
+              <div className="absolute right-0 top-full z-50 mt-2 w-48 max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border border-[#F4EAF0]/20 bg-[#07142D] py-1 text-[#F4EAF0] shadow-2xl">
                 {([["ru","Русский"],["en","English"],["ky","Кыргызча"]] as const).map(([code,label]) => (
-                  <button type="button" key={code} lang={code} onClick={() => { if (code !== language) changeLanguage(code); languageMenuRef.current?.removeAttribute("open") }} aria-current={language === code ? "true" : undefined} className={`flex w-full items-center justify-between gap-5 px-4 py-3 text-left text-sm transition-colors hover:bg-[#F4EAF0]/10 ${language === code ? "text-[#FDC21E]" : "text-[#F4EAF0]"}`}>
+                  <button type="button" key={code} lang={code} onClick={() => { if (code !== language) changeLanguage(code); languageMenuRef.current?.removeAttribute("open") }} aria-current={language === code ? "true" : undefined} className={`flex min-h-12 w-full items-center justify-between gap-5 px-4 py-3 text-left text-base transition-colors hover:bg-[#F4EAF0]/10 ${language === code ? "text-[#FDC21E]" : "text-[#F4EAF0]"}`}>
                     <span>{label}</span>{language === code && <span aria-hidden="true">✓</span>}
                   </button>
                 ))}
               </div>
             </details>
-            <button type="button" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu" aria-expanded={mobileOpen} className="px-3 py-2 text-sm lg:hidden">{mobileOpen ? "✕" : "☰"}</button>
+            <button type="button" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu" aria-expanded={mobileOpen} className="min-h-11 min-w-11 rounded-lg px-3 py-2 text-sm lg:hidden">{mobileOpen ? "✕" : "☰"}</button>
           </div>
         </div>
         {mobileOpen && <nav aria-label="Mobile navigation" className="mt-3 grid gap-1 border-t border-[#F4EAF0]/15 pt-3 lg:hidden">{navSections.map(item => <a key={item.id} href={`#${item.id}`} onClick={() => setMobileOpen(false)} className="px-3 py-3 text-sm hover:bg-[#FDC21E]/10">{item.number} / {item.label}</a>)}</nav>}
@@ -175,7 +175,7 @@ export default function App() {
         <span className="text-xs tracking-[.2em] text-[#FDC21E]">03 / HOW IT FITS</span>
         <h2 className="mt-5 text-3xl font-medium md:text-5xl">{tr("От данных к действиям.")}</h2>
         <div className="mt-8 grid gap-3 md:grid-cols-3">
-          {[["01",tr("Определяем данные"),tr("Выбираем необходимые показатели продаж, CRM, цен и коммуникаций под задачи компании.")],["02",tr("Настраиваем анализ"),tr("Формируем метрики прибыли и KPI, цикл сделки, потери лидов, маржу и качество диалогов.")],["03",tr("Применяем результаты"),tr("Используем выявленные отклонения для контроля процессов и принятия управленческих решений.")]].map(([n,t,d])=><div key={n} className="border border-[#F4EAF0]/15 p-7"><span className="text-[#FDC21E]">{n}</span><h3 className="mt-8 text-xl">{t}</h3><p className="mt-3 text-sm text-[#F4EAF0]/60">{d}</p></div>)}
+          {[["01",tr("Определяем данные"),tr("Выбираем необходимые показатели продаж, CRM, цен и коммуникаций под задачи компании.")],["02",tr("Настраиваем анализ"),tr("Формируем метрики прибыли и KPI, цикл сделки, потери лидов, маржу и качество диалогов.")],["03",tr("Применяем результаты"),tr("Используем выявленные отклонения для контроля процессов и принятия управленческих решений.")]].map(([n,t,d])=><div key={n} className="rounded-xl border border-[#F4EAF0]/15 p-7"><span className="text-[#FDC21E]">{n}</span><h3 className="mt-8 text-xl">{t}</h3><p className="mt-3 text-sm text-[#F4EAF0]/60">{d}</p></div>)}
         </div>
       </section>
       <IllosShaderFeatureBento
@@ -228,7 +228,7 @@ export default function App() {
           </div>
           <p className="max-w-md text-sm leading-relaxed text-[#F4EAF0]/60">{language === "ru" ? "AICHUUU.CO развивается как некоммерческий технологический проект. Следите за нашими исследованиями и прототипами в официальных каналах." : language === "en" ? "AICHUUU.CO is currently a non-commercial technology project. Follow our research and prototypes through official channels." : "AICHUUU.CO азыр коммерциялык эмес технологиялык долбоор. Биздин изилдөөлөрдү жана прототиптерди расмий каналдардан көрө аласыз."}</p>
         </div>
-        <div className="grid overflow-hidden border border-[#F4EAF0]/20 md:grid-cols-[1fr_1.2fr]">
+        <div className="grid overflow-hidden rounded-xl border border-[#F4EAF0]/20 md:grid-cols-[1fr_1.2fr]">
           <div className="flex flex-col justify-between bg-[#F4EAF0] p-8 text-[#07142D] md:p-12">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[.22em] text-[#9A6B00]">DIGITAL INTELLIGENCE STUDIO</p>
@@ -249,7 +249,7 @@ export default function App() {
               ].map(channel => channel.href ? (
                 <a key={channel.name} href={channel.href} target={channel.href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" className="group flex min-h-[70px] items-center justify-between gap-4 py-5 transition-colors hover:text-[#FDC21E]">
                   <span className="text-lg font-medium">{channel.name}</span>
-                  <span className="text-sm text-[#F4EAF0]/60 group-hover:text-[#FDC21E]">{channel.address} ↗</span>
+                  <span className="min-w-0 break-all text-right text-sm text-[#F4EAF0]/60 group-hover:text-[#FDC21E] sm:break-normal">{channel.address} ↗</span>
                 </a>
               ) : (
                 <div key={channel.name} className="flex min-h-[70px] items-center justify-between gap-4 py-5">
@@ -270,7 +270,7 @@ export default function App() {
       <section id="questions" className="mx-auto max-w-[1440px] px-6 pb-28 md:px-12">
         <span className="text-xs tracking-[.2em] text-[#FDC21E]">08 / QUESTIONS</span>
         <h2 className="mt-5 text-3xl font-medium md:text-5xl">{tr("Частые вопросы.")}</h2>
-        <div className="mt-8 divide-y divide-[#F4EAF0]/15 border-y border-[#F4EAF0]/15">
+        <div className="mt-8 divide-y divide-[#F4EAF0]/15 rounded-xl border border-[#F4EAF0]/15 px-5">
           {[
             [rezText("На какой стадии REZON?", "What stage is REZON at?", "REZON кайсы этапта?"), rezText("Разрабатываем концепцию и прототипы. Продажи и платные внедрения через сайт пока не осуществляются.", "The concept and prototypes are in development. No paid services are sold through this site.", "Азыр концепция жана прототиптер иштелүүдө. Сайт аркылуу азырынча акы төлөнүүчү кызматтар көрсөтүлбөйт.")],
             [rezText("Чем REZON отличается от обычной CRM?", "How is REZON different from a typical CRM?", "REZON кадимки CRMден эмнеси менен айырмаланат?"), rezText("REZON объединяет управление продажами с аналитикой конверсии, прибыли и причин потерь, чтобы находить конкретные возможности улучшения.", "REZON combines sales management with analytics for conversions, profit and reasons for losses to identify improvements.", "REZON сатууну башкарууну конверсияны, пайданы жана жоготуулардын себептерин талдоо менен айкалыштырат.")],
@@ -293,11 +293,11 @@ export default function App() {
         </div>
       </footer>
       {isAnalyticsConfigured() && analyticsConsent === null && (
-        <aside role="dialog" aria-label={language === "ru" ? "Согласие на аналитику" : language === "ky" ? "Аналитикага макулдук" : "Analytics consent"} className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-xl border border-[#FDC21E]/40 bg-[#07142D] p-5 text-[#F4EAF0] shadow-2xl">
+        <aside role="dialog" aria-label={language === "ru" ? "Согласие на аналитику" : language === "ky" ? "Аналитикага макулдук" : "Analytics consent"} className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-xl rounded-xl border border-[#FDC21E]/40 bg-[#07142D] p-5 text-[#F4EAF0] shadow-2xl">
           <p className="mb-4 text-sm leading-relaxed">{language === "ru" ? `Разрешить собирать статистику посещений и кликов через ${analyticsServices}? Без согласия счётчики не загружаются.` : language === "ky" ? `Сайтка кирүүлөрдү жана чыкылдатууларды ${analyticsServices} аркылуу талдоого макулсузбу? Макулдуксуз эсептегичтер жүктөлбөйт.` : `Allow ${analyticsServices} to measure visits and clicks? Analytics will not load without your consent.`}</p>
           <div className="flex flex-wrap gap-3">
-            <button type="button" onClick={() => chooseAnalytics("accepted")} className="bg-[#FDC21E] px-4 py-2 text-sm font-semibold text-[#07142D]">{language === "ru" ? "Разрешить" : language === "ky" ? "Уруксат берүү" : "Allow"}</button>
-            <button type="button" onClick={() => chooseAnalytics("rejected")} className="border border-[#F4EAF0]/30 px-4 py-2 text-sm">{language === "ru" ? "Отказаться" : language === "ky" ? "Баш тартуу" : "Decline"}</button>
+            <button type="button" onClick={() => chooseAnalytics("accepted")} className="rounded-lg bg-[#FDC21E] px-4 py-2 text-sm font-semibold text-[#07142D]">{language === "ru" ? "Разрешить" : language === "ky" ? "Уруксат берүү" : "Allow"}</button>
+            <button type="button" onClick={() => chooseAnalytics("rejected")} className="rounded-lg border border-[#F4EAF0]/30 px-4 py-2 text-sm">{language === "ru" ? "Отказаться" : language === "ky" ? "Баш тартуу" : "Decline"}</button>
           </div>
         </aside>
       )}
