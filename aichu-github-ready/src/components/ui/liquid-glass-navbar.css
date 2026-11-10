@@ -37,3 +37,23 @@
 .nimbus-nav[data-compact="true"] .nimbus-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 @media(max-width:520px){.nimbus-nav:not([data-compact="false"]) .nimbus-item{padding:0 13px}.nimbus-nav:not([data-compact="false"]) .nimbus-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}}
 @media(prefers-reduced-motion:reduce){.nv-ico svg,.nv-ico::before,.nv-ico::after,.nv-door{animation:none!important;transition:none!important}}
+
+/* Theme and language controls share the Waterline pill, not a second header. */
+.nimbus-actions{position:relative;z-index:3;display:inline-flex;align-items:center;gap:2px;margin-left:5px;padding-left:5px;border-left:1px solid rgba(7,20,45,.16)}
+.nimbus-nav[data-tone="dark"] .nimbus-actions{border-left-color:rgba(244,234,240,.22)}
+.nimbus-action{display:inline-flex;align-items:center;justify-content:center;width:44px;min-width:44px;height:44px;padding:0;border:0;border-radius:999px;background:transparent;color:var(--n-soft);font:600 13px/1 Inter,ui-sans-serif,system-ui,sans-serif;cursor:pointer;transition:color .2s ease,background .2s ease;-webkit-tap-highlight-color:transparent}
+.nimbus-action:hover,.nimbus-language[open] .nimbus-action{color:var(--n-fg);background:rgba(140,140,140,.10)}
+.nimbus-action:focus-visible{outline:2px solid #FDC21E;outline-offset:2px}
+.nimbus-language-summary{list-style:none;user-select:none;letter-spacing:.02em}
+.nimbus-language-summary::-webkit-details-marker{display:none}
+@media(max-width:520px){
+  .nimbus-nav .nimbus-item{height:42px;min-width:40px;padding:0 10px}
+  .nimbus-nav .nimbus-actions .nimbus-action{width:40px;min-width:40px;height:42px}
+  .nimbus-nav .nimbus-actions .nimbus-language-summary{width:44px;min-width:44px}
+}
+@media(max-width:360px){
+  .nimbus-nav .nimbus-item{min-width:36px;padding:0 9px}
+  .nimbus-nav .nimbus-actions{margin-left:3px;padding-left:3px}
+  .nimbus-nav .nimbus-actions .nimbus-action{width:38px;min-width:38px}
+  .nimbus-nav .nimbus-actions .nimbus-language-summary{width:42px;min-width:42px}
+}

@@ -18,6 +18,7 @@ export type LiquidNavbarProps = {
   defaultActive?: number
   active?: number
   onChange?: (index: number, item: LiquidNavItem) => void
+  endContent?: React.ReactNode
   tone?: "light" | "dark"
   compact?: boolean
   sound?: boolean
@@ -160,6 +161,7 @@ export function LiquidNavbar({
   defaultActive = 0,
   active,
   onChange,
+  endContent,
   tone = "light",
   compact,
   sound = false,
@@ -441,6 +443,7 @@ export function LiquidNavbar({
     }
   }
   const onKeyDown = (e: React.KeyboardEvent) => {
+    if ((e.target as HTMLElement).closest(".nimbus-actions")) return
     if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return
     e.preventDefault()
     const n = (current + (e.key === "ArrowRight" ? 1 : -1) + items.length) % items.length
@@ -501,6 +504,7 @@ export function LiquidNavbar({
           <button key={item.label + i} {...props} type="button" aria-label={item.label}>{content}</button>
         )
       })}
+      {endContent && <span className="nimbus-actions">{endContent}</span>}
     </nav>
   )
 }
