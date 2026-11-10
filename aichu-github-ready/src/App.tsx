@@ -33,13 +33,10 @@ export default function App() {
       if (wasAccepted && isYandexMetricaConfigured()) { window.location.reload(); return }
     }
     setAnalyticsConsent(choice)
+    cookiePolicyRef.current?.close()
   }
-  const reviewAnalyticsConsent = () => {
-    localStorage.removeItem("aichu-analytics-consent")
-    pauseAnalytics()
-    if (isYandexMetricaConfigured()) { window.location.reload(); return }
-    setAnalyticsConsent(null)
-  }
+  const cookiePolicyRef = useRef<HTMLDialogElement>(null)
+  const openCookieSettings = () => cookiePolicyRef.current?.showModal()
   const analyticsServices = [
     isYandexMetricaConfigured() ? "Яндекс.Метрика" : null,
     isGoogleAnalyticsConfigured() ? "Google Analytics" : null
@@ -295,7 +292,7 @@ export default function App() {
       </div>
       <footer className="border-t border-[#F4EAF0]/15 px-6 py-10 md:px-12">
         <div className="mx-auto flex max-w-[1440px] flex-col justify-between gap-5 text-sm md:flex-row md:items-center">
-          <div><p className="font-medium">aichuuu.co <span className="text-[#FDC21E]">/</span> Digital Intelligence Studio</p><p className="mt-2 text-[#F4EAF0]/55">© {new Date().getFullYear()} aichuuu.co</p>{isAnalyticsConfigured() && <button type="button" onClick={reviewAnalyticsConsent} className="mt-2 text-xs text-[#F4EAF0]/60 underline underline-offset-4 hover:text-[#FDC21E]">{language === "ru" ? "Настройки аналитики" : language === "ky" ? "Аналитика жөндөөлөрү" : "Analytics preferences"}</button>}</div>
+          <div><p className="font-medium">aichuuu.co <span className="text-[#FDC21E]">/</span> Digital Intelligence Studio</p><p className="mt-2 text-[#F4EAF0]/55">© {new Date().getFullYear()} aichuuu.co</p>{isAnalyticsConfigured() && <button type="button" onClick={openCookieSettings} className="mt-2 text-xs text-[#F4EAF0]/60 underline underline-offset-4 hover:text-[#FDC21E]">{language === "ru" ? "Настройки cookie" : language === "ky" ? "Cookie жөндөөлөрү" : "Cookie preferences"}</button>}</div>
           <nav aria-label={language === "ru" ? "Навигация по странице" : language === "ky" ? "Барактын навигациясы" : "Page navigation"} className="flex flex-wrap gap-x-6 gap-y-3 text-[#F4EAF0]/70">
             <a href="#contacts" className="transition-colors hover:text-[#FDC21E]">{language === "ru" ? "Контакты" : language === "ky" ? "Байланыш" : "Contacts"}</a>
             <a href="#products" className="transition-colors hover:text-[#FDC21E]">{language === "ru" ? "Продукты" : language === "ky" ? "Продукттар" : "Products"}</a>
@@ -305,13 +302,82 @@ export default function App() {
         </div>
       </footer>
       {isAnalyticsConfigured() && analyticsConsent === null && (
-        <aside role="dialog" aria-label={language === "ru" ? "Согласие на аналитику" : language === "ky" ? "Аналитикага макулдук" : "Analytics consent"} className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-xl rounded-xl border border-[#FDC21E]/40 bg-[#07142D] p-5 text-[#F4EAF0] shadow-2xl">
-          <p className="mb-4 text-sm leading-relaxed">{language === "ru" ? `Разрешить собирать статистику посещений и кликов через ${analyticsServices}? Без согласия счётчики не загружаются.` : language === "ky" ? `Сайтка кирүүлөрдү жана чыкылдатууларды ${analyticsServices} аркылуу талдоого макулсузбу? Макулдуксуз эсептегичтер жүктөлбөйт.` : `Allow ${analyticsServices} to measure visits and clicks? Analytics will not load without your consent.`}</p>
-          <div className="flex flex-wrap gap-3">
-            <button type="button" onClick={() => chooseAnalytics("accepted")} className="rounded-lg bg-[#FDC21E] px-4 py-2 text-sm font-semibold text-[#07142D]">{language === "ru" ? "Разрешить" : language === "ky" ? "Уруксат берүү" : "Allow"}</button>
-            <button type="button" onClick={() => chooseAnalytics("rejected")} className="rounded-lg border border-[#F4EAF0]/30 px-4 py-2 text-sm">{language === "ru" ? "Отказаться" : language === "ky" ? "Баш тартуу" : "Decline"}</button>
+        <aside role="region" aria-label={rezText("Настройки cookie", "Cookie preferences", "Cookie жөндөөлөрү")} className="fixed bottom-3 left-3 right-3 z-50 mx-auto max-w-[640px] rounded-2xl border border-[#FDC21E]/35 bg-[#07142D] p-5 text-[#F4EAF0] shadow-2xl sm:bottom-6 sm:p-6">
+          <p className="text-[11px] font-semibold uppercase tracking-[.22em] text-[#FDC21E]">COOKIE &amp; PRIVACY</p>
+          <p className="mt-3 text-sm leading-relaxed text-[#F4EAF0]/85">
+            {rezText(
+              "Мы используем необходимые cookie для работы сайта. С вашего согласия также включаем аналитику посещений, чтобы улучшать сайт. Вы можете принять или отклонить необязательные cookie.",
+              "We use essential cookies to run this website. With your consent, we also use visit analytics to improve it. You can accept or decline optional cookies.",
+              "Сайттын иштеши үчүн зарыл cookie файлдары колдонулат. Макулдугуңуз болсо гана сайтты жакшыртуу үчүн кирүүлөрдү талдайбыз. Кошумча cookie файлдарына макул болууга же баш тартууга болот."
+            )}
+          </p>
+          <div className="mt-4 flex flex-col gap-2 min-[380px]:flex-row">
+            <button type="button" onClick={() => chooseAnalytics("accepted")} className="min-h-11 flex-1 rounded-lg border border-[#FDC21E]/80 px-4 py-2 text-sm font-medium text-[#F4EAF0] transition-colors hover:bg-[#FDC21E]/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FDC21E]">
+              {rezText("Принять", "Accept", "Макул болуу")}
+            </button>
+            <button type="button" onClick={() => chooseAnalytics("rejected")} className="min-h-11 flex-1 rounded-lg border border-[#FDC21E]/80 px-4 py-2 text-sm font-medium text-[#F4EAF0] transition-colors hover:bg-[#FDC21E]/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FDC21E]">
+              {rezText("Отклонить", "Decline", "Баш тартуу")}
+            </button>
           </div>
+          <button type="button" onClick={openCookieSettings} className="mt-3 min-h-9 text-left text-xs text-[#F4EAF0]/70 underline decoration-[#F4EAF0]/40 underline-offset-4 transition-colors hover:text-[#FDC21E]">
+            {rezText("Подробнее о cookie и данных", "How cookies and data are used", "Cookie жана маалыматтар тууралуу")}
+          </button>
         </aside>
+      )}
+      {isAnalyticsConfigured() && (
+        <dialog ref={cookiePolicyRef} aria-labelledby="cookie-policy-title" className="fixed inset-0 m-auto max-h-[90dvh] w-[min(94vw,680px)] overflow-y-auto rounded-2xl border border-[#FDC21E]/40 bg-[#07142D] p-0 text-[#F4EAF0] shadow-2xl backdrop:bg-[#07142D]/80">
+          <div className="p-5 sm:p-8">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[.22em] text-[#FDC21E]">AICHUUU.CO / PRIVACY</p>
+                <h2 id="cookie-policy-title" className="mt-2 text-xl font-semibold">
+                  {rezText("Cookie и обработка данных", "Cookies and data processing", "Cookie жана маалыматтарды иштетүү")}
+                </h2>
+              </div>
+              <button type="button" onClick={() => cookiePolicyRef.current?.close()} aria-label={rezText("Закрыть", "Close", "Жабуу")} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#F4EAF0]/25 text-xl hover:border-[#FDC21E]">×</button>
+            </div>
+            <div className="mt-5 space-y-4 text-sm leading-relaxed text-[#F4EAF0]/80">
+              <p>{rezText(
+                "На сайте используются необходимые технологии хранения настроек (например, выбора темы и решения о cookie). Они нужны для работы интерфейса и не используются для рекламы.",
+                "The website uses essential storage for preferences, such as your theme and cookie choice. These are used to operate the interface, not for advertising.",
+                "Сайт интерфейстин иштеши үчүн зарыл болгон жөндөөлөрдү (мисалы, теманы жана cookie тандоосун) сактайт. Алар жарнама үчүн колдонулбайт."
+              )}</p>
+              <p>{rezText(
+                "Только с вашего согласия мы подключаем аналитику. Она может обрабатывать сведения о просмотренных страницах, действиях на сайте, параметрах устройства и браузера, IP-адресе и идентификаторах cookie. Цель — статистика посещений и улучшение сайта.",
+                "Only with your consent do we enable analytics. It may process visited pages, on-site actions, device and browser details, IP addresses and cookie identifiers. The purpose is visitor statistics and website improvement.",
+                "Макулдугуңуз менен гана аналитика иштетилет. Ал ачылган барактар, сайттагы аракеттер, түзмөк жана браузер, IP дарек жана cookie идентификаторлору тууралуу маалыматтарды иштете алат. Максат — кирүүлөрдү талдоо жана сайтты жакшыртуу."
+              )}</p>
+              <p>{rezText(
+                "Поставщики аналитики:", "Analytics providers:", "Аналитика кызматтары:"
+              )} <span className="font-medium text-[#F4EAF0]">{analyticsServices}</span>. {rezText(
+                "Данные могут передаваться этим поставщикам, в том числе для обработки за пределами вашей страны. Сроки хранения аналитических cookie зависят от настроек и политик поставщиков.",
+                "Data may be shared with these providers, including processing outside your country. Analytics cookie retention depends on provider settings and policies.",
+                "Маалыматтар бул кызматтарга, анын ичинде өлкөңүздөн тышкары иштетүү үчүн берилиши мүмкүн. Аналитикалык cookie файлдарын сактоо мөөнөтү кызматтын жөндөөлөрүнө жана саясатына жараша болот."
+              )}</p>
+              <p>{rezText(
+                "Условия обработки данных поставщиками:",
+                "Providers’ data processing policies:",
+                "Кызматтардын маалыматтарды иштетүү эрежелери:"
+              )}{" "}
+                {isYandexMetricaConfigured() && <a className="underline underline-offset-4 hover:text-[#FDC21E]" href="https://yandex.com/legal/confidential/" target="_blank" rel="noopener noreferrer">Yandex Privacy</a>}
+                {isYandexMetricaConfigured() && isGoogleAnalyticsConfigured() && " · "}
+                {isGoogleAnalyticsConfigured() && <a className="underline underline-offset-4 hover:text-[#FDC21E]" href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google Privacy</a>}
+              </p>
+              <p>{rezText(
+                "Ваш выбор сохраняется в браузере до его изменения или удаления данных сайта. Аналитика не загружается до согласия. Согласие можно изменить или отозвать в любой момент через «Настройки cookie» внизу сайта; при отзыве аналитика отключается после перезагрузки страницы. Отказ не ограничивает доступ к сайту.",
+                "Your choice is saved in the browser until you change it or clear site data. Analytics will not load before consent. You can change or withdraw consent any time using “Cookie preferences” in the footer; analytics stops after a page reload when withdrawn. Declining does not restrict access to this website.",
+                "Тандооңуз өзгөртүлмөйүнчө же сайттын маалыматы өчүрүлмөйүнчө браузерде сакталат. Макулдук берилмейинче аналитика жүктөлбөйт. Макулдукту каалаган убакта барактын аягындагы «Cookie жөндөөлөрү» аркылуу өзгөртсөңүз болот; баш тартканда аналитика барак жаңыртылгандан кийин токтойт. Баш тартуу сайтты колдонууга тоскоол болбойт."
+              )}</p>
+              <p>{rezText(
+                "По вопросам обработки данных: ", "For privacy inquiries: ", "Маалыматтарды иштетүү боюнча суроолор: "
+              )}<a className="underline underline-offset-4 hover:text-[#FDC21E]" href="mailto:aichurekmilashka@icloud.com">aichurekmilashka@icloud.com</a></p>
+            </div>
+            <div className="mt-6 flex flex-col gap-2 sm:flex-row">
+              <button type="button" onClick={() => chooseAnalytics("accepted")} className="min-h-11 flex-1 rounded-lg border border-[#FDC21E]/80 px-4 py-2 text-sm font-medium hover:bg-[#FDC21E]/15">{rezText("Принять аналитику", "Accept analytics", "Аналитикага макул болуу")}</button>
+              <button type="button" onClick={() => chooseAnalytics("rejected")} className="min-h-11 flex-1 rounded-lg border border-[#FDC21E]/80 px-4 py-2 text-sm font-medium hover:bg-[#FDC21E]/15">{rezText("Отклонить аналитику", "Decline analytics", "Аналитикадан баш тартуу")}</button>
+            </div>
+          </div>
+        </dialog>
       )}
     </main>
   )
