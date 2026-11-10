@@ -105,6 +105,12 @@
   from { opacity: 0; }
   to { opacity: 1; }
 }
+.sl-root.sl-paused .sl-leak-line,
+.sl-root.sl-paused .sl-incoming line,
+.sl-root.sl-paused .sl-inner-flow,
+.sl-root.sl-paused .sl-exit-dot {
+  animation-play-state: paused;
+}
 .sl-leak-line { stroke-dasharray: 6 8; animation: sl-leak 2.7s linear infinite; }
 .sl-incoming line { animation: sl-incoming 1.9s linear infinite; }
 .sl-incoming line:nth-child(2n) { animation-duration: 2.3s; }
