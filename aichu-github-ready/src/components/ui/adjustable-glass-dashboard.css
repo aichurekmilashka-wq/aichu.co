@@ -22,6 +22,7 @@
   font-variant-numeric:tabular-nums;
 }
 .rz-root[data-theme="light"] {
+  --rz-accent:#8A6000;
   --rz-ink:#07142D;
   --rz-muted:rgba(7,20,45,.62);
   --rz-bg:#f2f4f7;

@@ -10,3 +10,7 @@ React + TypeScript + Tailwind CSS + original HalftoneWordmarkFooter.
 
 No npm installation is needed on your own computer. GitHub Actions handles it.
 For local development: `npm install` then `npm run dev`.
+
+## Application form
+
+See [APPLICATION_SETUP.md](APPLICATION_SETUP.md) to connect direct delivery or test the email fallback. Run `npm test` for validation and delivery-response checks; the tests do not send real applications.

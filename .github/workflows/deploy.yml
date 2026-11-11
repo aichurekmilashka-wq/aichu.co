@@ -29,6 +29,10 @@ jobs:
         working-directory: aichu-github-ready
         run: npm install
 
+      - name: Test application handling and funnel geometry
+        working-directory: aichu-github-ready
+        run: npm test
+
       - name: Build React
         working-directory: aichu-github-ready
         env:

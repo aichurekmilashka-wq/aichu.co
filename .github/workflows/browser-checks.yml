@@ -1,0 +1,44 @@
+name: Browser regression checks
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: aichu-github-ready
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install
+      - run: npm test
+      - run: npm run build
+        env:
+          VITE_WEB3FORMS_ACCESS_KEY: ""
+      - name: Build connected form with a mock-only key
+        run: npx vite build --outDir dist-connected
+        env:
+          VITE_WEB3FORMS_ACCESS_KEY: qa-mocked-only
+      - name: Install browser test tooling
+        run: npm install --no-save --package-lock=false playwright && npx playwright install --with-deps chromium
+      - name: Check responsive layouts and form behavior
+        run: |
+          npx vite preview --host 127.0.0.1 --port 4173 > /tmp/aichu-preview.log 2>&1 &
+          npx vite preview --outDir dist-connected --host 127.0.0.1 --port 4174 > /tmp/aichu-connected.log 2>&1 &
+          node scripts/browser-checks.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-checks
+          path: aichu-github-ready/browser-results/
+          retention-days: 14
