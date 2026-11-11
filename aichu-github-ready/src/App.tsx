@@ -388,9 +388,9 @@ export default function App() {
               <span className="mb-2 block">{rezText("Ваше имя", "Your name", "Атыңыз")}</span>
               <input required disabled={applicationStatus === "sending"} maxLength={100} autoComplete="name" value={applicationName} onChange={(e) => setApplicationName(e.target.value)} className="w-full rounded-xl border border-[#F4EAF0]/25 bg-white/5 px-4 py-3 text-base text-[#F4EAF0] outline-none focus:border-[#FDC21E]" placeholder={rezText("Как к вам обращаться", "Your name", "Атыңыз")} />
             </label>
-            <label className="block text-sm">
-              <span className="mb-2 block">{rezText("Номер телефона", "Phone number", "Телефон номери")}</span>
-              <input ref={applicationPhoneRef} required disabled={applicationStatus === "sending"} type="tel" inputMode="tel" maxLength={30} autoComplete="tel" value={applicationPhone}
+            <div className="block text-sm">
+              <label htmlFor="application-phone" className="mb-2 block">{rezText("Номер телефона", "Phone number", "Телефон номери")}</label>
+              <input id="application-phone" ref={applicationPhoneRef} required disabled={applicationStatus === "sending"} type="tel" inputMode="tel" maxLength={30} autoComplete="tel" value={applicationPhone}
                 aria-invalid={applicationPhoneTouched && applicationPhoneInvalid ? true : undefined}
                 aria-describedby={applicationPhoneTouched && applicationPhoneInvalid ? "application-phone-hint application-phone-error" : "application-phone-hint"}
                 onChange={(e) => {
@@ -405,7 +405,7 @@ export default function App() {
                 className="w-full rounded-xl border border-[#F4EAF0]/25 bg-white/5 px-4 py-3 text-base text-[#F4EAF0] outline-none focus:border-[#FDC21E]" placeholder="+996 503 030 997" />
               <span id="application-phone-hint" className="mt-2 block text-xs leading-relaxed text-[#F4EAF0]/65">{rezText("С кодом страны, например +996 503 030 997 или +7 999 123 45 67.", "Include the country code, for example +996 503 030 997 or +44 20 7946 0958.", "Өлкөнүн коду менен, мисалы +996 503 030 997 же +7 999 123 45 67.")}</span>
               {applicationPhoneTouched && applicationPhoneInvalid && <span id="application-phone-error" role="alert" className="application-error mt-2 block text-xs text-red-300">{phoneValidationMessage}</span>}
-            </label>
+            </div>
             <label className="block text-sm">
               <span className="mb-2 block">{rezText("Количество человек в организации", "Number of employees", "Уюмдагы кызматкерлердин саны")}</span>
               <input required disabled={applicationStatus === "sending"} type="number" min="1" max="1000000" step="1" value={applicationTeamSize} onChange={(e) => setApplicationTeamSize(e.target.value)} className="w-full rounded-xl border border-[#F4EAF0]/25 bg-white/5 px-4 py-3 text-base text-[#F4EAF0] outline-none focus:border-[#FDC21E]" placeholder="10" />

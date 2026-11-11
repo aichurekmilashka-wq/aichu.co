@@ -4,7 +4,7 @@ import { chromium } from "playwright"
 
 const output = new URL("../browser-results/", import.meta.url)
 await fs.mkdir(output, { recursive: true })
-const results = { viewports: [], forms: [], errors: [], failedRequests: [] }
+const results = { viewports: [], forms: [], languages: [], errors: [], failedRequests: [] }
 for (const port of [4173, 4174]) {
   let ready = false
   for (let attempt = 0; attempt < 50; attempt++) {
@@ -82,6 +82,22 @@ try {
       failure.push(`${width}×${height}: ${error}`)
       await save(page, `${width}-failure`)
     } finally { await context.close() }
+  }
+  for (const locale of [
+    { code: "en", open: "Open request form", phone: "Phone number", prepare: "Prepare email", close: "Close" },
+    { code: "ky", open: "Өтүнмө формасын ачуу", phone: "Телефон номери", prepare: "Кат даярдоо", close: "Жабуу" },
+  ]) {
+    const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true })
+    const page = await context.newPage()
+    await page.goto(`http://127.0.0.1:4173/${locale.code}/`, { waitUntil: "networkidle" })
+    await page.getByRole("button", { name: locale.open, exact: true }).tap()
+    await page.getByLabel(locale.phone, { exact: true }).fill("abcdefg")
+    await page.getByRole("button", { name: locale.prepare, exact: true }).click()
+    assert.equal(await page.locator('input[type="tel"]').evaluate(e => e.validity.valid), false)
+    await save(page, `390-${locale.code}-validation`)
+    await page.getByRole("button", { name: locale.close, exact: true }).click()
+    results.languages.push(locale.code)
+    await context.close()
   }
   // Connected path: every outbound delivery request is intercepted locally.
   for (const success of [false, true]) {
