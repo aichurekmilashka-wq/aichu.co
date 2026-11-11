@@ -24,6 +24,11 @@ export function createApplicationEmail(details: ApplicationDetails) {
   }
 }
 
+export class ApplicationRequestError extends Error {
+  status: number
+  constructor(status: number) { super("Application submission failed"); this.status = status }
+}
+
 export async function sendApplicationRequest(formData: FormData, fetchRequest: typeof fetch = fetch) {
   const controller = new AbortController()
   const timeout = setTimeout(() => controller.abort(), 20_000)
@@ -36,7 +41,7 @@ export async function sendApplicationRequest(formData: FormData, fetchRequest: t
     })
     const result: unknown = await response.json()
     if (!response.ok || !result || typeof result !== "object" || !("success" in result) || result.success !== true) {
-      throw new Error("Application submission failed")
+      throw new ApplicationRequestError(response.status)
     }
   } finally {
     clearTimeout(timeout)
