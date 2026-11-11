@@ -72,6 +72,7 @@ export default function App() {
   const [applicationPhone, setApplicationPhone] = useState("")
   const [applicationTeamSize, setApplicationTeamSize] = useState("")
   const [applicationStatus, setApplicationStatus] = useState<"idle" | "sending" | "sent" | "error" | "manual">("idle")
+  const applicationSubmittingRef = useRef(false)
   const web3FormsAccessKey = (import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || "").trim()
   const openApplication = () => {
     setApplicationStatus("idle")
@@ -79,7 +80,7 @@ export default function App() {
   }
   const submitApplication = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    if (applicationStatus === "sending") return
+    if (applicationSubmittingRef.current || applicationStatus === "sending") return
     const name = applicationName.trim()
     const phone = applicationPhone.trim()
     const teamSize = Number(applicationTeamSize)
@@ -104,6 +105,7 @@ export default function App() {
     formData.set("team_size", String(teamSize))
     formData.set("source", "aichuuu.co")
     if (new FormData(event.currentTarget).has("botcheck")) formData.set("botcheck", "true")
+    applicationSubmittingRef.current = true
     setApplicationStatus("sending")
     try {
       const response = await fetch("https://api.web3forms.com/submit", {
@@ -120,6 +122,8 @@ export default function App() {
       trackEvent("lead_submit_success", { form: "application", page_language: language })
     } catch {
       setApplicationStatus("error")
+    } finally {
+      applicationSubmittingRef.current = false
     }
   }
   const cookiePolicyRef = useRef<HTMLDialogElement>(null)
@@ -357,11 +361,25 @@ export default function App() {
             </label>
 
             <input type="checkbox" name="botcheck" tabIndex={-1} aria-hidden="true" autoComplete="off" className="pointer-events-none absolute h-0 w-0 opacity-0" />
-            <p className="text-xs leading-relaxed text-[#F4EAF0]/55">
-              {web3FormsAccessKey
-                ? rezText("Нажимая «Отправить», вы предоставляете данные для ответа на ваше обращение.", "By submitting, you provide these details so we can respond to your request.", "Жөнөтүү менен сиз кайрылууңузга жооп берүү үчүн маалыматыңызды бересиз.")
-                : rezText("Пока отправка через сайт не активирована, откроется почтовое приложение с готовой заявкой.", "Until website submissions are activated, a prefilled email will open.", "Сайт аркылуу жөнөтүү иштетилгенге чейин даяр кат менен почта тиркемеси ачылат.")}
+            <p className="text-xs leading-relaxed text-[#F4EAF0]/70">
+              {rezText(
+                "Имя, телефон и численность организации используются только для ответа на обращение и обсуждения вашей задачи. При автоматической отправке данные передаются через Web3Forms, а при ручной отправке — через ваше почтовое приложение. Данные могут обрабатываться за пределами вашей страны. Срок хранения зависит от используемого сервиса и нашей переписки. Запросить сведения о данных, исправление или удаление можно по адресу ",
+                "Your name, phone number and organisation size are used only to respond to your request and discuss your needs. Automated submissions are processed through Web3Forms; manual submissions use your email application. Data may be processed outside your country. Retention depends on the service used and our correspondence. For access, correction or deletion requests, contact ",
+                "Атыңыз, телефонуңуз жана уюмдун көлөмү кайрылууңузга жооп берүү жана маселеңизди талкуулоо үчүн гана колдонулат. Автоматтык жөнөтүүдө маалымат Web3Forms аркылуу, кол менен жөнөтүүдө почта колдонмоңуз аркылуу өтөт. Маалымат өлкөңүздөн тышкары иштетилиши мүмкүн. Сактоо мөөнөтү кызматка жана кат алышууга жараша болот. Маалыматка жетүү, оңдоо же өчүрүү боюнча кайрылыңыз: "
+              )}
+              <a href="mailto:aichurekmilashka@icloud.com" className="underline underline-offset-2 hover:text-[#FDC21E]">aichurekmilashka@icloud.com</a>.
+              {" "}
+              {web3FormsAccessKey && (
+                <a href="https://web3forms.com/privacy" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-[#FDC21E]">
+                  {rezText("Политика Web3Forms", "Web3Forms privacy policy", "Web3Forms купуялык саясаты")}
+                </a>
+              )}
             </p>
+            {!web3FormsAccessKey && (
+              <p className="text-xs leading-relaxed text-[#F4EAF0]/55">
+                {rezText("Автоматическая отправка пока не подключена: откроется почтовое приложение с готовым письмом.", "Automated submission is not configured yet: your mail app will open with a prepared message.", "Автоматтык жөнөтүү туташкан эмес: даяр кат менен почта тиркемеси ачылат.")}
+              </p>
+            )}
             <button type="submit" disabled={applicationStatus === "sending" || applicationStatus === "sent"} className="w-full rounded-xl bg-[#FDC21E] px-5 py-3 font-semibold text-[#07142D] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-55">
               {applicationStatus === "sending" ? rezText("Отправляем…", "Sending…", "Жөнөтүлүүдө…") : rezText("Отправить", "Send request", "Жөнөтүү")}
             </button>
