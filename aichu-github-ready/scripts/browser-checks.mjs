@@ -29,11 +29,13 @@ async function save(page, name) {
     }
   })
   await page.screenshot({ path: new URL(name + ".png", output).pathname, animations: "disabled" })
-  results.screenshots.push(await page.evaluate(name => {
+  const snapshot = await page.evaluate(name => {
     const nav = document.querySelector(".nimbus-nav").getBoundingClientRect()
     const header = document.querySelector("header").getBoundingClientRect()
     return { name, scrollY, nav: { top: nav.top, bottom: nav.bottom }, header: { top: header.top, bottom: header.bottom }, viewportOffset: visualViewport?.offsetTop }
-  }, name))
+  }, name)
+  results.screenshots.push(snapshot)
+  assert.ok(snapshot.nav.top - (snapshot.viewportOffset || 0) >= -1, `Navigation is clipped in ${name}: ${JSON.stringify(snapshot)}`)
 }
 async function noOverflow(page) {
   const dimensions = await page.evaluate(() => ({ width: innerWidth, content: document.documentElement.scrollWidth }))

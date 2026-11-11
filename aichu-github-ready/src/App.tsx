@@ -49,6 +49,30 @@ export default function App() {
     window.location.assign(prefix + next + "/" + window.location.search + window.location.hash)
   }
   const [theme, setTheme] = useState<"dark" | "light">(() => localStorage.getItem("aichu-theme") === "light" ? "light" : "dark")
+  const headerRef = useRef<HTMLElement>(null)
+  useEffect(() => {
+    const viewport = window.visualViewport
+    if (!viewport) return
+    let frame = 0
+    const update = () => {
+      if (headerRef.current) headerRef.current.style.top = Math.max(0, viewport.offsetTop) + "px"
+    }
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(() => { frame = 0; update() })
+    }
+    // Sticky coordinates belong to the layout viewport; mobile browser controls
+    // and the keyboard can pan the visible viewport within it.
+    update()
+    viewport.addEventListener("scroll", schedule, { passive: true })
+    viewport.addEventListener("resize", schedule, { passive: true })
+    window.addEventListener("scroll", schedule, { passive: true })
+    return () => {
+      cancelAnimationFrame(frame)
+      viewport.removeEventListener("scroll", schedule)
+      viewport.removeEventListener("resize", schedule)
+      window.removeEventListener("scroll", schedule)
+    }
+  }, [])
   const tr = (text: string) => language === "ru" ? text : (translations[text]?.[language === "en" ? 0 : 1] || text)
   useEffect(() => { document.documentElement.lang = language }, [language])
   const [analyticsConsent, setAnalyticsConsent] = useState<"accepted" | "rejected" | null>(() => {
@@ -235,7 +259,7 @@ export default function App() {
         .aichu-light article:not([class*="bg-[#F4EAF0]"]) { background-color:#fff !important; }
         .aichu-light [class*="text-[#F4EAF0]/"] { color:rgba(7,20,45,.72) !important; }
       `}</style>
-      <header className="sticky top-0 z-40 bg-[#07142D] px-2 py-2 text-[#F4EAF0] sm:px-4 md:px-8 lg:py-3">
+      <header ref={headerRef} className="sticky top-0 z-40 bg-[#07142D] px-2 py-2 text-[#F4EAF0] sm:px-4 md:px-8 lg:py-3">
         <div className="mx-auto flex max-w-[1440px] items-center justify-center">
           <LiquidNavbar
             ariaLabel={rezText("Основная навигация", "Main navigation", "Негизги багыттоо")}
