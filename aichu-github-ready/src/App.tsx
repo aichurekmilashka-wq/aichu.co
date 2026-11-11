@@ -102,6 +102,7 @@ export default function App() {
   const [applicationCopyStatus, setApplicationCopyStatus] = useState<"idle" | "copied" | "error">("idle")
   const [applicationStatus, setApplicationStatus] = useState<"idle" | "sending" | "sent" | "error" | "manual">("idle")
   const [applicationRateLimited, setApplicationRateLimited] = useState(false)
+  const [applicationValidationError, setApplicationValidationError] = useState("")
   const applicationSubmittingRef = useRef(false)
   const leadsConfigured = true
   const requestIdentity = useRef<{signature: string; id: string} | null>(null)
@@ -121,6 +122,7 @@ export default function App() {
     }
     setApplicationStatus("idle")
     setApplicationRateLimited(false)
+    setApplicationValidationError("")
     setApplicationPhoneTouched(false)
     setApplicationDraft(null)
     setApplicationCopyStatus("idle")
@@ -141,15 +143,24 @@ export default function App() {
     const name = applicationName.trim()
     const phone = normalizeApplicationPhone(applicationPhone)
     const teamSize = Number(applicationTeamSize)
-    if (!name || !phone || !Number.isInteger(teamSize) || teamSize < 1 || teamSize > 1000000) {
-      if (!phone) {
-        setApplicationPhoneTouched(true)
-        applicationPhoneRef.current?.setCustomValidity(phoneValidationMessage)
-        applicationPhoneRef.current?.reportValidity()
-      }
+    const consentInput = event.currentTarget.elements.namedItem("consent") as HTMLInputElement | null
+    const validTeam = Number.isInteger(teamSize) && teamSize >= 1 && teamSize <= 1000000
+    const validName = !!name && name.length <= 120 && !/[\x00-\x1f<>]/.test(name)
+    if (!validName || !phone || !validTeam || !consentInput?.checked) {
+      setApplicationValidationError(!validName
+        ? rezText("Укажите имя (до 120 символов, без < и >).", "Enter your name (up to 120 characters, without < or >).", "Атыңызды жазыңыз (120 белгиге чейин, < жана > белгилерисиз).")
+        : !phone ? phoneValidationMessage
+        : !validTeam ? rezText("Укажите количество человек в организации: целое число от 1 до 1 000 000.", "Enter the number of employees: a whole number from 1 to 1,000,000.", "Кызматкерлердин санын жазыңыз: 1ден 1 000 000го чейинки бүтүн сан.")
+        : rezText("Поставьте галочку согласия на обработку данных, чтобы отправить заявку.", "Check the data processing consent box to send your request.", "Өтүнмөнү жөнөтүү үчүн маалыматтарды иштетүүгө макулдук кутучасын белгилеңиз."))
+      if (!phone) setApplicationPhoneTouched(true)
       setApplicationStatus("error")
+      const target = !validName ? event.currentTarget.querySelector<HTMLInputElement>('input[autocomplete="name"]')
+        : !phone ? applicationPhoneRef.current
+        : !validTeam ? event.currentTarget.querySelector<HTMLInputElement>('input[type="number"]') : consentInput
+      target?.focus()
       return
     }
+    setApplicationValidationError("")
     const draft = createApplicationEmail({ name, phone, teamSize })
     setApplicationDraft(draft)
     setApplicationCopyStatus("idle")
@@ -407,11 +418,13 @@ export default function App() {
           <button type="button" onClick={() => applicationDialogRef.current?.close()} aria-label={rezText("Закрыть", "Close", "Жабуу")} className="absolute right-5 top-4 rounded-lg px-2 py-1 text-2xl text-[#F4EAF0]/70 hover:text-[#FDC21E]">×</button>
           <h2 id="application-heading" className="pr-8 text-2xl font-semibold">{rezText("Обсудим вашу задачу", "Tell us about your business", "Бизнесиңиз тууралуу айтып бериңиз")}</h2>
           <p className="mt-2 text-sm text-[#F4EAF0]/65">{rezText("Заполните короткую анкету для обращения в студию.", "Fill out this short request form.", "Кыскача өтүнмөнү толтуруңуз.")}</p>
-          <form onSubmit={submitApplication} onChange={() => {
+          <form noValidate onSubmit={submitApplication} onChange={() => {
+            setApplicationValidationError("")
             setApplicationDraft(null)
             setApplicationCopyStatus("idle")
             if (applicationStatus === "manual" || applicationStatus === "error") setApplicationStatus("idle")
           }} className="mt-7 space-y-5">
+            {applicationValidationError && <p role="alert" className="application-error rounded-lg border border-red-400/40 p-3 text-sm text-red-300">{applicationValidationError}</p>}
             <label className="block text-sm">
               <span className="mb-2 block">{rezText("Ваше имя", "Your name", "Атыңыз")}</span>
               <input required disabled={applicationStatus === "sending"} maxLength={120} autoComplete="name" value={applicationName} onChange={(e) => setApplicationName(e.target.value)} className="w-full rounded-xl border border-[#F4EAF0]/25 bg-white/5 px-4 py-3 text-base text-[#F4EAF0] outline-none focus:border-[#FDC21E]" placeholder={rezText("Как к вам обращаться", "Your name", "Атыңыз")} />
@@ -467,7 +480,7 @@ export default function App() {
               {applicationStatus === "sending" ? rezText("Отправляем…", "Sending…", "Жөнөтүлүүдө…") : applicationStatus === "sent" ? rezText("Отправлено", "Sent", "Жөнөтүлдү") : leadsConfigured ? rezText("Отправить", "Send request", "Жөнөтүү") : rezText("Подготовить письмо", "Prepare email", "Кат даярдоо")}
             </button>
             {applicationStatus === "sent" && <p role="status" className="text-sm text-[#FDC21E]">{rezText("Заявка отправлена. Мы свяжемся с вами по указанному номеру.", "Request sent. We will contact you at the phone number provided.", "Өтүнмө жөнөтүлдү. Көрсөтүлгөн номер боюнча байланышабыз.")}</p>}
-            {applicationStatus === "error" && <p role="alert" className="application-error text-sm text-red-300">{applicationRateLimited ? rezText("Достигнут лимит отправок. Для нового обращения напишите на почту ниже или попробуйте позже.", "Submission limit reached. Email us below for another request or try later.", "Жөнөтүү чегине жеттиңиз. Жаңы кайрылуу үчүн төмөнкү почтага жазыңыз же кийин аракет кылыңыз.") : rezText("Не удалось подтвердить отправку. Данные сохранены в форме. Повторите попытку или отправьте письмо по электронной почте.", "We could not confirm delivery. Your details remain in the form. Try again or send the request by email.", "Өтүнмөнү жөнөтүү ырасталган жок. Маалыматтар формада калды. Кайра аракет кылыңыз же электрондук почта аркылуу жөнөтүңүз.")}</p>}
+            {applicationStatus === "error" && !applicationValidationError && <p role="alert" className="application-error text-sm text-red-300">{applicationRateLimited ? rezText("Достигнут лимит отправок. Для нового обращения напишите на почту ниже или попробуйте позже.", "Submission limit reached. Email us below for another request or try later.", "Жөнөтүү чегине жеттиңиз. Жаңы кайрылуу үчүн төмөнкү почтага жазыңыз же кийин аракет кылыңыз.") : rezText("Не удалось подтвердить отправку. Данные сохранены в форме. Повторите попытку или отправьте письмо по электронной почте.", "We could not confirm delivery. Your details remain in the form. Try again or send the request by email.", "Өтүнмөнү жөнөтүү ырасталган жок. Маалыматтар формада калды. Кайра аракет кылыңыз же электрондук почта аркылуу жөнөтүңүз.")}</p>}
             {applicationStatus === "manual" && <p role="status" className="text-sm text-[#FDC21E]">{rezText("Письмо подготовлено, но ещё не отправлено. Отправьте его из своей почты.", "Your email is prepared, but has not been sent. Send it from your mail app.", "Кат даяр, бирок жөнөтүлө элек. Аны почтаңыздан жөнөтүңүз.")}</p>}
             {applicationDraft && (applicationStatus === "manual" || applicationStatus === "error") && (
               <div className="space-y-3 rounded-xl border border-[#F4EAF0]/25 p-4">

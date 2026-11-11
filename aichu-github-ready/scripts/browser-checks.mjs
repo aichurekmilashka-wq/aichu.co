@@ -147,10 +147,13 @@ try {
     const decline = page.getByRole("button", { name: "Отклонить", exact: true })
     if (await decline.isVisible()) await decline.click()
     await page.getByRole("button", { name: "Открыть анкету", exact: true }).click()
-    const testName = success ? "QA demo" : '<img src=x onerror="window.__aichuSecurityProbe=1">'
+    const testName = "QA demo"
     await page.getByLabel("Ваше имя", { exact: true }).fill(testName)
     await page.getByLabel("Номер телефона", { exact: true }).fill("+996 (503) 030-997")
     await page.getByLabel("Количество человек в организации", { exact: true }).fill("10")
+    await page.getByRole("button", { name: "Отправить", exact: true }).click()
+    await page.getByRole("alert").filter({ hasText: "галочку согласия" }).waitFor()
+    assert.equal(intercepted, 0)
     await page.locator('input[name="consent"]').check()
     await page.getByRole("button", { name: "Отправить", exact: true }).click()
     if (success) {
