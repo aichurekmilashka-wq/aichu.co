@@ -29,9 +29,9 @@ test("accepts only an explicit successful response; no real request is sent", as
   const form = new FormData()
   form.set("phone", "+996503030997")
   await sendApplicationRequest(form, async (url, options) => {
-    assert.equal(url, "https://api.web3forms.com/submit")
+    assert.equal(url, "https://kbnhwitwttcemvysbeco.supabase.co/functions/v1/submit-lead")
     assert.equal(options.method, "POST")
-    assert.equal(options.body, form)
+    assert.equal(JSON.parse(options.body).phone, form.get("phone"))
     assert.ok(options.signal instanceof AbortSignal)
     return Response.json({ success: true })
   })

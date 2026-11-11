@@ -102,7 +102,8 @@ export default function App() {
   const [applicationCopyStatus, setApplicationCopyStatus] = useState<"idle" | "copied" | "error">("idle")
   const [applicationStatus, setApplicationStatus] = useState<"idle" | "sending" | "sent" | "error" | "manual">("idle")
   const applicationSubmittingRef = useRef(false)
-  const web3FormsAccessKey = (import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || "").trim()
+  const leadsConfigured = true
+  const requestIdentity = useRef<{signature: string; id: string} | null>(null)
   const phoneValidationMessage = language === "en"
     ? "Enter a phone number with + and country code, containing 7–15 digits."
     : language === "ky"
@@ -150,14 +151,12 @@ export default function App() {
     const draft = createApplicationEmail({ name, phone, teamSize })
     setApplicationDraft(draft)
     setApplicationCopyStatus("idle")
-    // Preserve email fallback until the Web3Forms public access key is supplied.
-    if (!web3FormsAccessKey) {
-      setApplicationStatus("manual")
-      window.location.href = draft.mailto
-      return
-    }
+    const signature = JSON.stringify({ name, phone, teamSize, language })
+    if (requestIdentity.current?.signature !== signature) requestIdentity.current = { signature, id: crypto.randomUUID() }
     const formData = new FormData()
-    formData.set("access_key", web3FormsAccessKey)
+    formData.set("id", requestIdentity.current.id)
+    formData.set("language", language)
+    formData.set("consent", "true")
     formData.set("subject", "Новая заявка с aichuuu.co")
     formData.set("from_name", "aichuuu.co")
     formData.set("name", name)
@@ -410,7 +409,7 @@ export default function App() {
           }} className="mt-7 space-y-5">
             <label className="block text-sm">
               <span className="mb-2 block">{rezText("Ваше имя", "Your name", "Атыңыз")}</span>
-              <input required disabled={applicationStatus === "sending"} maxLength={100} autoComplete="name" value={applicationName} onChange={(e) => setApplicationName(e.target.value)} className="w-full rounded-xl border border-[#F4EAF0]/25 bg-white/5 px-4 py-3 text-base text-[#F4EAF0] outline-none focus:border-[#FDC21E]" placeholder={rezText("Как к вам обращаться", "Your name", "Атыңыз")} />
+              <input required disabled={applicationStatus === "sending"} maxLength={120} autoComplete="name" value={applicationName} onChange={(e) => setApplicationName(e.target.value)} className="w-full rounded-xl border border-[#F4EAF0]/25 bg-white/5 px-4 py-3 text-base text-[#F4EAF0] outline-none focus:border-[#FDC21E]" placeholder={rezText("Как к вам обращаться", "Your name", "Атыңыз")} />
             </label>
             <div className="block text-sm">
               <label htmlFor="application-phone" className="mb-2 block">{rezText("Номер телефона", "Phone number", "Телефон номери")}</label>
@@ -438,25 +437,29 @@ export default function App() {
             <input type="checkbox" name="botcheck" tabIndex={-1} aria-hidden="true" autoComplete="off" className="pointer-events-none absolute h-0 w-0 opacity-0" />
             <p className="text-xs leading-relaxed text-[#F4EAF0]/70">
               {rezText(
-                "Имя, телефон и численность организации используются только для ответа на обращение и обсуждения вашей задачи. При автоматической отправке данные передаются через Web3Forms, а при ручной отправке — через ваше почтовое приложение. Данные могут обрабатываться за пределами вашей страны. Срок хранения зависит от используемого сервиса и нашей переписки. Запросить сведения о данных, исправление или удаление можно по адресу ",
-                "Your name, phone number and organisation size are used only to respond to your request and discuss your needs. Automated submissions are processed through Web3Forms; manual submissions use your email application. Data may be processed outside your country. Retention depends on the service used and our correspondence. For access, correction or deletion requests, contact ",
-                "Атыңыз, телефонуңуз жана уюмдун көлөмү кайрылууңузга жооп берүү жана маселеңизди талкуулоо үчүн гана колдонулат. Автоматтык жөнөтүүдө маалымат Web3Forms аркылуу, кол менен жөнөтүүдө почта колдонмоңуз аркылуу өтөт. Маалымат өлкөңүздөн тышкары иштетилиши мүмкүн. Сактоо мөөнөтү кызматка жана кат алышууга жараша болот. Маалыматка жетүү, оңдоо же өчүрүү боюнча кайрылыңыз: "
+                "Имя, телефон и численность организации используются только для ответа на обращение и обсуждения вашей задачи. Заявки сохраняются в закрытой базе Supabase (Германия); доступ есть только у команды проекта. При отправке резервного письма используется ваше почтовое приложение. Данные могут обрабатываться за пределами вашей страны. Срок хранения зависит от используемого сервиса и нашей переписки. Запросить сведения о данных, исправление или удаление можно по адресу ",
+                "Your name, phone number and organisation size are used only to respond to your request and discuss your needs. Requests are stored in a private Supabase database in Germany, accessible only to the project team. Backup emails use your email application. Data may be processed outside your country. Retention depends on the service used and our correspondence. For access, correction or deletion requests, contact ",
+                "Атыңыз, телефонуңуз жана уюмдун көлөмү кайрылууңузга жооп берүү жана маселеңизди талкуулоо үчүн гана колдонулат. Өтүнмөлөр Supabase жабык базасында (Германия) сакталат; маалыматка долбоордун командасы гана жете алат. Камдык кат почта колдонмоңуз аркылуу жөнөтүлөт. Маалымат өлкөңүздөн тышкары иштетилиши мүмкүн. Сактоо мөөнөтү кызматка жана кат алышууга жараша болот. Маалыматка жетүү, оңдоо же өчүрүү боюнча кайрылыңыз: "
               )}
               <a href="mailto:aichurekmilashka@icloud.com" className="underline underline-offset-2 hover:text-[#FDC21E]">aichurekmilashka@icloud.com</a>.
               {" "}
-              {web3FormsAccessKey && (
-                <a href="https://web3forms.com/privacy" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-[#FDC21E]">
-                  {rezText("Политика Web3Forms", "Web3Forms privacy policy", "Web3Forms купуялык саясаты")}
+              {leadsConfigured && (
+                <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-[#FDC21E]">
+                  {rezText("Политика Supabase", "Supabase privacy policy", "Supabase купуялык саясаты")}
                 </a>
               )}
             </p>
-            {!web3FormsAccessKey && (
+            {!leadsConfigured && (
               <p className="text-xs leading-relaxed text-[#F4EAF0]/55">
                 {rezText("Мы подготовим письмо с вашими данными. Отправьте его из почтового приложения; если оно не откроется, скопируйте текст ниже.", "We will prepare an email with your details. Send it from your mail app; if it does not open, copy the draft below.", "Маалыматтарыңыз менен кат даярдайбыз. Аны почта колдонмосунан жөнөтүңүз; колдонмо ачылбаса, төмөндөгү текстти көчүрүңүз.")}
               </p>
             )}
+            <label className="flex items-start gap-3 text-xs leading-relaxed">
+              <input type="checkbox" name="consent" required disabled={applicationStatus === "sending"} className="mt-1 h-4 w-4 shrink-0 accent-[#FDC21E]" />
+              <span>{rezText("Согласен(на) на обработку указанных данных для ответа на заявку.", "I agree to processing these details to respond to my request.", "Өтүнмөмө жооп берүү үчүн көрсөтүлгөн маалыматтарды иштетүүгө макулмун.")}</span>
+            </label>
             <button type="submit" disabled={applicationStatus === "sending" || applicationStatus === "sent"} className="w-full rounded-xl bg-[#FDC21E] px-5 py-3 font-semibold text-[#07142D] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-55">
-              {applicationStatus === "sending" ? rezText("Отправляем…", "Sending…", "Жөнөтүлүүдө…") : web3FormsAccessKey ? rezText("Отправить", "Send request", "Жөнөтүү") : rezText("Подготовить письмо", "Prepare email", "Кат даярдоо")}
+              {applicationStatus === "sending" ? rezText("Отправляем…", "Sending…", "Жөнөтүлүүдө…") : leadsConfigured ? rezText("Отправить", "Send request", "Жөнөтүү") : rezText("Подготовить письмо", "Prepare email", "Кат даярдоо")}
             </button>
             {applicationStatus === "sent" && <p role="status" className="text-sm text-[#FDC21E]">{rezText("Заявка отправлена. Мы свяжемся с вами по указанному номеру.", "Request sent. We will contact you at the phone number provided.", "Өтүнмө жөнөтүлдү. Көрсөтүлгөн номер боюнча байланышабыз.")}</p>}
             {applicationStatus === "error" && <p role="alert" className="application-error text-sm text-red-300">{rezText("Не удалось подтвердить отправку. Данные сохранены в форме. Повторите попытку или отправьте письмо по электронной почте.", "We could not confirm delivery. Your details remain in the form. Try again or send the request by email.", "Өтүнмөнү жөнөтүү ырасталган жок. Маалыматтар формада калды. Кайра аракет кылыңыз же электрондук почта аркылуу жөнөтүңүз.")}</p>}
