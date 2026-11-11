@@ -134,28 +134,34 @@ try {
     await context.close()
   }
   // Connected path: every outbound delivery request is intercepted locally.
-  for (const success of [false, true]) {
+  for (const responseStatus of [503, 200, 429]) {
+    const success = responseStatus === 200
     const context = await browser.newContext()
     const page = await context.newPage()
     let intercepted = 0
     await page.route("https://kbnhwitwttcemvysbeco.supabase.co/functions/v1/submit-lead", route => {
       intercepted++
-      return route.fulfill({ status: success ? 200 : 503, contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body: JSON.stringify({ success }) })
+      return route.fulfill({ status: responseStatus, contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body: JSON.stringify({ success }) })
     })
     await page.goto("http://127.0.0.1:4174/", { waitUntil: "networkidle" })
     const decline = page.getByRole("button", { name: "Отклонить", exact: true })
     if (await decline.isVisible()) await decline.click()
     await page.getByRole("button", { name: "Открыть анкету", exact: true }).click()
-    const testName = success ? "QA demo" : '<img src=x onerror="window.__aichuSecurityProbe=1">'
+    const testName = "QA demo"
     await page.getByLabel("Ваше имя", { exact: true }).fill(testName)
     await page.getByLabel("Номер телефона", { exact: true }).fill("+996 (503) 030-997")
     await page.getByLabel("Количество человек в организации", { exact: true }).fill("10")
+    await page.getByRole("button", { name: "Отправить", exact: true }).click()
+    await page.getByRole("alert").filter({ hasText: "галочку согласия" }).waitFor()
+    assert.equal(intercepted, 0)
     await page.locator('input[name="consent"]').check()
     await page.getByRole("button", { name: "Отправить", exact: true }).click()
     if (success) {
       await page.getByRole("status").filter({ hasText: "Заявка отправлена" }).waitFor()
+      assert.equal(await page.locator("#application-phone-error").count(), 0)
+      assert.equal(await page.getByRole("button", { name: "Отправлено", exact: true }).isDisabled(), true)
     } else {
-      await page.getByRole("alert").filter({ hasText: "Не удалось подтвердить" }).waitFor()
+      await page.getByRole("alert").filter({ hasText: responseStatus === 429 ? "Достигнут лимит" : "Не удалось подтвердить" }).waitFor()
       assert.equal(await page.getByLabel("Ваше имя", { exact: true }).inputValue(), testName)
       assert.ok((await page.getByLabel("Текст письма", { exact: true }).inputValue()).includes(testName))
       assert.equal(await page.locator("dialog img").count(), 0)
@@ -164,7 +170,7 @@ try {
       await page.getByRole("status").waitFor()
     }
     assert.equal(intercepted, 1)
-    results.forms.push({ successResponse: success, intercepted })
+    results.forms.push({ successResponse: success, responseStatus, intercepted })
     await save(page, `delivery-${success ? "success" : "error"}`)
     await context.close()
   }

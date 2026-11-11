@@ -1,6 +1,6 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import { createApplicationEmail, normalizeApplicationPhone, sendApplicationRequest } from "../src/lib/application.ts"
+import { ApplicationRequestError, createApplicationEmail, normalizeApplicationPhone, sendApplicationRequest } from "../src/lib/application.ts"
 
 test("normalizes international numbers without changing country codes", () => {
   assert.equal(normalizeApplicationPhone(" +996 (503) 030-997 "), "+996503030997")
@@ -55,4 +55,9 @@ test("aborts an unresponsive request after 20 seconds", async (t) => {
   const rejection = assert.rejects(request, /aborted/)
   t.mock.timers.tick(20_000)
   await rejection
+})
+
+
+test("preserves HTTP status so throttling is distinguished from delivery errors", async () => {
+  await assert.rejects(sendApplicationRequest(new FormData(), async () => Response.json({ success: false }, { status: 429 })), error => error instanceof ApplicationRequestError && error.status === 429)
 })
