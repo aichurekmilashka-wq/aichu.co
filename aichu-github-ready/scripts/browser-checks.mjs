@@ -4,7 +4,7 @@ import { chromium } from "playwright"
 
 const output = new URL("../browser-results/", import.meta.url)
 await fs.mkdir(output, { recursive: true })
-const results = { viewports: [], forms: [], languages: [], errors: [], failedRequests: [] }
+const results = { viewports: [], forms: [], languages: [], screenshots: [], errors: [], failedRequests: [] }
 for (const port of [4173, 4174]) {
   let ready = false
   for (let attempt = 0; attempt < 50; attempt++) {
@@ -19,7 +19,21 @@ const sizes = [[320, 568], [375, 812], [390, 844], [430, 932], [768, 1024], [102
 const failure = []
 
 async function save(page, name) {
-  await page.screenshot({ path: new URL(name + ".png", output).pathname })
+  // Let native smooth scrolling settle before judging clipped/sticky elements.
+  await page.evaluate(async () => {
+    let last = scrollY, stable = 0
+    for (let frame = 0; frame < 120 && stable < 4; frame++) {
+      await new Promise(resolve => requestAnimationFrame(resolve))
+      stable = scrollY === last ? stable + 1 : 0
+      last = scrollY
+    }
+  })
+  await page.screenshot({ path: new URL(name + ".png", output).pathname, animations: "disabled" })
+  results.screenshots.push(await page.evaluate(name => {
+    const nav = document.querySelector(".nimbus-nav").getBoundingClientRect()
+    const header = document.querySelector("header").getBoundingClientRect()
+    return { name, scrollY, nav: { top: nav.top, bottom: nav.bottom }, header: { top: header.top, bottom: header.bottom }, viewportOffset: visualViewport?.offsetTop }
+  }, name))
 }
 async function noOverflow(page) {
   const dimensions = await page.evaluate(() => ({ width: innerWidth, content: document.documentElement.scrollWidth }))

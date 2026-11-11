@@ -67,6 +67,7 @@
   font-family: ui-monospace,SFMono-Regular,Consolas,monospace;
   font-size: 13px; letter-spacing: 3px; fill: #9BAEC9;
 }
+.sl-root.sl-light .sl-svg-overline { fill: var(--sl-muted); }
 .sl-svg-stage {
   font-family: Inter,Arial,sans-serif;
   font-size: 19px; font-weight: 540; fill: #F4EAF0;
