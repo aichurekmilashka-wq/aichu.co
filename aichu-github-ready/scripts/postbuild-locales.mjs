@@ -70,6 +70,8 @@ const rootHtml = `<!doctype html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'none'; img-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
   <meta name="robots" content="noindex,follow" />
   <meta http-equiv="refresh" content="0; url=./ru/" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />

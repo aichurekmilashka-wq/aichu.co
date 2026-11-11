@@ -63,7 +63,9 @@ export function initAnalytics(): void {
     // Webvisor and click maps are intentionally off: we only need visits and named goals.
     window.ym(metrikaId, "init", {
       clickmap: false,
-      trackLinks: true,
+      // Contact goals are sent explicitly without hrefs or form values.
+      // Automatic link tracking could include the body of a prepared mailto URL.
+      trackLinks: false,
       accurateTrackBounce: true,
       webvisor: false,
     })

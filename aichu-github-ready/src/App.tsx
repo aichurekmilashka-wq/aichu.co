@@ -466,7 +466,7 @@ export default function App() {
                 <p className="break-all text-sm">{rezText("Получатель", "Recipient", "Алуучу")}: <a href="mailto:aichurekmilashka@icloud.com" className="underline">aichurekmilashka@icloud.com</a></p>
                 <textarea readOnly rows={5} value={applicationDraft.message} onFocus={(event) => event.currentTarget.select()} aria-label={rezText("Текст письма", "Email draft", "Каттын тексти")} className="w-full resize-y rounded-lg border border-[#F4EAF0]/25 bg-white/5 p-3 text-sm leading-relaxed" />
                 <div className="flex flex-wrap gap-3 text-sm">
-                  <a href={applicationDraft.mailto} className="inline-flex min-h-11 items-center rounded-lg border border-[#F4EAF0]/25 px-3 underline">{rezText("Открыть почту", "Open mail app", "Почтаны ачуу")}</a>
+                  <a href={applicationDraft.mailto} className="ym-disable-tracklink inline-flex min-h-11 items-center rounded-lg border border-[#F4EAF0]/25 px-3 underline">{rezText("Открыть почту", "Open mail app", "Почтаны ачуу")}</a>
                   <button type="button" onClick={copyApplication} className="min-h-11 rounded-lg border border-[#F4EAF0]/25 px-3">{rezText("Скопировать текст", "Copy draft", "Текстти көчүрүү")}</button>
                 </div>
                 {applicationCopyStatus === "copied" && <p role="status" className="text-xs">{rezText("Текст скопирован. Вставьте его в письмо.", "Draft copied. Paste it into your email.", "Текст көчүрүлдү. Аны катка коюңуз.")}</p>}

@@ -5,6 +5,18 @@ import { chromium } from "playwright"
 const output = new URL("../browser-results/", import.meta.url)
 await fs.mkdir(output, { recursive: true })
 const results = { viewports: [], forms: [], languages: [], screenshots: [], errors: [], failedRequests: [] }
+// Observe the public response from the CI runner as well as the development
+// environment, whose network proxy may alter HTTP headers. No visitor data.
+results.publishedSecurity = []
+for (const url of ["https://aichuuu.com/ru/", "https://aichuuu.com/.env", "https://aichuuu.com/.git/HEAD"]) {
+  try {
+    const response = await fetch(url, { method: "HEAD", signal: AbortSignal.timeout(15_000), redirect: "follow" })
+    const headers = Object.fromEntries(["strict-transport-security", "content-security-policy", "x-frame-options", "x-content-type-options", "referrer-policy", "permissions-policy"].map(name => [name, response.headers.get(name)]))
+    results.publishedSecurity.push({ url, status: response.status, headers })
+  } catch (error) {
+    results.publishedSecurity.push({ url, error: String(error) })
+  }
+}
 for (const port of [4173, 4174]) {
   let ready = false
   for (let attempt = 0; attempt < 50; attempt++) {
@@ -132,7 +144,8 @@ try {
     const decline = page.getByRole("button", { name: "Отклонить", exact: true })
     if (await decline.isVisible()) await decline.click()
     await page.getByRole("button", { name: "Открыть анкету", exact: true }).click()
-    await page.getByLabel("Ваше имя", { exact: true }).fill("QA demo")
+    const testName = success ? "QA demo" : '<img src=x onerror="window.__aichuSecurityProbe=1">'
+    await page.getByLabel("Ваше имя", { exact: true }).fill(testName)
     await page.getByLabel("Номер телефона", { exact: true }).fill("+996 (503) 030-997")
     await page.getByLabel("Количество человек в организации", { exact: true }).fill("10")
     await page.getByRole("button", { name: "Отправить", exact: true }).click()
@@ -140,7 +153,10 @@ try {
       await page.getByRole("status").filter({ hasText: "Заявка отправлена" }).waitFor()
     } else {
       await page.getByRole("alert").filter({ hasText: "Не удалось подтвердить" }).waitFor()
-      assert.equal(await page.getByLabel("Ваше имя", { exact: true }).inputValue(), "QA demo")
+      assert.equal(await page.getByLabel("Ваше имя", { exact: true }).inputValue(), testName)
+      assert.ok((await page.getByLabel("Текст письма", { exact: true }).inputValue()).includes(testName))
+      assert.equal(await page.locator("dialog img").count(), 0)
+      assert.equal(await page.evaluate(() => window.__aichuSecurityProbe), undefined)
       await page.getByRole("button", { name: "Скопировать текст", exact: true }).click()
       await page.getByRole("status").waitFor()
     }
