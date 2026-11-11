@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import "./sales-leakage-funnel.css"
+import { funnelRibbon as tiers } from "../lib/sales-funnel-geometry"
 
 type Language = "ru" | "en" | "ky"
 type Stage = {
@@ -102,14 +103,6 @@ const text: Record<Language, Content> = {
   },
 }
 
-const tiers = [
-  { d: "M100 150 Q350 128 600 150 L552 252 Q350 269 148 252 Z", top: 150, rx: 250, holeX: 151, holeY: 214, holeSide: -1, leak: "M151 214 C111 202 101 247 34 253", labelY: 203 },
-  { d: "M164 272 Q350 255 536 272 L502 367 Q350 381 198 367 Z", top: 272, rx: 186, holeX: 521, holeY: 323, holeSide: 1, leak: "M521 323 C571 325 594 354 665 366", labelY: 321 },
-  { d: "M206 386 Q350 375 494 386 L465 477 Q350 490 235 477 Z", top: 386, rx: 144, holeX: 238, holeY: 436, holeSide: -1, leak: "M238 436 C190 427 166 475 76 493", labelY: 433 },
-  { d: "M242 497 Q350 490 458 497 L437 585 Q350 597 263 585 Z", top: 497, rx: 108, holeX: 440, holeY: 540, holeSide: 1, leak: "M440 540 C496 530 546 577 646 591", labelY: 548 },
-  { d: "M272 603 Q350 595 428 603 L408 681 Q350 694 292 681 Z", top: 603, rx: 78, holeX: 292, holeY: 650, holeSide: -1, leak: "M292 650 C250 635 213 695 145 707", labelY: 650 },
-]
-
 export default function SalesLeakageFunnel({ language, theme }: { language: Language; theme: "dark" | "light" }) {
   const rootRef = useRef<HTMLElement | null>(null)
   const [inView, setInView] = useState(false)
@@ -183,9 +176,13 @@ export default function SalesLeakageFunnel({ language, theme }: { language: Lang
               <svg viewBox="0 0 700 790" role="group" aria-label={copy.overview} className="sl-funnel-svg">
                 <defs>
                   <linearGradient id="sl-tier-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#1F3658" stopOpacity=".82" />
-                    <stop offset="46%" stopColor="#0A1A34" stopOpacity=".95" />
-                    <stop offset="100%" stopColor="#253C60" stopOpacity=".86" />
+                    <stop offset="0%" stopColor="#365578" />
+                    <stop offset="46%" stopColor="#0A1A34" />
+                    <stop offset="100%" stopColor="#253C60" />
+                  </linearGradient>
+                  <linearGradient id="sl-back-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#142D4B" />
+                    <stop offset="100%" stopColor="#071326" />
                   </linearGradient>
                   <linearGradient id="sl-rim-gradient">
                     <stop offset="0" stopColor="#526988" stopOpacity=".35"/>
@@ -210,6 +207,15 @@ export default function SalesLeakageFunnel({ language, theme }: { language: Lang
                   ))}
                 </g>
                 <path d="M350 135 C350 300 350 520 350 710" className="sl-inner-flow" stroke="url(#sl-flow-gradient)" fill="none" strokeWidth="2" strokeDasharray="7 15" aria-hidden="true"/>
+                <g aria-hidden="true" className="sl-ribbon-back">
+                  {tiers.map((tier, i) => (
+                    <g key={i}>
+                      <path d={tier.back.face} fill="url(#sl-back-gradient)" />
+                      <path d={tier.back.upper} fill="none" stroke="#6B83A2" strokeOpacity=".55" strokeWidth="1.4" />
+                      <path d={tier.back.lower} fill="none" stroke="#6B83A2" strokeOpacity=".3" strokeWidth="1.2" />
+                    </g>
+                  ))}
+                </g>
                 {tiers.map((tier, i) => {
                   const selected = active === i
                   const stage = copy.stages[i]
@@ -225,11 +231,11 @@ export default function SalesLeakageFunnel({ language, theme }: { language: Lang
                       onMouseEnter={event => { if ((event.target as Element).closest(".sl-hole")) return; if (window.matchMedia("(hover: hover)").matches) choose(i) }}
                       onKeyDown={event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); choose(i) } }}
                     >
-                      <path d={tier.d} fill="url(#sl-tier-gradient)" stroke={selected ? "#FFE1A0" : "#5A7191"} strokeWidth={selected ? 2 : 1.2} className="sl-tier-face"/>
-                      <ellipse cx="350" cy={tier.top} rx={tier.rx} ry={i === 0 ? 20 : 13} fill="#0B1A33" fillOpacity=".92" stroke="url(#sl-rim-gradient)" strokeWidth="1.8"/>
-                      <path d={tier.d} fill="none" stroke={selected ? "#FDC21E" : "#B2C9ED"} strokeOpacity={selected ? ".38" : ".13"} strokeWidth="5" className="sl-tier-glow"/>
-                      <text x="350" y={tier.labelY - (stage.shortLines.length > 1 ? 15 : 12)} textAnchor="middle" className="sl-tier-number">0{i + 1}</text>
-                      <text x="350" y={tier.labelY + (stage.shortLines.length > 1 ? 6 : 12)} className="sl-svg-stage" textAnchor="middle">
+                      <path d={tier.front.face} fill="url(#sl-tier-gradient)" className="sl-tier-face"/>
+                      <path d={tier.front.upper} fill="none" stroke={selected ? "#FFE1A0" : "url(#sl-rim-gradient)"} strokeWidth={selected ? 2.5 : 1.8} className="sl-tier-glow"/>
+                      <path d={tier.front.lower} fill="none" stroke={selected ? "#FDC21E" : "#6B83A2"} strokeOpacity={selected ? ".85" : ".6"} strokeWidth={selected ? 2 : 1.2} className="sl-tier-glow"/>
+                      <text x="350" y={tier.labelY - (stage.shortLines.length > 1 ? 21 : 12)} textAnchor="middle" className="sl-tier-number">0{i + 1}</text>
+                      <text x="350" y={tier.labelY + (stage.shortLines.length > 1 ? 0 : 12)} className="sl-svg-stage" textAnchor="middle">
                         {stage.shortLines.map((line, j) => <tspan key={j} x="350" dy={j === 0 ? 0 : 20}>{line}</tspan>)}
                       </text>
                       <path d={tier.leak} fill="none" stroke="#FDC21E" strokeWidth={selected ? 3 : 1.6} strokeOpacity={selected ? ".92" : ".4"} strokeLinecap="round" className="sl-leak-line"/>
@@ -259,7 +265,7 @@ export default function SalesLeakageFunnel({ language, theme }: { language: Lang
                     </circle>
                   )))}
                 </g>
-                <path d="M350 697 L350 721" stroke="#FDC21E" strokeOpacity=".6" strokeWidth="1.5" strokeDasharray="3 5"/>
+                <path d="M430 680 C430 711 350 706 350 721" fill="none" stroke="#FDC21E" strokeOpacity=".6" strokeWidth="1.5" strokeDasharray="3 5"/>
                 <circle cx="350" cy="723" r="4" fill="#FDC21E" className="sl-exit-dot"/>
                 <text x="350" y="752" textAnchor="middle" className="sl-svg-overline">{copy.result}</text>
               </svg>

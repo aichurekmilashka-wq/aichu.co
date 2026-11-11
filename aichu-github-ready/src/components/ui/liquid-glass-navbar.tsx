@@ -23,6 +23,7 @@ export type LiquidNavbarProps = {
   tone?: "light" | "dark"
   compact?: boolean
   sound?: boolean
+  ariaLabel?: string
   className?: string
   style?: React.CSSProperties
 }
@@ -166,6 +167,7 @@ export function LiquidNavbar({
   tone = "light",
   compact,
   sound = false,
+  ariaLabel = "Main navigation",
   className,
   style,
 }: LiquidNavbarProps) {
@@ -469,7 +471,7 @@ export function LiquidNavbar({
       data-tone={tone}
       data-gl={gl}
       data-compact={compact === undefined ? undefined : String(compact)}
-      aria-label="Основная навигация"
+      aria-label={ariaLabel}
       onKeyDown={onKeyDown}
       onPointerMove={onMove}
       onPointerLeave={() => { st.current.mouse.on = false; loop() }}
