@@ -30,6 +30,7 @@ try {
     const touch = width <= 1024
     const context = await browser.newContext({ viewport: { width, height }, hasTouch: touch, isMobile: touch })
     const page = await context.newPage()
+    page.setDefaultTimeout(10_000)
     const record = { width, height, touch, states: [] }
     results.viewports.push(record)
     page.on("pageerror", error => results.errors.push({ width, message: error.message }))
@@ -40,6 +41,7 @@ try {
       if (await decline.isVisible()) await decline.click()
       for (const theme of ["dark", "light"]) {
         if (theme === "light") await page.getByRole("button", { name: "Включить светлую тему" }).click()
+        assert.equal(await page.locator(".sl-headline strong").evaluate(e => getComputedStyle(e).color), theme === "light" ? "rgb(138, 96, 0)" : "rgb(253, 194, 30)")
         await noOverflow(page)
         await save(page, `${width}-${theme}-hero`)
         await page.locator('#problem').scrollIntoViewIfNeeded()
@@ -63,6 +65,8 @@ try {
           assert.equal(await page.locator("#problem").evaluate(e => e.classList.contains("sl-paused")), true)
         }
         await page.getByRole("button", { name: "Открыть анкету", exact: true }).click()
+        await page.getByLabel("Ваше имя", { exact: true }).fill("QA demo")
+        await page.getByLabel("Количество человек в организации", { exact: true }).fill("10")
         await page.getByLabel("Номер телефона", { exact: true }).fill("abcdefg")
         await page.getByRole("button", { name: "Подготовить письмо", exact: true }).click()
         assert.equal(await page.locator('input[type="tel"]').evaluate(e => e.validity.valid), false)
@@ -106,7 +110,7 @@ try {
     let intercepted = 0
     await page.route("https://api.web3forms.com/submit", route => {
       intercepted++
-      return route.fulfill({ status: success ? 200 : 503, contentType: "application/json", body: JSON.stringify({ success }) })
+      return route.fulfill({ status: success ? 200 : 503, contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body: JSON.stringify({ success }) })
     })
     await page.goto("http://127.0.0.1:4174/", { waitUntil: "networkidle" })
     const decline = page.getByRole("button", { name: "Отклонить", exact: true })
