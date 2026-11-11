@@ -1,3 +1,6 @@
+// Public anon credential: permits invoking the receiver, never reading lead records.
+const LEAD_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtibmh3aXR3dHRjZW12eXNiZWNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQzOTM4MzgsImV4cCI6MjEwOTk2OTgzOH0.SJ2ZML7BLSH5f2MPpJNoci3IDERopvoh4hLD1corviw"
+
 export type ApplicationDetails = {
   name: string
   phone: string
@@ -25,10 +28,10 @@ export async function sendApplicationRequest(formData: FormData, fetchRequest: t
   const controller = new AbortController()
   const timeout = setTimeout(() => controller.abort(), 20_000)
   try {
-    const response = await fetchRequest("https://api.web3forms.com/submit", {
+    const response = await fetchRequest("https://kbnhwitwttcemvysbeco.supabase.co/functions/v1/submit-lead", {
       method: "POST",
-      body: formData,
-      headers: { Accept: "application/json" },
+      body: JSON.stringify({ id: formData.get("id"), name: formData.get("name"), phone: formData.get("phone"), teamSize: Number(formData.get("team_size")), language: formData.get("language"), consent: formData.get("consent") === "true", botcheck: formData.has("botcheck") }),
+      headers: { Accept: "application/json", "Content-Type": "application/json", Authorization: `Bearer ${LEAD_ANON_KEY}`, apikey: LEAD_ANON_KEY },
       signal: controller.signal,
     })
     const result: unknown = await response.json()

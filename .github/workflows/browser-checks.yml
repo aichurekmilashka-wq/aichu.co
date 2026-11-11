@@ -25,14 +25,10 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm test
       - run: npm run build
-        env:
-          VITE_WEB3FORMS_ACCESS_KEY: ""
       - run: npm audit --audit-level=high
       - run: npm run security:check
-      - name: Build connected form with a mock-only key
+      - name: Build form for intercepted delivery tests
         run: npx --no-install vite build --outDir dist-connected
-        env:
-          VITE_WEB3FORMS_ACCESS_KEY: qa-mocked-only
       - name: Install browser test tooling
         run: npx --no-install playwright install --with-deps chromium
       - name: Check responsive layouts and form behavior

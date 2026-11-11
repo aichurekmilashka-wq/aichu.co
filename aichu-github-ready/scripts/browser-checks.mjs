@@ -96,10 +96,12 @@ try {
         await page.getByLabel("Ваше имя", { exact: true }).fill("QA demo")
         await page.getByLabel("Количество человек в организации", { exact: true }).fill("10")
         await page.getByLabel("Номер телефона", { exact: true }).fill("abcdefg")
-        await page.getByRole("button", { name: "Подготовить письмо", exact: true }).click()
+        await page.getByRole("button", { name: "Отправить", exact: true }).click()
         assert.equal(await page.locator('input[type="tel"]').evaluate(e => e.validity.valid), false)
         await page.getByLabel("Номер телефона", { exact: true }).fill("+996 (503) 030-997")
         assert.equal(await page.locator('input[type="tel"]').evaluate(e => e.validity.valid), true)
+        assert.equal(await page.locator('input[name="consent"]').isChecked(), false)
+        assert.equal(await page.locator('input[name="consent"]').evaluate(e => e.validity.valid), false)
         await save(page, `${width}-${theme}-form`)
         await page.getByRole("button", { name: "Закрыть", exact: true }).click()
         await page.locator("#products").scrollIntoViewIfNeeded()
@@ -116,8 +118,8 @@ try {
     } finally { await context.close() }
   }
   for (const locale of [
-    { code: "en", open: "Open request form", phone: "Phone number", prepare: "Prepare email", close: "Close" },
-    { code: "ky", open: "Өтүнмө формасын ачуу", phone: "Телефон номери", prepare: "Кат даярдоо", close: "Жабуу" },
+    { code: "en", open: "Open request form", phone: "Phone number", prepare: "Send request", close: "Close" },
+    { code: "ky", open: "Өтүнмө формасын ачуу", phone: "Телефон номери", prepare: "Жөнөтүү", close: "Жабуу" },
   ]) {
     const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true })
     const page = await context.newPage()
@@ -136,7 +138,7 @@ try {
     const context = await browser.newContext()
     const page = await context.newPage()
     let intercepted = 0
-    await page.route("https://api.web3forms.com/submit", route => {
+    await page.route("https://kbnhwitwttcemvysbeco.supabase.co/functions/v1/submit-lead", route => {
       intercepted++
       return route.fulfill({ status: success ? 200 : 503, contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body: JSON.stringify({ success }) })
     })
@@ -148,6 +150,7 @@ try {
     await page.getByLabel("Ваше имя", { exact: true }).fill(testName)
     await page.getByLabel("Номер телефона", { exact: true }).fill("+996 (503) 030-997")
     await page.getByLabel("Количество человек в организации", { exact: true }).fill("10")
+    await page.locator('input[name="consent"]').check()
     await page.getByRole("button", { name: "Отправить", exact: true }).click()
     if (success) {
       await page.getByRole("status").filter({ hasText: "Заявка отправлена" }).waitFor()
