@@ -5,6 +5,18 @@ import { chromium } from "playwright"
 const output = new URL("../browser-results/", import.meta.url)
 await fs.mkdir(output, { recursive: true })
 const results = { viewports: [], forms: [], languages: [], screenshots: [], errors: [], failedRequests: [] }
+// Observe the public response from the CI runner as well as the development
+// environment, whose network proxy may alter HTTP headers. No visitor data.
+results.publishedSecurity = []
+for (const url of ["https://aichuuu.com/ru/", "https://aichuuu.com/.env", "https://aichuuu.com/.git/HEAD"]) {
+  try {
+    const response = await fetch(url, { method: "HEAD", signal: AbortSignal.timeout(15_000), redirect: "follow" })
+    const headers = Object.fromEntries(["strict-transport-security", "content-security-policy", "x-frame-options", "x-content-type-options", "referrer-policy", "permissions-policy"].map(name => [name, response.headers.get(name)]))
+    results.publishedSecurity.push({ url, status: response.status, headers })
+  } catch (error) {
+    results.publishedSecurity.push({ url, error: String(error) })
+  }
+}
 for (const port of [4173, 4174]) {
   let ready = false
   for (let attempt = 0; attempt < 50; attempt++) {
