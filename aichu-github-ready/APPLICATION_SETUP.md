@@ -1,24 +1,19 @@
-# Application delivery
+# Application collection
 
-The form has two explicit modes:
+The live site saves applications to the private Supabase project `aichuuu-leads` (`kbnhwitwttcemvysbeco`), through the JWT-gated `submit-lead` Edge Function. No Web3Forms variable or mail app is required for ordinary submission.
 
-- With `VITE_WEB3FORMS_ACCESS_KEY`: POST to Web3Forms, confirm success only when the response is successful and contains `success: true`. Requests time out after 20 seconds. Errors keep the form data and offer an email draft.
-- Without the key: the button says “Prepare email”. The visitor sends the prepared draft from their own mail app. A selectable draft and copy button remain available when no mail app opens. This mode never displays an automatic-delivery confirmation.
+## View applications
 
-## Connect direct delivery
+Sign into the owning Supabase account: https://supabase.com/dashboard/project/kbnhwitwttcemvysbeco/editor
 
-1. Obtain a Web3Forms form access key for the intended notification email. The email owner must complete any verification required by that service.
-2. Set the repository **Actions variable** `VITE_WEB3FORMS_ACCESS_KEY`. The existing Pages workflow passes it to Vite. For local development, set it in `.env.local` instead.
-3. Rebuild/deploy the site. Vite reads this value at build time; setting the variable alone does not change an existing deployment.
+Open `public.leads` and sort `created_at` descending. Fields: name, phone, team_size, language, created_at, consent_at, status. CSV export is available in the dashboard. Three initial rows named `QA TEST — delete me`, with the reserved fictional number `+12025550199`, are synthetic backend verification records, not customers.
 
-This is a public form key embedded in browser JavaScript. Do not put an email password, mail API secret, or Supabase service role key in a `VITE_*` variable. The form sends contact data to Web3Forms only after the visitor submits it; the privacy text links to that service when connected.
+## Security and maintenance
 
-## Validation
+The browser's public anon JWT invokes the receiver but cannot read or write tables directly. `anon` and `authenticated` have no lead-table privileges. Server-only service-role credentials remain in Supabase runtime secrets. Do not copy them into the website or VITE variables.
 
-Phone numbers require `+`, a nonzero first country-code digit and 7–15 digits in total. Spaces, brackets, dots and hyphens are accepted for readability and removed before delivery. This validates format, not ownership or whether a number is reachable. Names must contain non-whitespace text; team size must be an integer from 1 to 1,000,000.
+Source: `supabase/functions/submit-lead/index.ts`; deployed schema: `supabase/leads.sql`. Changes to those repository files do not automatically redeploy Supabase. Deploy the receiver and schema separately through an authorized Supabase connection. Website deployments remain on GitHub Pages.
 
-## Checks without delivering real applications
+Success appears only after database persistence. A UUID prevents duplicate retries. Server limits: 5/IP/hour, 3/phone/day, 200 overall/hour; origin allowlist, consent, body-size and field checks, honeypot. Limits reduce abuse; CORS and a public JWT are not bot identity checks.
 
-`npm test` checks normalization, malformed numbers, URL encoding of the email draft, explicit API success, HTTP and JSON failures, network errors and request timeout with mocked requests. `npm run build` checks TypeScript and generates localized pages.
-
-For browser testing, intercept `https://api.web3forms.com/submit` and return controlled responses; never send test contact data to the live service. Check RU/EN/KY, both themes, keyboard validation, the clipboard-denied case, and small-screen scrolling. Real inbox delivery requires a separately authorized submission and is not established by mocked tests.
+No email or Telegram notifications are configured. On failure the visitor can explicitly use the email draft fallback. Monitor the private inbox and manage data retention/deletion there. The project is on the free plan, subject to provider quotas and inactivity rules.
