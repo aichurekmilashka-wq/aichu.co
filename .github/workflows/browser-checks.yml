@@ -27,6 +27,12 @@ jobs:
       - run: npm run build
       - run: npm audit --audit-level=high
       - run: npm run security:check
+      - name: Verify localized pages
+        run: node scripts/check-locales.mjs
+      - name: Validate Pages artifact upload without deploying
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
+        with:
+          path: aichu-github-ready/dist
       - name: Build form for intercepted delivery tests
         run: npx --no-install vite build --outDir dist-connected
       - name: Install browser test tooling
