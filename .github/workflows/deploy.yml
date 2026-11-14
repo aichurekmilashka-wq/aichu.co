@@ -18,30 +18,57 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
 
       - name: Install dependencies
         working-directory: aichu-github-ready
-        run: npm install
+        run: npm ci --ignore-scripts
+
+      - name: Test application handling and funnel geometry
+        working-directory: aichu-github-ready
+        run: npm test
 
       - name: Build React
         working-directory: aichu-github-ready
+        env:
+          SITE_ORIGIN: https://aichuuu.com
+          VITE_GA4_MEASUREMENT_ID: ${{ vars.VITE_GA4_MEASUREMENT_ID }}
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          VITE_YANDEX_METRIKA_ID: "114175679"
+          GOOGLE_SITE_VERIFICATION: ${{ vars.GOOGLE_SITE_VERIFICATION }}
         run: npm run build
 
-      - name: Audit production dependencies
+      - name: Generate high-quality social preview
         working-directory: aichu-github-ready
-        run: npm audit --omit=dev --audit-level=high
+        run: python3 scripts/render-og-preview.py
+
+      - name: Verify localized pages and translations
+        working-directory: aichu-github-ready
+        env:
+          SITE_ORIGIN: https://aichuuu.com
+        run: node scripts/check-locales.mjs
+
+      - name: Audit dependencies including build tools
+        working-directory: aichu-github-ready
+        run: npm audit --audit-level=high
+
+      - name: Check published assets for secrets and unsafe script policy
+        working-directory: aichu-github-ready
+        run: npm run security:check
 
       - name: Configure Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
 
       - name: Upload website
-        uses: actions/upload-pages-artifact@v5
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
         with:
           path: aichu-github-ready/dist
 
@@ -57,4 +84,4 @@ jobs:
     steps:
       - name: Deploy
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4

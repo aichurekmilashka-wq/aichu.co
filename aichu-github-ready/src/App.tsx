@@ -1,29 +1,236 @@
-import { useEffect, useRef, useState } from "react"
+import { lazy, Suspense, useEffect, useRef, useState, type FormEvent } from "react"
 import HalftoneWordmarkFooter from "@/components/ui/halftone-wordmark-footer"
 import SalesLeakageFunnel from "./components/SalesLeakageFunnel"
-import { IllosShaderFeatureBento } from "@/components/ui/illos-shader-feature-bento"
+import { initAnalytics, pauseAnalytics, isAnalyticsConfigured, isYandexMetricaConfigured, isGoogleAnalyticsConfigured, trackEvent } from "./analytics"
+import LiquidNavbar from "@/components/ui/liquid-glass-navbar"
+import SocialTooltip from "@/components/ui/social-media"
+import { ApplicationRequestError, createApplicationEmail, normalizeApplicationPhone, sendApplicationRequest } from "./lib/application"
+import { Home, ChartNoAxesCombined, Layers, Mail, Phone, MessageCircle, Send, Instagram, AtSign, Sun, Moon, Globe2 } from "lucide-react"
 
-const translations: Record<string, [string, string]> = {"Наши решения":["Solutions","Чечимдер"],"Готовые сайты":["Ready-made websites","Даяр сайттар"],"Продукты":["Products","Продукттар"],"Решения":["Solutions","Чечимдер"],"Студия":["Studio","Студия"],"Наш подход":["Our approach","Биздин ыкма"],"Контакты":["Contacts","Байланыш"],"Разрабатываем B2B SaaS-продукты для аналитики продаж, контроля CRM и автоматизации бизнеса.":["We develop B2B SaaS products for sales analytics, CRM quality control and business automation.","Биз сатууну талдоо, CRM сапатын көзөмөлдөө жана бизнести автоматташтыруу үчүн B2B SaaS продукттарын иштеп чыгабыз."],"4 SaaS-продукта · Индивидуальные решения":["4 SaaS products · Tailored solutions","4 SaaS продукт · Жекече чечимдер"],"Когда данные разрознены, решения принимаются вслепую.":["Fragmented data leads to decisions without visibility.","Маалыматтар чачыранды болгондо, чечимдер толук көрүнүшсүз кабыл алынат."],"От данных к действиям.":["From data to action.","Маалыматтан иш-аракетке."],"Практические сценарии.":["Business use cases.","Практикалык сценарийлер."],"Интеллект в каждом решении":["Intelligence in every decision","Ар бир чечимдеги интеллект"],"Четыре B2B SaaS-продукта для решений на основе данных, а не догадок.":["Four B2B SaaS products for evidence-based decisions.","Божомолдорго эмес, маалыматтарга негизделген чечимдер үчүн төрт B2B SaaS продукт."],"Стоимость рассчитывается индивидуально под объём данных, интеграции и задачи.":["Pricing is tailored to data volume, integrations and business requirements.","Баасы маалымат көлөмүнө, интеграцияларга жана милдеттерге жараша жекече эсептелет."],"Для команд, которым нужна ясность.":["For teams that demand clarity.","Так маалыматты талап кылган командалар үчүн."],"Частые вопросы.":["Frequently asked questions.","Көп берилүүчү суроолор."],"Бизнес-контекст":["Business context","Бизнес контекст"],"Аналитическая модель":["Analytical model","Аналитикалык модель"],"Применение":["Application","Колдонуу"],"Управленческая ценность":["Management value","Башкаруудагы баалуулук"],"Выручка растёт, но её динамика сама по себе не объясняет изменение прибыли и результативность коммерческой команды.":["Revenue growth alone does not explain profitability or commercial team performance.","Кирешенин өсүшү өзү эле пайданын өзгөрүшүн жана коммерциялык команданын натыйжалуулугун түшүндүрбөйт."],"Единая система показателей продаж, прибыли и KPI с разграничением доступа к управленческой информации.":["Unified sales, profit and KPI reporting with role-based access to management data.","Сатуу, пайда жана KPI көрсөткүчтөрүнүн бирдиктүү системасы, башкаруу маалыматына ролдор боюнча жеткиликтүүлүк."],"Сопоставление коммерческих результатов и ключевых метрик по доступным срезам данных; выявление отклонений для управленческого разбора.":["Compare commercial results and key metrics across available dimensions; identify variances for management review.","Коммерциялык натыйжаларды жана негизги көрсөткүчтөрдү салыштырып, башкаруу үчүн четтөөлөрдү аныктоо."],"Прозрачность финансово-коммерческой результативности и более обоснованная приоритизация решений.":["Clearer commercial performance and better-informed management priorities.","Коммерциялык натыйжалардын ачыктыгы жана негиздүү башкаруу артыкчылыктары."],"Формальное ведение CRM не гарантирует контроля над потерями лидов, скоростью реакции и экономикой сделки.":["Using a CRM does not guarantee visibility into lost leads, response times or deal economics.","CRM колдонуу лиддердин жоголушун, жооп берүү ылдамдыгын жана бүтүмдүн экономикасын көзөмөлдөөгө кепилдик бербейт."],"Аналитика юнит-экономики, длительности цикла сделки, скорости обработки обращений и конверсии по этапам воронки.":["Analysis of unit economics, sales cycle duration, response speed and funnel-stage conversion.","Юнит-экономиканы, бүтүм циклин, кайрылууларды иштетүү ылдамдыгын жана воронкадагы конверсияны талдоо."],"Локализация этапов потери лидов, анализ задержек и сопоставление операционных показателей с экономикой продаж.":["Identify lead-loss stages, analyze delays and connect operational metrics to sales economics.","Лиддер жоголгон этаптарды жана кечигүүлөрдү аныктап, операциялык көрсөткүчтөрдү сатуу экономикасы менен салыштыруу."],"Основа для точечных изменений в процессе продаж вместо решений на уровне субъективных оценок.":["Evidence for targeted sales-process improvements instead of subjective judgments.","Субъективдүү баалардын ордуна сатуу процессин так жакшыртууга негиз."],"Изменения закупочных и рыночных цен могут ухудшать маржинальность раньше, чем это отражается в итоговой отчётности.":["Supplier and market price shifts can erode margins before the impact appears in financial reports.","Сатып алуу жана рыноктук баалардын өзгөрүшү отчетто көрүнгөнгө чейин маржаны азайтышы мүмкүн."],"Мониторинг цен, анализ поставщиков и контроль показателей маржинальности.":["Price monitoring, supplier analysis and margin tracking.","Бааларды мониторингдөө, жеткирүүчүлөрдү талдоо жана маржаны көзөмөлдөө."],"Сопоставление ценовых изменений и условий поставщиков с маржинальностью для оценки необходимости пересмотра закупок или ценовой политики.":["Assess price and supplier changes against margins to inform purchasing and pricing decisions.","Баалардын жана жеткирүүчүлөрдүн шарттарынын өзгөрүшүн маржа менен салыштырып, сатып алуу жана баа саясатын баалоо."],"Более оперативный контроль факторов, влияющих на валовую доходность, и аргументированная работа с ценами.":["Faster visibility into gross-margin drivers and more defensible pricing decisions.","Дүң кирешелүүлүккө таасир эткен факторлорду тезирээк көзөмөлдөө жана негиздүү баа чечимдери."],"Оценка качества клиентских коммуникаций зависит от выборочных проверок и не даёт системной картины работы команды.":["Sample-based conversation reviews fail to provide a consistent view of team performance.","Кардарлар менен сүйлөшүүлөрдү тандалма текшерүү команданын иши жөнүндө системалуу көрүнүш бербейт."],"Анализ переписок с клиентами и качества коммуникации менеджеров.":["Analysis of customer conversations and manager communication quality.","Кардарлар менен кат алышууну жана менеджерлердин баарлашуу сапатын талдоо."],"Выявление повторяющихся проблем в диалогах и формирование предметной базы для обратной связи, контроля стандартов и обучения.":["Detect recurring issues in conversations to support coaching, quality standards and training.","Диалогдордогу кайталанган көйгөйлөрдү аныктап, окутууга жана сапатты көзөмөлдөөгө негиз түзүү."],"Более последовательная оценка клиентского взаимодействия и управляемое повышение качества работы команды.":["More consistent customer-interaction reviews and structured quality improvement.","Кардарлар менен иштөөнү ырааттуу баалоо жана команданын сапатын системалуу жакшыртуу."],"Продажи и прибыль":["Sales and profit","Сатуу жана пайда"],"KPI и динамика":["KPI and trends","KPI жана динамика"],"Разграничение доступа":["Access controls","Жеткиликтүүлүктү чектөө"],"Юнит-экономика":["Unit economics","Юнит-экономика"],"Цикл сделки и скорость реакции":["Sales cycle and response speed","Бүтүм цикли жана жооп ылдамдыгы"],"Воронка и потери лидов":["Funnel and lead loss","Воронка жана лид жоготуулар"],"Мониторинг цен":["Price monitoring","Баалар мониторинги"],"Анализ поставщиков":["Supplier analysis","Жеткирүүчүлөрдү талдоо"],"Маржинальность":["Margins","Маржа"],"Анализ переписок":["Conversation analysis","Кат алышууну талдоо"],"Оценка качества диалогов":["Conversation quality review","Диалог сапатын баалоо"],"Повторяющиеся ошибки":["Recurring issues","Кайталанган каталар"],"Sales Intelligence: сложно увидеть реальную динамику продаж, прибыли и KPI по одной системе показателей.":["Sales Intelligence: without a unified view, actual sales, profit and KPI trends are difficult to assess.","Sales Intelligence: бирдиктүү көрсөткүчтөр системасы болбосо, сатуунун, пайданын жана KPIнин динамикасын баалоо кыйын."],"CRM Quality Control: задержки обработки заявок, длинный цикл сделки и потери лидов остаются незаметными.":["CRM Quality Control: slow response times, lengthy sales cycles and lost leads can go unnoticed.","CRM Quality Control: кайрылууларды иштетүүдөгү кечигүүлөр, узак бүтүм цикли жана жоголгон лиддер байкалбай калат."],"Price & Margin Intelligence: изменения цен поставщиков влияют на маржу, пока данные собирают вручную.":["Price & Margin Intelligence: supplier price changes affect margins while teams still consolidate data manually.","Price & Margin Intelligence: маалымат кол менен чогултулуп жатканда, жеткирүүчүлөрдүн баа өзгөрүүлөрү маржага таасир этет."],"AI Conversation Intelligence: качество переписок менеджеров трудно оценивать последовательно.":["AI Conversation Intelligence: consistent assessment of managers' customer conversations is difficult.","AI Conversation Intelligence: менеджерлердин кардарлар менен кат алышуусунун сапатын туруктуу баалоо кыйын."],"Определяем данные":["Define the data","Маалыматтарды аныктайбыз"],"Выбираем необходимые показатели продаж, CRM, цен и коммуникаций под задачи компании.":["Select the sales, CRM, pricing and communication metrics relevant to the business.","Компаниянын максатына жараша сатуу, CRM, баа жана байланыш көрсөткүчтөрүн тандайбыз."],"Настраиваем анализ":["Configure analytics","Аналитиканы жөндөйбүз"],"Формируем метрики прибыли и KPI, цикл сделки, потери лидов, маржу и качество диалогов.":["Structure profit and KPI metrics, sales cycles, lead losses, margins and conversation quality.","Пайда, KPI, бүтүм цикли, жоголгон лиддер, маржа жана диалог сапаты боюнча көрсөткүчтөрдү түзөбүз."],"Применяем результаты":["Put insights to work","Натыйжаларды колдонобуз"],"Используем выявленные отклонения для контроля процессов и принятия управленческих решений.":["Use identified deviations to monitor processes and support management decisions.","Аныкталган четтөөлөрдү процесстерди көзөмөлдөө жана башкаруу чечимдерин кабыл алуу үчүн колдонобуз."],"Сопоставляйте продажи, прибыль и KPI. Разграничивайте доступ к показателям для разных ролей.":["Compare sales, profit and KPIs, with role-based access to each set of metrics.","Сатуу, пайда жана KPIни салыштырып, ролдор боюнча көрсөткүчтөргө жетүүнү чектеңиз."],"Оценивайте юнит-экономику, длительность сделки, скорость обработки заявок и этапы потери лидов.":["Assess unit economics, sales cycle duration, response speed and where leads are lost.","Юнит-экономиканы, бүтүмдүн узактыгын, кайрылууларга жооп берүү ылдамдыгын жана лид жоготууларын баалаңыз."],"Отслеживайте изменения цен и предложения поставщиков, анализируйте влияние на маржинальность.":["Track price changes and supplier offers, and assess their impact on margins.","Баалардагы өзгөрүүлөрдү жана жеткирүүчүлөрдүн сунуштарын көзөмөлдөп, маржага таасирин талдаңыз."],"Анализируйте клиентские переписки и качество работы менеджеров, находите проблемные диалоги.":["Analyze customer conversations and managers' communication quality to uncover problematic interactions.","Кардарлар менен кат алышууну жана менеджерлердин иш сапатын талдап, көйгөйлүү диалогдорду аныктаңыз."],"05 / НАШИ ПРОДУКТЫ":["05 / OUR PRODUCTS","05 / БИЗДИН ПРОДУКТТАР"],"Выберите готовый дизайн или закажите адаптацию под свой бизнес.":["Choose a ready-made design or commission a tailored version for your business.","Даяр дизайнды тандаңыз же бизнесиңизге ылайыкташтырууга заказ бериңиз."],"На основе проекта Nurba":["Based on the Nurba project","Nurba долбоорунун негизинде"],"Лендинг для услуг и частной практики":["Landing page for services and independent professionals","Кызматтар жана жеке практика үчүн лендинг"],"Адаптивный сайт с блоками услуг, информацией о специалисте и контактами. Демонстрация показывает дизайн; персональные данные исходного проекта не входят в продаваемый шаблон.":["A responsive website with service sections, professional information and contact details. The demo showcases the design; personal data from the source project is not included in the template.","Кызматтар, адис жөнүндө маалымат жана байланыштар үчүн бөлүмдөрү бар ыңгайлашкан сайт. Демо дизайнды көрсөтөт; баштапкы долбоордун жеке маалыматтары шаблонго кирбейт."],"Посмотреть демоверсию ↗":["View live demo ↗","Демону көрүү ↗"],"Цены / RUB":["Pricing / RUB","Баалар / RUB"],"готовый шаблон":["ready-made template","даяр шаблон"],"Шаблон (файлы сайта)":["Template (website files)","Шаблон (сайттын файлдары)"],"Замена текста, фото и контактов":["Replace text, images and contacts","Текстти, сүрөттөрдү жана байланыштарды алмаштыруу"],"Под ключ с доменом и настройками":["Complete setup with domain","Домен жана жөндөөлөр менен толук даярдоо"],"Индивидуальные доработки":["Custom modifications","Жекече өзгөртүүлөр"],"от 30 000 ₽":["from 30,000 ₽","30 000 ₽ баштап"],"Открыть демонстрацию ↗":["Open demo ↗","Демону ачуу ↗"],"Оплата и автоматическая выдача файлов пока не подключены. Контакт для приёма заказов будет добавлен после настройки.":["Online payment and automatic file delivery are not yet enabled. Order contact details will be added after setup.","Онлайн төлөм жана файлдарды автоматтык берүү азырынча кошула элек. Заказ үчүн байланыштар кийин кошулат."],"Для собственников и руководителей, которым важны прибыль и KPI; для отделов продаж, контролирующих воронку и скорость обработки; для коммерческих команд, управляющих ценами и маржой; для руководителей клиентского сервиса, оценивающих качество переписок.":["For founders and executives focused on profit and KPIs; sales teams managing funnel performance and response time; commercial teams responsible for pricing and margins; and customer service leaders assessing conversation quality.","Пайдага жана KPIге көңүл бурган компания ээлери жана жетекчилер; сатуу воронкасын жана жооп ылдамдыгын көзөмөлдөгөн командалар; бааларды жана маржаны башкарган коммерциялык командалар; диалогдордун сапатын баалаган кардарларды тейлөө жетекчилери үчүн."],"Сколько стоит внедрение?":["How much does implementation cost?","Ишке киргизүү канча турат?"],"Стоимость каждого продукта рассчитывается индивидуально и зависит от объёма данных, интеграций и задач.":["Each product is priced individually based on data volume, integrations and project requirements.","Ар бир продукттун баасы маалымат көлөмүнө, интеграцияларга жана милдеттерге жараша жекече эсептелет."],"Нужно ли подключать все четыре продукта?":["Do we need all four products?","Төрт продуктту тең туташтыруу керекпи?"],"Нет. Sales Intelligence, CRM Quality Control, Price & Margin Intelligence и AI Conversation Intelligence представлены как отдельные решения.":["No. Sales Intelligence, CRM Quality Control, Price & Margin Intelligence and AI Conversation Intelligence are independent solutions.","Жок. Sales Intelligence, CRM Quality Control, Price & Margin Intelligence жана AI Conversation Intelligence өз алдынча чечимдер."],"Какие показатели анализирует Sales Intelligence?":["Which metrics does Sales Intelligence analyze?","Sales Intelligence кайсы көрсөткүчтөрдү талдайт?"],"Продажи, прибыль, KPI и динамику показателей. Предусмотрено разграничение доступа.":["Sales, profit, KPIs and performance trends, with role-based access controls.","Сатууну, пайданы, KPIни жана көрсөткүчтөрдүн динамикасын. Ролдор боюнча жетүү чектелет."],"Что контролирует CRM Quality Control?":["What does CRM Quality Control monitor?","CRM Quality Control эмнени көзөмөлдөйт?"],"Юнит-экономику, цикл сделки, скорость обработки заявок, воронку и потери лидов.":["Unit economics, the sales cycle, response times, the sales funnel and lead losses.","Юнит-экономиканы, бүтүм циклин, кайрылууларды иштетүү ылдамдыгын, воронканы жана жоголгон лиддерди."],"Что даёт Price & Margin Intelligence?":["What does Price & Margin Intelligence provide?","Price & Margin Intelligence эмне берет?"],"Мониторинг цен и поставщиков, а также анализ маржинальности.":["Price and supplier monitoring, plus margin analysis.","Бааларды жана жеткирүүчүлөрдү мониторингдөө, ошондой эле маржаны талдоо."],"Что анализирует AI Conversation Intelligence?":["What does AI Conversation Intelligence analyze?","AI Conversation Intelligence эмнени талдайт?"],"Переписки с клиентами и качество работы менеджеров.":["Customer conversations and managers' communication quality.","Кардарлар менен кат алышууну жана менеджерлердин ишинин сапатын."],"Можно ли интегрировать решение с нашей CRM?":["Can it integrate with our CRM?","Биздин CRM менен интеграциялоого болобу?"],"Совместимость и необходимый состав интеграций определяются при обсуждении конкретного проекта.":["Compatibility and integration requirements are assessed for each project.","Шайкештик жана интеграция талаптары ар бир долбоор үчүн өзүнчө аныкталат."]}
+const translations: Record<string, [string, string]> = {"Наши решения":["Solutions","Чечимдер"],"Готовые сайты":["Ready-made websites","Даяр сайттар"],"Продукты":["Products","Продукттар"],"Решения":["Solutions","Чечимдер"],"Студия":["Studio","Студия"],"Наш подход":["Our approach","Биздин ыкма"],"Контакты":["Contacts","Байланыш"],"Разрабатываем B2B SaaS-продукты для аналитики продаж, контроля CRM и автоматизации бизнеса.":["We develop B2B SaaS products for sales analytics, CRM quality control and business automation.","Биз сатууну талдоо, CRM сапатын көзөмөлдөө жана бизнести автоматташтыруу үчүн B2B SaaS продукттарын иштеп чыгабыз."],"4 SaaS-продукта · Индивидуальные решения":["4 SaaS products · Tailored solutions","4 SaaS продукт · Жекече чечимдер"],"Когда данные разрознены, решения принимаются вслепую.":["Fragmented data leads to decisions without visibility.","Маалыматтар чачыранды болгондо, чечимдер толук көрүнүшсүз кабыл алынат."],"От данных к действиям.":["From data to action.","Маалыматтан иш-аракетке."],"Практические сценарии.":["Business use cases.","Практикалык сценарийлер."],"Интеллект в каждом решении":["Intelligence in every decision","Ар бир чечимдеги интеллект"],"Четыре B2B SaaS-продукта для решений на основе данных, а не догадок.":["Four B2B SaaS products for evidence-based decisions.","Божомолдорго эмес, маалыматтарга негизделген чечимдер үчүн төрт B2B SaaS продукт."],"Для команд, которым нужна ясность.":["For teams that demand clarity.","Так маалыматты талап кылган командалар үчүн."],"Частые вопросы.":["Frequently asked questions.","Көп берилүүчү суроолор."],"Бизнес-контекст":["Business context","Бизнес контекст"],"Аналитическая модель":["Analytical model","Аналитикалык модель"],"Применение":["Application","Колдонуу"],"Управленческая ценность":["Management value","Башкаруудагы баалуулук"],"Выручка растёт, но её динамика сама по себе не объясняет изменение прибыли и результативность коммерческой команды.":["Revenue growth alone does not explain profitability or commercial team performance.","Кирешенин өсүшү өзү эле пайданын өзгөрүшүн жана коммерциялык команданын натыйжалуулугун түшүндүрбөйт."],"Единая система показателей продаж, прибыли и KPI с разграничением доступа к управленческой информации.":["Unified sales, profit and KPI reporting with role-based access to management data.","Сатуу, пайда жана KPI көрсөткүчтөрүнүн бирдиктүү системасы, башкаруу маалыматына ролдор боюнча жеткиликтүүлүк."],"Сопоставление коммерческих результатов и ключевых метрик по доступным срезам данных; выявление отклонений для управленческого разбора.":["Compare commercial results and key metrics across available dimensions; identify variances for management review.","Коммерциялык натыйжаларды жана негизги көрсөткүчтөрдү салыштырып, башкаруу үчүн четтөөлөрдү аныктоо."],"Прозрачность финансово-коммерческой результативности и более обоснованная приоритизация решений.":["Clearer commercial performance and better-informed management priorities.","Коммерциялык натыйжалардын ачыктыгы жана негиздүү башкаруу артыкчылыктары."],"Формальное ведение CRM не гарантирует контроля над потерями лидов, скоростью реакции и экономикой сделки.":["Using a CRM does not guarantee visibility into lost leads, response times or deal economics.","CRM колдонуу лиддердин жоголушун, жооп берүү ылдамдыгын жана бүтүмдүн экономикасын көзөмөлдөөгө кепилдик бербейт."],"Аналитика юнит-экономики, длительности цикла сделки, скорости обработки обращений и конверсии по этапам воронки.":["Analysis of unit economics, sales cycle duration, response speed and funnel-stage conversion.","Юнит-экономиканы, бүтүм циклин, кайрылууларды иштетүү ылдамдыгын жана воронкадагы конверсияны талдоо."],"Локализация этапов потери лидов, анализ задержек и сопоставление операционных показателей с экономикой продаж.":["Identify lead-loss stages, analyze delays and connect operational metrics to sales economics.","Лиддер жоголгон этаптарды жана кечигүүлөрдү аныктап, операциялык көрсөткүчтөрдү сатуу экономикасы менен салыштыруу."],"Основа для точечных изменений в процессе продаж вместо решений на уровне субъективных оценок.":["Evidence for targeted sales-process improvements instead of subjective judgments.","Субъективдүү баалардын ордуна сатуу процессин так жакшыртууга негиз."],"Изменения закупочных и рыночных цен могут ухудшать маржинальность раньше, чем это отражается в итоговой отчётности.":["Supplier and market price shifts can erode margins before the impact appears in financial reports.","Сатып алуу жана рыноктук баалардын өзгөрүшү отчетто көрүнгөнгө чейин маржаны азайтышы мүмкүн."],"Мониторинг цен, анализ поставщиков и контроль показателей маржинальности.":["Price monitoring, supplier analysis and margin tracking.","Бааларды мониторингдөө, жеткирүүчүлөрдү талдоо жана маржаны көзөмөлдөө."],"Сопоставление ценовых изменений и условий поставщиков с маржинальностью для оценки необходимости пересмотра закупок или ценовой политики.":["Assess price and supplier changes against margins to inform purchasing and pricing decisions.","Баалардын жана жеткирүүчүлөрдүн шарттарынын өзгөрүшүн маржа менен салыштырып, сатып алуу жана баа саясатын баалоо."],"Более оперативный контроль факторов, влияющих на валовую доходность, и аргументированная работа с ценами.":["Faster visibility into gross-margin drivers and more defensible pricing decisions.","Дүң кирешелүүлүккө таасир эткен факторлорду тезирээк көзөмөлдөө жана негиздүү баа чечимдери."],"Оценка качества клиентских коммуникаций зависит от выборочных проверок и не даёт системной картины работы команды.":["Sample-based conversation reviews fail to provide a consistent view of team performance.","Кардарлар менен сүйлөшүүлөрдү тандалма текшерүү команданын иши жөнүндө системалуу көрүнүш бербейт."],"Анализ переписок с клиентами и качества коммуникации менеджеров.":["Analysis of customer conversations and manager communication quality.","Кардарлар менен кат алышууну жана менеджерлердин баарлашуу сапатын талдоо."],"Выявление повторяющихся проблем в диалогах и формирование предметной базы для обратной связи, контроля стандартов и обучения.":["Detect recurring issues in conversations to support coaching, quality standards and training.","Диалогдордогу кайталанган көйгөйлөрдү аныктап, окутууга жана сапатты көзөмөлдөөгө негиз түзүү."],"Более последовательная оценка клиентского взаимодействия и управляемое повышение качества работы команды.":["More consistent customer-interaction reviews and structured quality improvement.","Кардарлар менен иштөөнү ырааттуу баалоо жана команданын сапатын системалуу жакшыртуу."],"Продажи и прибыль":["Sales and profit","Сатуу жана пайда"],"KPI и динамика":["KPI and trends","KPI жана динамика"],"Разграничение доступа":["Access controls","Жеткиликтүүлүктү чектөө"],"Юнит-экономика":["Unit economics","Юнит-экономика"],"Цикл сделки и скорость реакции":["Sales cycle and response speed","Бүтүм цикли жана жооп ылдамдыгы"],"Воронка и потери лидов":["Funnel and lead loss","Воронка жана лид жоготуулар"],"Мониторинг цен":["Price monitoring","Баалар мониторинги"],"Анализ поставщиков":["Supplier analysis","Жеткирүүчүлөрдү талдоо"],"Маржинальность":["Margins","Маржа"],"Анализ переписок":["Conversation analysis","Кат алышууну талдоо"],"Оценка качества диалогов":["Conversation quality review","Диалог сапатын баалоо"],"Повторяющиеся ошибки":["Recurring issues","Кайталанган каталар"],"Sales Intelligence: сложно увидеть реальную динамику продаж, прибыли и KPI по одной системе показателей.":["Sales Intelligence: without a unified view, actual sales, profit and KPI trends are difficult to assess.","Sales Intelligence: бирдиктүү көрсөткүчтөр системасы болбосо, сатуунун, пайданын жана KPIнин динамикасын баалоо кыйын."],"CRM Quality Control: задержки обработки заявок, длинный цикл сделки и потери лидов остаются незаметными.":["CRM Quality Control: slow response times, lengthy sales cycles and lost leads can go unnoticed.","CRM Quality Control: кайрылууларды иштетүүдөгү кечигүүлөр, узак бүтүм цикли жана жоголгон лиддер байкалбай калат."],"Price & Margin Intelligence: изменения цен поставщиков влияют на маржу, пока данные собирают вручную.":["Price & Margin Intelligence: supplier price changes affect margins while teams still consolidate data manually.","Price & Margin Intelligence: маалымат кол менен чогултулуп жатканда, жеткирүүчүлөрдүн баа өзгөрүүлөрү маржага таасир этет."],"AI Conversation Intelligence: качество переписок менеджеров трудно оценивать последовательно.":["AI Conversation Intelligence: consistent assessment of managers' customer conversations is difficult.","AI Conversation Intelligence: менеджерлердин кардарлар менен кат алышуусунун сапатын туруктуу баалоо кыйын."],"Определяем данные":["Define the data","Маалыматтарды аныктайбыз"],"Выбираем необходимые показатели продаж, CRM, цен и коммуникаций под задачи компании.":["Select the sales, CRM, pricing and communication metrics relevant to the business.","Компаниянын максатына жараша сатуу, CRM, баа жана байланыш көрсөткүчтөрүн тандайбыз."],"Настраиваем анализ":["Configure analytics","Аналитиканы жөндөйбүз"],"Формируем метрики прибыли и KPI, цикл сделки, потери лидов, маржу и качество диалогов.":["Structure profit and KPI metrics, sales cycles, lead losses, margins and conversation quality.","Пайда, KPI, бүтүм цикли, жоголгон лиддер, маржа жана диалог сапаты боюнча көрсөткүчтөрдү түзөбүз."],"Применяем результаты":["Put insights to work","Натыйжаларды колдонобуз"],"Используем выявленные отклонения для контроля процессов и принятия управленческих решений.":["Use identified deviations to monitor processes and support management decisions.","Аныкталган четтөөлөрдү процесстерди көзөмөлдөө жана башкаруу чечимдерин кабыл алуу үчүн колдонобуз."],"Сопоставляйте продажи, прибыль и KPI. Разграничивайте доступ к показателям для разных ролей.":["Compare sales, profit and KPIs, with role-based access to each set of metrics.","Сатуу, пайда жана KPIни салыштырып, ролдор боюнча көрсөткүчтөргө жетүүнү чектеңиз."],"Оценивайте юнит-экономику, длительность сделки, скорость обработки заявок и этапы потери лидов.":["Assess unit economics, sales cycle duration, response speed and where leads are lost.","Юнит-экономиканы, бүтүмдүн узактыгын, кайрылууларга жооп берүү ылдамдыгын жана лид жоготууларын баалаңыз."],"Отслеживайте изменения цен и предложения поставщиков, анализируйте влияние на маржинальность.":["Track price changes and supplier offers, and assess their impact on margins.","Баалардагы өзгөрүүлөрдү жана жеткирүүчүлөрдүн сунуштарын көзөмөлдөп, маржага таасирин талдаңыз."],"Анализируйте клиентские переписки и качество работы менеджеров, находите проблемные диалоги.":["Analyze customer conversations and managers' communication quality to uncover problematic interactions.","Кардарлар менен кат алышууну жана менеджерлердин иш сапатын талдап, көйгөйлүү диалогдорду аныктаңыз."],"05 / НАШИ ПРОДУКТЫ":["05 / OUR PRODUCTS","05 / БИЗДИН ПРОДУКТТАР"],"Выберите готовый дизайн или закажите адаптацию под свой бизнес.":["Choose a ready-made design or commission a tailored version for your business.","Даяр дизайнды тандаңыз же бизнесиңизге ылайыкташтырууга заказ бериңиз."],"На основе проекта Nurba":["Based on the Nurba project","Nurba долбоорунун негизинде"],"Лендинг для услуг и частной практики":["Landing page for services and independent professionals","Кызматтар жана жеке практика үчүн лендинг"],"Посмотреть демоверсию ↗":["View live demo ↗","Демону көрүү ↗"],"Открыть демонстрацию ↗":["Open demo ↗","Демону ачуу ↗"],"Для собственников и руководителей, которым важны прибыль и KPI; для отделов продаж, контролирующих воронку и скорость обработки; для коммерческих команд, управляющих ценами и маржой; для руководителей клиентского сервиса, оценивающих качество переписок.":["For founders and executives focused on profit and KPIs; sales teams managing funnel performance and response time; commercial teams responsible for pricing and margins; and customer service leaders assessing conversation quality.","Пайдага жана KPIге көңүл бурган компания ээлери жана жетекчилер; сатуу воронкасын жана жооп ылдамдыгын көзөмөлдөгөн командалар; бааларды жана маржаны башкарган коммерциялык командалар; диалогдордун сапатын баалаган кардарларды тейлөө жетекчилери үчүн."],"Нужно ли подключать все четыре продукта?":["Do we need all four products?","Төрт продуктту тең туташтыруу керекпи?"],"Нет. Sales Intelligence, CRM Quality Control, Price & Margin Intelligence и AI Conversation Intelligence представлены как отдельные решения.":["No. Sales Intelligence, CRM Quality Control, Price & Margin Intelligence and AI Conversation Intelligence are independent solutions.","Жок. Sales Intelligence, CRM Quality Control, Price & Margin Intelligence жана AI Conversation Intelligence өз алдынча чечимдер."],"Какие показатели анализирует Sales Intelligence?":["Which metrics does Sales Intelligence analyze?","Sales Intelligence кайсы көрсөткүчтөрдү талдайт?"],"Продажи, прибыль, KPI и динамику показателей. Предусмотрено разграничение доступа.":["Sales, profit, KPIs and performance trends, with role-based access controls.","Сатууну, пайданы, KPIни жана көрсөткүчтөрдүн динамикасын. Ролдор боюнча жетүү чектелет."],"Что контролирует CRM Quality Control?":["What does CRM Quality Control monitor?","CRM Quality Control эмнени көзөмөлдөйт?"],"Юнит-экономику, цикл сделки, скорость обработки заявок, воронку и потери лидов.":["Unit economics, the sales cycle, response times, the sales funnel and lead losses.","Юнит-экономиканы, бүтүм циклин, кайрылууларды иштетүү ылдамдыгын, воронканы жана жоголгон лиддерди."],"Что даёт Price & Margin Intelligence?":["What does Price & Margin Intelligence provide?","Price & Margin Intelligence эмне берет?"],"Мониторинг цен и поставщиков, а также анализ маржинальности.":["Price and supplier monitoring, plus margin analysis.","Бааларды жана жеткирүүчүлөрдү мониторингдөө, ошондой эле маржаны талдоо."],"Что анализирует AI Conversation Intelligence?":["What does AI Conversation Intelligence analyze?","AI Conversation Intelligence эмнени талдайт?"],"Переписки с клиентами и качество работы менеджеров.":["Customer conversations and managers' communication quality.","Кардарлар менен кат алышууну жана менеджерлердин ишинин сапатын."],"Можно ли интегрировать решение с нашей CRM?":["Can it integrate with our CRM?","Биздин CRM менен интеграциялоого болобу?"],"Совместимость и необходимый состав интеграций определяются при обсуждении конкретного проекта.":["Compatibility and integration requirements are assessed for each project.","Шайкештик жана интеграция талаптары ар бир долбоор үчүн өзүнчө аныкталат."]}
+
+const RezonGlassDashboard = lazy(() => import("@/components/ui/adjustable-glass-dashboard"))
+
+function DeferredRezonDashboard({ language, theme }: { language: "ru" | "en" | "ky"; theme: "dark" | "light" }) {
+  const placeholderRef = useRef<HTMLDivElement>(null)
+  const [shouldLoad, setShouldLoad] = useState(false)
+
+  useEffect(() => {
+    if (shouldLoad) return
+    const node = placeholderRef.current
+    if (!node) return
+    if (!("IntersectionObserver" in window)) {
+      setShouldLoad(true)
+      return
+    }
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) setShouldLoad(true)
+    }, { rootMargin: "500px 0px" })
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [shouldLoad])
+
+  return (
+    <div ref={placeholderRef} style={shouldLoad ? undefined : { minHeight: 480 }}>
+      {shouldLoad && (
+        <Suspense fallback={<div style={{ minHeight: 480 }} aria-label="REZON" />}>
+          <RezonGlassDashboard language={language} theme={theme} />
+        </Suspense>
+      )}
+    </div>
+  )
+}
 
 export default function App() {
-  const [language, setLanguage] = useState<"ru" | "en" | "ky">(() => {
-    const saved = localStorage.getItem("aichu-language")
-    if (saved === "ru" || saved === "en" || saved === "ky") return saved
-    const preferred = navigator.languages?.find(lang => /^(ru|en|ky|kg)(-|$)/i.test(lang)) || navigator.language || "ru"
-    const code = preferred.toLowerCase().split("-")[0]
-    return code === "ky" || code === "kg" ? "ky" : code === "en" ? "en" : "ru"
-  })
+  // The URL is the source of truth: every language has a permanent, shareable page.
+  const language = (window.location.pathname.match(/\/(ru|en|ky)\/?$/)?.[1] || "ru") as "ru" | "en" | "ky"
+  const changeLanguage = (next: "ru" | "en" | "ky") => {
+    const prefix = window.location.pathname.replace(/(?:ru|en|ky)\/?$/, "").replace(/\/?$/, "/")
+    window.location.assign(prefix + next + "/" + window.location.search + window.location.hash)
+  }
   const [theme, setTheme] = useState<"dark" | "light">(() => localStorage.getItem("aichu-theme") === "light" ? "light" : "dark")
+  const headerRef = useRef<HTMLElement>(null)
+  useEffect(() => {
+    const viewport = window.visualViewport
+    if (!viewport) return
+    let frame = 0
+    const update = () => {
+      if (headerRef.current) headerRef.current.style.top = Math.max(0, viewport.offsetTop) + "px"
+    }
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(() => { frame = 0; update() })
+    }
+    // Sticky coordinates belong to the layout viewport; mobile browser controls
+    // and the keyboard can pan the visible viewport within it.
+    update()
+    viewport.addEventListener("scroll", schedule, { passive: true })
+    viewport.addEventListener("resize", schedule, { passive: true })
+    window.addEventListener("scroll", schedule, { passive: true })
+    return () => {
+      cancelAnimationFrame(frame)
+      viewport.removeEventListener("scroll", schedule)
+      viewport.removeEventListener("resize", schedule)
+      window.removeEventListener("scroll", schedule)
+    }
+  }, [])
   const tr = (text: string) => language === "ru" ? text : (translations[text]?.[language === "en" ? 0 : 1] || text)
-  useEffect(() => { localStorage.setItem("aichu-language", language); document.documentElement.lang = language === "ky" ? "ky" : language }, [language])
+  useEffect(() => { document.documentElement.lang = language }, [language])
+  const [analyticsConsent, setAnalyticsConsent] = useState<"accepted" | "rejected" | null>(() => {
+    const stored = localStorage.getItem("aichu-analytics-consent")
+    return stored === "accepted" || stored === "rejected" ? stored : null
+  })
+  useEffect(() => { if (analyticsConsent === "accepted") initAnalytics() }, [analyticsConsent])
+  const chooseAnalytics = (choice: "accepted" | "rejected") => {
+    const wasAccepted = localStorage.getItem("aichu-analytics-consent") === "accepted"
+    localStorage.setItem("aichu-analytics-consent", choice)
+    if (choice === "rejected") {
+      pauseAnalytics()
+      // Reload to fully stop Yandex's script after revoking consent.
+      if (wasAccepted && isYandexMetricaConfigured()) { window.location.reload(); return }
+    }
+    setAnalyticsConsent(choice)
+    cookiePolicyRef.current?.close()
+  }
+
+  const applicationDialogRef = useRef<HTMLDialogElement>(null)
+  const [applicationName, setApplicationName] = useState("")
+  const [applicationPhone, setApplicationPhone] = useState("")
+  const [applicationTeamSize, setApplicationTeamSize] = useState("")
+  const applicationPhoneRef = useRef<HTMLInputElement>(null)
+  const [applicationPhoneTouched, setApplicationPhoneTouched] = useState(false)
+  const [applicationDraft, setApplicationDraft] = useState<ReturnType<typeof createApplicationEmail> | null>(null)
+  const [applicationCopyStatus, setApplicationCopyStatus] = useState<"idle" | "copied" | "error">("idle")
+  const [applicationStatus, setApplicationStatus] = useState<"idle" | "sending" | "sent" | "error" | "manual">("idle")
+  const [applicationRateLimited, setApplicationRateLimited] = useState(false)
+  const [applicationValidationError, setApplicationValidationError] = useState("")
+  const applicationSubmittingRef = useRef(false)
+  const leadsConfigured = true
+  const requestIdentity = useRef<{signature: string; id: string} | null>(null)
+  const phoneValidationMessage = language === "en"
+    ? "Enter a phone number with + and country code, containing 7–15 digits."
+    : language === "ky"
+      ? "+ белгиси жана өлкөнүн коду менен 7–15 сандан турган телефон номерин жазыңыз."
+      : "Введите номер с + и кодом страны: от 7 до 15 цифр."
+  const applicationPhoneInvalid = !normalizeApplicationPhone(applicationPhone)
+  useEffect(() => {
+    applicationPhoneRef.current?.setCustomValidity(applicationPhoneInvalid ? phoneValidationMessage : "")
+  }, [applicationPhoneInvalid, phoneValidationMessage])
+  const openApplication = () => {
+    if (applicationSubmittingRef.current) {
+      applicationDialogRef.current?.showModal()
+      return
+    }
+    setApplicationStatus("idle")
+    setApplicationRateLimited(false)
+    setApplicationValidationError("")
+    setApplicationPhoneTouched(false)
+    setApplicationDraft(null)
+    setApplicationCopyStatus("idle")
+    applicationDialogRef.current?.showModal()
+  }
+  const copyApplication = async () => {
+    if (!applicationDraft) return
+    try {
+      await navigator.clipboard.writeText(applicationDraft.message)
+      setApplicationCopyStatus("copied")
+    } catch {
+      setApplicationCopyStatus("error")
+    }
+  }
+  const submitApplication = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (applicationSubmittingRef.current || applicationStatus === "sending") return
+    const name = applicationName.trim()
+    const phone = normalizeApplicationPhone(applicationPhone)
+    const teamSize = Number(applicationTeamSize)
+    const consentInput = event.currentTarget.elements.namedItem("consent") as HTMLInputElement | null
+    const validTeam = Number.isInteger(teamSize) && teamSize >= 1 && teamSize <= 1000000
+    const validName = !!name && name.length <= 120 && !/[\x00-\x1f<>]/.test(name)
+    if (!validName || !phone || !validTeam || !consentInput?.checked) {
+      setApplicationValidationError(!validName
+        ? rezText("Укажите имя (до 120 символов, без < и >).", "Enter your name (up to 120 characters, without < or >).", "Атыңызды жазыңыз (120 белгиге чейин, < жана > белгилерисиз).")
+        : !phone ? phoneValidationMessage
+        : !validTeam ? rezText("Укажите количество человек в организации: целое число от 1 до 1 000 000.", "Enter the number of employees: a whole number from 1 to 1,000,000.", "Кызматкерлердин санын жазыңыз: 1ден 1 000 000го чейинки бүтүн сан.")
+        : rezText("Поставьте галочку согласия на обработку данных, чтобы отправить заявку.", "Check the data processing consent box to send your request.", "Өтүнмөнү жөнөтүү үчүн маалыматтарды иштетүүгө макулдук кутучасын белгилеңиз."))
+      if (!phone) setApplicationPhoneTouched(true)
+      setApplicationStatus("error")
+      const target = !validName ? event.currentTarget.querySelector<HTMLInputElement>('input[autocomplete="name"]')
+        : !phone ? applicationPhoneRef.current
+        : !validTeam ? event.currentTarget.querySelector<HTMLInputElement>('input[type="number"]') : consentInput
+      target?.focus()
+      return
+    }
+    setApplicationValidationError("")
+    const draft = createApplicationEmail({ name, phone, teamSize })
+    setApplicationDraft(draft)
+    setApplicationCopyStatus("idle")
+    const signature = JSON.stringify({ name, phone, teamSize, language })
+    if (requestIdentity.current?.signature !== signature) requestIdentity.current = { signature, id: crypto.randomUUID() }
+    const formData = new FormData()
+    formData.set("id", requestIdentity.current.id)
+    formData.set("language", language)
+    formData.set("consent", "true")
+    formData.set("subject", "Новая заявка с aichuuu.co")
+    formData.set("from_name", "aichuuu.co")
+    formData.set("name", name)
+    formData.set("phone", phone)
+    formData.set("team_size", String(teamSize))
+    formData.set("source", "aichuuu.co")
+    if (new FormData(event.currentTarget).has("botcheck")) formData.set("botcheck", "true")
+    applicationSubmittingRef.current = true
+    setApplicationRateLimited(false)
+    setApplicationStatus("sending")
+    try {
+      await sendApplicationRequest(formData)
+      setApplicationStatus("sent")
+      setApplicationPhoneTouched(false)
+      setApplicationName("")
+      setApplicationPhone("")
+      setApplicationTeamSize("")
+      setApplicationDraft(null)
+      trackEvent("lead_submit_success", { form: "application", page_language: language })
+    } catch (error) {
+      setApplicationRateLimited(error instanceof ApplicationRequestError && error.status === 429)
+      setApplicationStatus("error")
+    } finally {
+      applicationSubmittingRef.current = false
+    }
+  }
+  const cookiePolicyRef = useRef<HTMLDialogElement>(null)
+  const openCookieSettings = () => cookiePolicyRef.current?.showModal()
+  const analyticsServices = [
+    isYandexMetricaConfigured() ? "Яндекс.Метрика" : null,
+    isGoogleAnalyticsConfigured() ? "Google Analytics" : null
+  ].filter(Boolean).join(" + ")
+  useEffect(() => {
+    const onClick = (event: MouseEvent) => {
+      if (!(event.target instanceof Element)) return
+      const anchor = event.target.closest<HTMLAnchorElement>("a[href]")
+      if (!anchor) return
+      const href = anchor.getAttribute("href") || ""
+      const contactMethod = href.startsWith("tel:") ? "phone"
+        : href.startsWith("mailto:") ? "email"
+        : href.startsWith("https://t.me/") ? "telegram" : null
+      if (contactMethod) trackEvent("contact_click", { contact_method: contactMethod, page_language: language })
+      if (href === "#products") trackEvent("product_navigation", { product_id: "all", page_language: language })
+      if (/^#product-0[1-4]$/.test(href)) trackEvent("product_navigation", { product_id: href.slice(1), page_language: language })
+    }
+    document.addEventListener("click", onClick)
+    return () => document.removeEventListener("click", onClick)
+  }, [language])
   useEffect(() => { localStorage.setItem("aichu-theme", theme) }, [theme])
   const languageMenuRef = useRef<HTMLDetailsElement>(null)
+  const contactMenuRef = useRef<HTMLDetailsElement>(null)
   useEffect(() => {
     const onPointerDown = (event: PointerEvent) => {
       if (!languageMenuRef.current?.contains(event.target as Node)) languageMenuRef.current?.removeAttribute("open")
+      if (!contactMenuRef.current?.contains(event.target as Node)) contactMenuRef.current?.removeAttribute("open")
     }
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") languageMenuRef.current?.removeAttribute("open")
+      if (event.key === "Escape") {
+        languageMenuRef.current?.removeAttribute("open")
+        contactMenuRef.current?.removeAttribute("open")
+      }
     }
     document.addEventListener("pointerdown", onPointerDown)
     document.addEventListener("keydown", onKeyDown)
@@ -32,15 +239,13 @@ export default function App() {
       document.removeEventListener("keydown", onKeyDown)
     }
   }, [])
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const navSections = [{id:"about",number:"01",label:language==="ru"?"Обзор":language==="ky"?"Сереп":"Overview"},{id:"problem",number:"02",label:language==="ru"?"Проблемы":language==="ky"?"Көйгөйлөр":"Challenges"},{id:"how",number:"03",label:language==="ru"?"Подход":language==="ky"?"Ыкма":"Approach"},{id:"practice",number:"04",label:language==="ru"?"Применение":language==="ky"?"Колдонуу":"Use cases"},{id:"products",number:"05",label:language==="ru"?"Продукты":language==="ky"?"Продукттар":"Products"},{id:"templates",number:"06",label:language==="ru"?"Готовые сайты":language==="ky"?"Даяр сайттар":"Templates"},{id:"customers",number:"07",label:language==="ru"?"Для кого":language==="ky"?"Кимдер үчүн":"Who it’s for"},{id:"questions",number:"08",label:language==="ru"?"Вопросы":language==="ky"?"Суроолор":"FAQ"}]
-  const productsMenu = [{id:"product-01",name:"Sales Intelligence Platform",ru:"Продажи, прибыль, KPI",en:"Sales, profit and KPIs",ky:"Сатуу, пайда жана KPI"},{id:"product-02",name:"CRM Quality Control",ru:"Контроль воронки и потерь лидов",en:"Funnel and lead-loss control",ky:"Воронка жана лид жоготуулары"},{id:"product-03",name:"Price & Margin Intelligence",ru:"Цены и маржинальность",en:"Pricing and margins",ky:"Баалар жана маржа"},{id:"product-04",name:"AI Conversation Intelligence",ru:"Аналитика клиентских диалогов",en:"Customer conversation analytics",ky:"Кардарлар менен диалогдорду талдоо"}]
+  const rezText = (ru: string, en: string, ky: string) => language === "ru" ? ru : language === "en" ? en : ky
   const [section, setSection] = useState("about")
   const [visible, setVisible] = useState(false)
   useEffect(() => {
     const update = () => {
       const about = document.getElementById("about")
-      const ids = ["about", "problem", "how", "practice", "products", "templates", "customers", "questions"]
+      const ids = ["about", "problem", "products", "contacts"]
       setVisible(Boolean(about && about.getBoundingClientRect().top < window.innerHeight * 0.5))
       setSection([...ids].reverse().find(id => (document.getElementById(id)?.getBoundingClientRect().top ?? Infinity) < window.innerHeight * 0.5) ?? "about")
     }
@@ -51,7 +256,7 @@ export default function App() {
   }, [])
   return (
     <main id="top" className={`min-h-screen bg-[#07142D] text-[#F4EAF0] ${theme === "light" ? "aichu-light" : ""}`}>
-      <h1 className="sr-only">{language === "en" ? "aichu.co — Digital Intelligence Studio. B2B SaaS products in development." : language === "ky" ? "aichu.co — Digital Intelligence Studio. B2B SaaS продукттар иштелип чыгууда." : "aichu.co — Digital Intelligence Studio. Разрабатываем B2B SaaS-продукты для аналитики и автоматизации бизнеса."}</h1>
+      <h1 className="sr-only">{language === "en" ? "aichuuu.co — Digital Intelligence Studio. B2B SaaS products in development." : language === "ky" ? "aichuuu.co — Digital Intelligence Studio. B2B SaaS продукттар иштелип чыгууда." : "aichuuu.co — Digital Intelligence Studio. Разрабатываем B2B SaaS-продукты для аналитики и автоматизации бизнеса."}</h1>
       <style>{`
         .aichu-light { background:#FFFFFF !important; color:#07142D !important; }
         .aichu-light .bg-\\[\\#07142D\\] { background-color:#FFFFFF !important; }
@@ -62,55 +267,123 @@ export default function App() {
         .aichu-light .bg-\\[\\#F4EAF0\\] { background-color:#FFFFFF !important; }
         .aichu-light .text-\\[\\#07142D\\] { color:#07142D !important; }
         .aichu-light .hwf-root { color:#07142D !important; }
+        .aichu-light .text-\\[\\#FDC21E\\] { color:#8A6000 !important; }
+        .aichu-light .hover\\:text-\\[\\#FDC21E\\]:hover { color:#8A6000 !important; }
+        .aichu-light .group:hover .group-hover\\:text-\\[\\#FDC21E\\] { color:#8A6000 !important; }
+        .aichu-light .application-error { color:#B42318; }
         .aichu-light article:not([class*="bg-[#F4EAF0]"]) { background-color:#fff !important; }
         .aichu-light [class*="text-[#F4EAF0]/"] { color:rgba(7,20,45,.72) !important; }
       `}</style>
-      <header className="sticky top-0 z-40 bg-[#07142D] px-4 py-3 text-[#F4EAF0] md:px-8">
-        <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4">
-          <nav aria-label="Main navigation" className="hidden items-center gap-2 lg:flex">
-            <a href="#top" className="px-3 py-2 text-sm hover:text-[#FA347D]">{language === "ru" ? "Главная" : language === "ky" ? "Башкы бет" : "Home"}</a>
-            <div className="group relative">
-              <button type="button" className="px-3 py-2 text-sm hover:text-[#FA347D]" aria-haspopup="true">{language === "ru" ? "Решения" : language === "ky" ? "Чечимдер" : "Solutions"} ▾</button>
-              <div className="invisible absolute left-0 top-full w-[340px] translate-y-2 border border-[#FA347D]/25 bg-[#07142D] p-3 opacity-0 shadow-2xl transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
-                {productsMenu.map(item => <a key={item.name} href={`#${item.id}`} className="block border-b border-white/10 px-3 py-3 last:border-0 hover:bg-white/10"><span className="block text-sm font-medium">{item.name}</span><span className="mt-1 block text-xs text-white/55">{language === "ru" ? item.ru : language === "ky" ? item.ky : item.en}</span></a>)}
-              </div>
-            </div>
-            <div className="group relative">
-              <button type="button" className="px-3 py-2 text-sm hover:text-[#FA347D]" aria-haspopup="true">{language === "ru" ? "О студии" : language === "ky" ? "Студия жөнүндө" : "Studio"} ▾</button>
-              <div className="invisible absolute left-0 top-full w-56 translate-y-2 border border-[#FA347D]/25 bg-[#07142D] p-2 opacity-0 shadow-2xl transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
-                {navSections.filter(item => !["products","templates"].includes(item.id)).map(item => <a key={item.id} href={`#${item.id}`} className="block px-3 py-2 text-sm hover:bg-white/10">{item.number} / {item.label}</a>)}
-              </div>
-            </div>
-            <a href="#templates" className="px-3 py-2 text-sm hover:text-[#FA347D]">{language === "ru" ? "Готовые сайты" : language === "ky" ? "Даяр сайттар" : "Website templates"}</a>
-          </nav>
-          <div className="flex items-center gap-2">
-            <button type="button" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label={theme === "dark" ? "Light mode" : "Dark mode"} className="px-3 py-2 text-sm transition-colors hover:text-[#FA347D]">{theme === "dark" ? "☀" : "☾"}</button>
-            <details ref={languageMenuRef} className="group relative">
-              <summary aria-label={language === "ru" ? "Выбрать язык" : language === "ky" ? "Тилди тандоо" : "Choose language"} className="flex cursor-pointer list-none items-center gap-2 px-3 py-2 text-xs font-semibold tracking-wider text-[#F4EAF0] transition-colors hover:text-[#FA347D] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#FA347D] [&::-webkit-details-marker]:hidden">
-                <span>{language.toUpperCase()}</span>
-                <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true" className="transition-transform duration-200 group-open:rotate-180"><path d="m2.5 4.5 3.5 3.5 3.5-3.5" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="1.5" /></svg>
-              </summary>
-              <div className="absolute right-0 top-full z-50 mt-2 min-w-[160px] border border-[#F4EAF0]/15 bg-[#07142D] py-1 text-[#F4EAF0] shadow-xl">
-                {([["ru","Русский"],["en","English"],["ky","Кыргызча"]] as const).map(([code,label]) => (
-                  <button type="button" key={code} lang={code} onClick={() => { setLanguage(code); languageMenuRef.current?.removeAttribute("open") }} aria-current={language === code ? "true" : undefined} className={`flex w-full items-center justify-between gap-5 px-4 py-3 text-left text-sm transition-colors hover:bg-[#F4EAF0]/10 ${language === code ? "text-[#FA347D]" : "text-[#F4EAF0]"}`}>
-                    <span>{label}</span>{language === code && <span aria-hidden="true">✓</span>}
-                  </button>
-                ))}
-              </div>
-            </details>
-            <button type="button" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu" aria-expanded={mobileOpen} className="px-3 py-2 text-sm lg:hidden">{mobileOpen ? "✕" : "☰"}</button>
-          </div>
+      <header ref={headerRef} className="sticky top-0 z-40 bg-[#07142D] px-2 py-2 text-[#F4EAF0] sm:px-4 md:px-8 lg:py-3">
+        <div className="mx-auto flex max-w-[1440px] items-center justify-center">
+          <LiquidNavbar
+            ariaLabel={rezText("Основная навигация", "Main navigation", "Негизги багыттоо")}
+            compact={true}
+            tone={theme}
+            sound={false}
+            active={!visible ? 0 : section === "about" || section === "problem" ? 1 : 2}
+            onChange={(index) => setSection(["about", "problem", "products"][index])}
+            items={[
+              { label: language === "ru" ? "Главная" : language === "ky" ? "Башкы бет" : "Home", href: "#top", icon: <Home size={18} strokeWidth={1.8} />, fx: "glow" },
+              { label: language === "ru" ? "Воронка" : language === "ky" ? "Воронка" : "Funnel", href: "#problem", icon: <ChartNoAxesCombined size={18} strokeWidth={1.8} />, fx: "drop" },
+              { label: "REZON", href: "#products", icon: <Layers size={18} strokeWidth={1.8} />, fx: "plane" },
+            ]}
+            endContent={
+              <>
+                <details ref={contactMenuRef} className="nimbus-language relative">
+                  <summary
+                    className="nimbus-action nimbus-language-summary"
+                    onClick={() => languageMenuRef.current?.removeAttribute("open")}
+                    aria-label={rezText("Способы связи", "Contact options", "Байланыш жолдору")}
+                    title={rezText("Способы связи", "Contact options", "Байланыш жолдору")}
+                  >
+                    <Phone size={19} strokeWidth={1.8} aria-hidden="true" />
+                  </summary>
+                  <div className={`fixed right-3 top-16 z-[70] w-[min(18rem,calc(100vw-1.5rem))] rounded-xl border p-2 shadow-2xl sm:absolute sm:right-0 sm:top-full sm:mt-3 ${theme === "light" ? "border-[#07142D]/15 bg-white text-[#07142D]" : "border-[#F4EAF0]/20 bg-[#07142D] text-[#F4EAF0]"}`}>
+                    <p className="px-3 pb-2 pt-1 text-[11px] font-semibold uppercase tracking-[.16em] opacity-60">
+                      {rezText("Способы связи", "Get in touch", "Байланыш жолдору")}
+                    </p>
+                    {[
+                      { name: rezText("Позвонить", "Call", "Чалуу"), detail: "+996 503 030 997", href: "tel:+996503030997", icon: Phone },
+                      { name: "WhatsApp", detail: "+996 503 030 997", href: "https://wa.me/996503030997", icon: MessageCircle },
+                      { name: "Telegram", detail: "@Aichuuuco", href: "https://t.me/Aichuuuco", icon: Send },
+                      { name: "Instagram", detail: "@aichuuu.co", href: "https://www.instagram.com/aichuuu.co/", icon: Instagram },
+                      { name: "Threads", detail: "@aichuuu.co", href: "https://www.threads.net/@aichuuu.co", icon: AtSign },
+                      { name: "Email", detail: "aichurekmilashka@icloud.com", href: "mailto:aichurekmilashka@icloud.com", icon: Mail },
+                    ].map(({ name, detail, href, icon: Icon }) => (
+                      <a
+                        key={href}
+                        href={href}
+                        target={href.startsWith("https://") ? "_blank" : undefined}
+                        rel={href.startsWith("https://") ? "noopener noreferrer" : undefined}
+                        onClick={() => contactMenuRef.current?.removeAttribute("open")}
+                        className="flex min-h-12 items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-[#FDC21E]/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#FDC21E]"
+                      >
+                        <Icon size={19} strokeWidth={1.8} className="shrink-0" aria-hidden="true" />
+                        <span className="min-w-0">
+                          <span className="block text-sm font-medium">{name}</span>
+                          <span className="block truncate text-[11px] opacity-65">{detail}</span>
+                        </span>
+                      </a>
+                    ))}
+                  </div>
+                </details>
+                <button
+                  type="button"
+                  className="nimbus-action"
+                  onClick={openApplication}
+                  aria-label={rezText("Открыть анкету", "Open request form", "Өтүнмө формасын ачуу")}
+                  title={rezText("Открыть анкету", "Open request form", "Өтүнмө формасын ачуу")}
+                >
+                  <Mail size={19} strokeWidth={1.8} aria-hidden="true" />
+                </button>
+                <button
+                  type="button"
+                  className="nimbus-action"
+                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                  aria-label={language === "ru" ? (theme === "dark" ? "Включить светлую тему" : "Включить тёмную тему") : language === "ky" ? (theme === "dark" ? "Ачык теманы күйгүзүү" : "Караңгы теманы күйгүзүү") : (theme === "dark" ? "Switch to light theme" : "Switch to dark theme")}
+                  title={language === "ru" ? "Тема" : language === "ky" ? "Тема" : "Theme"}
+                >
+                  {theme === "dark" ? <Sun size={19} strokeWidth={1.8} /> : <Moon size={19} strokeWidth={1.8} />}
+                </button>
+                <details ref={languageMenuRef} className="nimbus-language relative">
+                  <summary
+                    className="nimbus-action nimbus-language-summary"
+                    onClick={() => contactMenuRef.current?.removeAttribute("open")}
+                    aria-label={language === "ru" ? "Выбрать язык" : language === "ky" ? "Тилди тандоо" : "Choose language"}
+                    title={language === "ru" ? "Язык" : language === "ky" ? "Тил" : "Language"}
+                  >
+                    <Globe2 size={19} strokeWidth={1.8} aria-hidden="true" />
+                  </summary>
+                  <div className={`absolute right-0 top-full z-50 mt-3 w-44 overflow-hidden rounded-xl border p-1 shadow-2xl ${theme === "light" ? "border-[#07142D]/15 bg-white text-[#07142D]" : "border-[#F4EAF0]/20 bg-[#07142D] text-[#F4EAF0]"}`}>
+                    {([["ru", "Русский"], ["en", "English"], ["ky", "Кыргызча"]] as const).map(([code, label]) => (
+                      <button
+                        type="button"
+                        key={code}
+                        lang={code}
+                        onClick={() => { languageMenuRef.current?.removeAttribute("open"); if (code !== language) changeLanguage(code) }}
+                        aria-current={language === code ? "true" : undefined}
+                        className="flex min-h-11 w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors hover:bg-[#FDC21E]/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#FDC21E]"
+                      >
+                        <span>{label}</span>
+                        {language === code && <span aria-hidden="true" className="text-[#C79400]">✓</span>}
+                      </button>
+                    ))}
+                  </div>
+                </details>
+              </>
+            }
+          />
         </div>
-        {mobileOpen && <nav aria-label="Mobile navigation" className="mt-3 grid gap-1 border-t border-white/15 pt-3 lg:hidden">{navSections.map(item => <a key={item.id} href={`#${item.id}`} onClick={() => setMobileOpen(false)} className="px-3 py-3 text-sm hover:bg-white/10">{item.number} / {item.label}</a>)}</nav>}
       </header>
       {/* The original interactive halftone wordmark now IS the hero, not a footer below it. */}
-      <section aria-label="Интерактивный логотип aichu.co" className="w-full">
+      <section aria-label={rezText("Интерактивный логотип AICHU", "Interactive AICHU wordmark", "Интерактивдүү AICHU логотиби")} className="w-full">
         <HalftoneWordmarkFooter
-          wordmark="aichu.co"
+          wordmark="AICHU"
           label=""
           meta=""
           backToTop={false}
-          palette={theme === "dark" ? { background: "#07142D", ink: "#F4EAF0", warm: "#FA347D" } : { background: "#FFFFFF", ink: "#07142D", warm: "#FA347D" }}
+          palette={theme === "dark" ? { background: "#07142D", ink: "#F4EAF0", warm: "#FDC21E" } : { background: "#FFFFFF", ink: "#07142D", warm: "#FDC21E" }}
           dotGap={6}
           radius={80}
           crop={0.05}
@@ -120,141 +393,209 @@ export default function App() {
         />
       </section>
 
-      <div id="about" className="relative">
+      <div id="about" className="relative pt-8 md:pt-12">
       <SalesLeakageFunnel language={language} theme={theme} />
-      <section id="how" className="mx-auto max-w-[1440px] px-6 pb-20 md:px-12">
-        <span className="text-xs tracking-[.2em] text-[#FA347D]">03 / HOW IT FITS</span>
-        <h2 className="mt-5 text-3xl font-medium md:text-5xl">{tr("От данных к действиям.")}</h2>
-        <div className="mt-8 grid gap-3 md:grid-cols-3">
-          {[["01",tr("Определяем данные"),tr("Выбираем необходимые показатели продаж, CRM, цен и коммуникаций под задачи компании.")],["02",tr("Настраиваем анализ"),tr("Формируем метрики прибыли и KPI, цикл сделки, потери лидов, маржу и качество диалогов.")],["03",tr("Применяем результаты"),tr("Используем выявленные отклонения для контроля процессов и принятия управленческих решений.")]].map(([n,t,d])=><div key={n} className="border border-[#F4EAF0]/15 p-7"><span className="text-[#FA347D]">{n}</span><h3 className="mt-8 text-xl">{t}</h3><p className="mt-3 text-sm text-[#F4EAF0]/60">{d}</p></div>)}
-        </div>
-      </section>
-      <IllosShaderFeatureBento
-        eyebrow="04 / IN PRACTICE"
-        title={tr("Практические сценарии.")}
-        items={[
-          {
-            title: tr("Продажи и прибыль"),
-            description: tr("Сопоставляйте продажи, прибыль и KPI. Разграничивайте доступ к показателям для разных ролей."),
-            illustration: "vector-search",
-          },
-          {
-            title: language === "ru" ? "CRM и коммуникации" : language === "en" ? "CRM and communications" : "CRM жана коммуникациялар",
-            description: language === "ru"
-              ? "Контролируйте скорость обработки заявок, потери лидов и качество переписок с клиентами."
-              : language === "en"
-                ? "Monitor enquiry response times, lost leads and the quality of customer conversations."
-                : "Кайрылууларды иштетүү ылдамдыгын, жоголгон лиддерди жана кардарлар менен кат алышуунун сапатын көзөмөлдөңүз.",
-            illustration: "cache-layer",
-          },
-          {
-            title: tr("Маржинальность"),
-            description: tr("Отслеживайте изменения цен и предложения поставщиков, анализируйте влияние на маржинальность."),
-            illustration: "rate-limit",
-          },
-        ]}
-      />
-      <section id="products" className="mx-auto max-w-[1440px] px-6 pb-28 pt-8 md:px-12">
+      <section id="products" className="mx-auto max-w-[1440px] scroll-mt-28 px-6 pb-28 pt-16 md:px-12 md:pt-20">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6 border-b border-[#F4EAF0]/15 pb-7">
           <div>
-            <span className="text-[11px] uppercase tracking-[.28em] text-[#FA347D]">{tr("05 / НАШИ ПРОДУКТЫ")}</span>
-            <h2 className="mt-4 text-4xl font-semibold tracking-tight md:text-6xl">{tr("Интеллект в каждом решении")}<span className="text-[#FA347D]">.</span></h2>
+            <h2 className="text-5xl font-semibold tracking-[-.04em] md:text-7xl">REZON<span className="text-[#FDC21E]">.</span></h2>
+            <p className="mt-4 text-base font-medium tracking-wide md:text-xl">CRM &amp; Business Intelligence</p>
           </div>
-          <p className="max-w-sm text-sm leading-relaxed text-[#F4EAF0]/60">{language === "ru" ? "Четыре направления B2B SaaS. Сейчас разрабатываем концепции и прототипы, условия пилотов обсуждаем индивидуально." : language === "en" ? "Four B2B SaaS directions in concept and prototype stages. Pilot terms are discussed individually." : "Төрт B2B SaaS багыты. Азыр концепциялар жана прототиптер иштелүүдө, пилоттук шарттар жекече талкууланат."}</p>
+          <p className="max-w-md text-sm leading-relaxed text-[#F4EAF0]/65">{rezText("Система управления и интеллектуальной аналитики бизнеса. Два равнозначных направления в одной платформе.", "Business management and intelligence in one platform. Two equally important capabilities.", "Бир платформада бизнести башкаруу жана интеллектуалдык талдоо. Эки тең маанилүү багыт.")}</p>
         </div>
-        <div className="grid grid-cols-1 gap-px overflow-hidden rounded-sm border border-[#F4EAF0]/15 bg-[#F4EAF0]/15 md:grid-cols-2">
-          {[
-            { number: "01", name: "Sales Intelligence Platform", tag: "SALES / PROFITABILITY", challenge: tr("Выручка растёт, но её динамика сама по себе не объясняет изменение прибыли и результативность коммерческой команды."), model: tr("Единая система показателей продаж, прибыли и KPI с разграничением доступа к управленческой информации."), application: tr("Сопоставление коммерческих результатов и ключевых метрик по доступным срезам данных; выявление отклонений для управленческого разбора."), value: tr("Прозрачность финансово-коммерческой результативности и более обоснованная приоритизация решений."), features: [tr("Продажи и прибыль"), tr("KPI и динамика"), tr("Разграничение доступа")] },
-            { number: "02", name: "CRM Quality Control", tag: "REVENUE OPERATIONS", challenge: tr("Формальное ведение CRM не гарантирует контроля над потерями лидов, скоростью реакции и экономикой сделки."), model: tr("Аналитика юнит-экономики, длительности цикла сделки, скорости обработки обращений и конверсии по этапам воронки."), application: tr("Локализация этапов потери лидов, анализ задержек и сопоставление операционных показателей с экономикой продаж."), value: tr("Основа для точечных изменений в процессе продаж вместо решений на уровне субъективных оценок."), features: [tr("Юнит-экономика"), tr("Цикл сделки и скорость реакции"), tr("Воронка и потери лидов")] },
-            { number: "03", name: "Price & Margin Intelligence", tag: "PRICING / PROCUREMENT", challenge: tr("Изменения закупочных и рыночных цен могут ухудшать маржинальность раньше, чем это отражается в итоговой отчётности."), model: tr("Мониторинг цен, анализ поставщиков и контроль показателей маржинальности."), application: tr("Сопоставление ценовых изменений и условий поставщиков с маржинальностью для оценки необходимости пересмотра закупок или ценовой политики."), value: tr("Более оперативный контроль факторов, влияющих на валовую доходность, и аргументированная работа с ценами."), features: [tr("Мониторинг цен"), tr("Анализ поставщиков"), tr("Маржинальность")] },
-            { number: "04", name: "AI Conversation Intelligence", tag: "AI / CUSTOMER COMMUNICATION", challenge: tr("Оценка качества клиентских коммуникаций зависит от выборочных проверок и не даёт системной картины работы команды."), model: tr("Анализ переписок с клиентами и качества коммуникации менеджеров."), application: tr("Выявление повторяющихся проблем в диалогах и формирование предметной базы для обратной связи, контроля стандартов и обучения."), value: tr("Более последовательная оценка клиентского взаимодействия и управляемое повышение качества работы команды."), features: [tr("Анализ переписок"), tr("Оценка качества диалогов"), tr("Повторяющиеся ошибки")] },
-          ].map((product) => (
-            <article key={product.number} id={`product-${product.number}`} className="group scroll-mt-28 flex min-h-[610px] flex-col justify-between bg-[#07142D] p-7 transition-colors duration-300 hover:bg-[#0B1C3B] md:p-10">
-              <div>
-                <div className="mb-10 flex items-center justify-between text-xs tracking-[.2em]">
-                  <span className="text-[#FA347D]">{product.number} / 04</span>
-                  <span className="text-[#F4EAF0]/40">{product.tag}</span>
-                </div>
-                <h3 className="max-w-md text-2xl font-medium leading-tight tracking-tight md:text-3xl">{product.name}</h3>
-                <div className="mt-7 space-y-6">
-                  {[[ tr("Бизнес-контекст"), product.challenge ], [ tr("Аналитическая модель"), product.model ], [ tr("Применение"), product.application ]].map(([label, copy]) => (
-                    <div key={label}><p className="mb-2 text-[10px] font-medium uppercase tracking-[.18em] text-[#F4EAF0]/40">{label}</p><p className="max-w-lg text-sm leading-relaxed text-[#F4EAF0]/75">{copy}</p></div>
-                  ))}
-                  <div className="border-t border-[#FA347D]/50 pt-5"><p className="mb-2 text-[10px] font-medium uppercase tracking-[.18em] text-[#FA347D]">{tr("Управленческая ценность")}</p><p className="max-w-lg text-base leading-relaxed text-[#F4EAF0]">{product.value}</p></div>
-                </div>
-              </div>
-              <div className="mt-10 flex flex-wrap gap-2">
-                {product.features.map((feature) => <span key={feature} className="border border-[#F4EAF0]/20 px-3 py-2 text-[11px] text-[#F4EAF0]/75">{feature}</span>)}
-              </div>
-            </article>
-          ))}
+        <div id="product-01" className="scroll-mt-28" />
+        <div id="product-02" className="scroll-mt-28" />
+        <DeferredRezonDashboard language={language} theme={theme} />
+        <div className="mt-8 border-l-2 border-[#FDC21E] pl-5 md:pl-7">
+          <p className="max-w-4xl text-xl font-medium leading-relaxed tracking-tight md:text-3xl">{rezText("Не просто показываем, что происходит в продажах. Помогаем понять почему и что нужно улучшить.", "Not just what is happening in sales, but why and what needs improving.", "Сатууда эмне болуп жатканын гана эмес, анын себептерин жана эмнени жакшыртуу керектигин түшүнүүгө жардам беребиз.")}</p>
         </div>
-        <div className="mt-7 flex flex-wrap items-center justify-between gap-3 text-sm text-[#F4EAF0]/60">
-          <p>{tr("Стоимость рассчитывается индивидуально под объём данных, интеграции и задачи.")}</p>
-          <span className="text-[#FA347D]">AICHU.CO / B2B SOFTWARE</span>
-        </div>
+        <p className="mt-7 text-xs leading-relaxed text-[#F4EAF0]/50">{rezText("REZON разрабатывается как концепция и прототип. Описанные функции пока не являются доступным коммерческим сервисом.", "REZON is in concept and prototype development. These planned features are not yet a commercially available service.", "REZON азыр концепция жана прототип баскычында. Бул пландалган функциялар азырынча коммерциялык сервис эмес.")}</p>
       </section>
-      <section id="templates" className="mx-auto max-w-[1440px] px-6 pb-28 md:px-12">
-        <div className="mb-10 flex flex-wrap items-end justify-between gap-6 border-b border-[#F4EAF0]/15 pb-7">
-          <div>
-            <span className="text-[11px] uppercase tracking-[.28em] text-[#FA347D]">06 / READY-MADE WEBSITES</span>
-            <h2 className="mt-4 text-4xl font-semibold tracking-tight md:text-6xl">{tr("Готовые сайты")}<span className="text-[#FA347D]">.</span></h2>
-          </div>
-          <p className="max-w-sm text-sm leading-relaxed text-[#F4EAF0]/60">{tr("Выберите готовый дизайн или закажите адаптацию под свой бизнес.")}</p>
-        </div>
-        <article className="grid overflow-hidden border border-[#F4EAF0]/20 lg:grid-cols-[1.15fr_1fr]">
-          <div className="flex min-h-[310px] flex-col justify-between bg-[#F4EAF0] p-8 text-[#07142D] md:p-12">
-            <div className="flex items-start justify-between gap-4 text-[11px] uppercase tracking-[.2em]">
-              <span>Template 001</span><span className="rounded-full border border-[#07142D]/25 px-3 py-1">Landing page</span>
-            </div>
-            <div>
-              <p className="mb-3 text-sm uppercase tracking-[.2em] text-[#A62D62]">{tr("На основе проекта Nurba")}</p>
-              <h3 className="max-w-lg text-4xl font-semibold leading-tight md:text-5xl">{tr("Лендинг для услуг и частной практики")}</h3>
-              <p className="mt-5 max-w-lg text-sm leading-relaxed text-[#07142D]/65">{tr("Адаптивный сайт с блоками услуг, информацией о специалисте и контактами. Демонстрация показывает дизайн; персональные данные исходного проекта не входят в продаваемый шаблон.")}</p>
-            </div>
-            <a href="https://aichurekmilashka-wq.github.io/Nurba-brat/" target="_blank" rel="noopener noreferrer" className="mt-8 w-fit border-b border-[#07142D] pb-1 text-sm font-semibold transition hover:text-[#A62D62]">{tr("Посмотреть демоверсию ↗")}</a>
-          </div>
-          <div className="flex flex-col justify-between bg-[#0B1C3B] p-8 md:p-12">
-            <div>
-              <p className="text-[11px] uppercase tracking-[.2em] text-[#FA347D]">{tr("Цены / RUB")}</p>
-              <div className="mt-8 flex items-end gap-3"><strong className="text-5xl font-semibold">2 000 ₽</strong><span className="pb-1 text-sm text-[#F4EAF0]/55">{tr("готовый шаблон")}</span></div>
-              <div className="mt-8 divide-y divide-[#F4EAF0]/15 border-y border-[#F4EAF0]/15 text-sm">
-                <div className="flex justify-between gap-4 py-4"><span>{tr("Шаблон (файлы сайта)")}</span><span className="shrink-0">2 000 ₽</span></div>
-                <div className="flex justify-between gap-4 py-4"><span>{tr("Замена текста, фото и контактов")}</span><span className="shrink-0">10 000 ₽</span></div>
-                <div className="flex justify-between gap-4 py-4"><span>{tr("Под ключ с доменом и настройками")}</span><span className="shrink-0">20 000 ₽</span></div>
-                <div className="flex justify-between gap-4 py-4"><span>{tr("Индивидуальные доработки")}</span><span className="shrink-0">{tr("от 30 000 ₽")}</span></div>
-              </div>
-            </div>
-            <div className="mt-8">
-              <a href="https://aichurekmilashka-wq.github.io/Nurba-brat/" target="_blank" rel="noopener noreferrer" className="inline-block rounded-full bg-[#FA347D] px-6 py-4 text-sm font-semibold text-[#07142D] transition hover:brightness-110">{tr("Открыть демонстрацию ↗")}</a>
-              <p className="mt-4 text-xs leading-relaxed text-[#F4EAF0]/45">{tr("Оплата и автоматическая выдача файлов пока не подключены. Контакт для приёма заказов будет добавлен после настройки.")}</p>
-            </div>
-          </div>
-        </article>
-      </section>
-      <section id="customers" className="mx-auto max-w-[1440px] px-6 pb-20 md:px-12">
-        <span className="text-xs tracking-[.2em] text-[#FA347D]">07 / WHO IT IS FOR</span>
-        <h2 className="mt-5 text-3xl font-medium md:text-5xl">{tr("Для команд, которым нужна ясность.")}</h2>
-        <p className="mt-6 max-w-2xl text-[#F4EAF0]/65">{tr("Для собственников и руководителей, которым важны прибыль и KPI; для отделов продаж, контролирующих воронку и скорость обработки; для коммерческих команд, управляющих ценами и маржой; для руководителей клиентского сервиса, оценивающих качество переписок.")}</p>
-      </section>
-      <section id="questions" className="mx-auto max-w-[1440px] px-6 pb-28 md:px-12">
-        <span className="text-xs tracking-[.2em] text-[#FA347D]">08 / QUESTIONS</span>
-        <h2 className="mt-5 text-3xl font-medium md:text-5xl">{tr("Частые вопросы.")}</h2>
-        <div className="mt-8 divide-y divide-[#F4EAF0]/15 border-y border-[#F4EAF0]/15">
-          {[[language === "ru" ? "На какой стадии продукты?" : language === "en" ? "What is the current product stage?" : "Продукттар кайсы этапта?", language === "ru" ? "Сейчас мы разрабатываем концепции и прототипы. Возможность пилотного проекта и конкретные интеграции обсуждаются индивидуально." : language === "en" ? "We are currently developing concepts and prototypes. Pilot availability and integrations are assessed individually." : "Азыр концепциялар жана прототиптер иштелүүдө. Пилоттук долбоор жана интеграциялар жекече талкууланат."],[tr("Сколько стоит внедрение?"),tr("Стоимость каждого продукта рассчитывается индивидуально и зависит от объёма данных, интеграций и задач.")],[tr("Нужно ли подключать все четыре продукта?"),tr("Нет. Sales Intelligence, CRM Quality Control, Price & Margin Intelligence и AI Conversation Intelligence представлены как отдельные решения.")],[tr("Какие показатели анализирует Sales Intelligence?"),tr("Продажи, прибыль, KPI и динамику показателей. Предусмотрено разграничение доступа.")],[tr("Что контролирует CRM Quality Control?"),tr("Юнит-экономику, цикл сделки, скорость обработки заявок, воронку и потери лидов.")],[tr("Что даёт Price & Margin Intelligence?"),tr("Мониторинг цен и поставщиков, а также анализ маржинальности.")],[tr("Что анализирует AI Conversation Intelligence?"),tr("Переписки с клиентами и качество работы менеджеров.")],[tr("Можно ли интегрировать решение с нашей CRM?"),tr("Совместимость и необходимый состав интеграций определяются при обсуждении конкретного проекта.")]].map(([q,a])=><details key={q} className="group py-5"><summary className="cursor-pointer list-none text-lg">{q}<span className="float-right text-[#FA347D]">+</span></summary><p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#F4EAF0]/65">{a}</p></details>)}
-        </div>
-      </section>
+
       </div>
-      <footer className="border-t border-[#F4EAF0]/15 px-6 py-10 md:px-12">
-        <div className="mx-auto flex max-w-[1440px] flex-col justify-between gap-5 text-sm md:flex-row md:items-center">
-          <div><p className="font-medium">aichu.co <span className="text-[#FA347D]">/</span> Digital Intelligence Studio</p><p className="mt-2 text-[#F4EAF0]/55">© {new Date().getFullYear()} aichu.co</p></div>
-          <nav aria-label={language === "ru" ? "Навигация по странице" : language === "ky" ? "Барактын навигациясы" : "Page navigation"} className="flex flex-wrap gap-x-6 gap-y-3 text-[#F4EAF0]/70">
-            <a href="#products" className="transition-colors hover:text-[#FA347D]">{language === "ru" ? "Продукты" : language === "ky" ? "Продукттар" : "Products"}</a>
-            <a href="#questions" className="transition-colors hover:text-[#FA347D]">{language === "ru" ? "Вопросы" : language === "ky" ? "Суроолор" : "FAQ"}</a>
-            <a href="#top" className="transition-colors hover:text-[#FA347D]">{language === "ru" ? "Наверх ↑" : language === "ky" ? "Жогору ↑" : "Back to top ↑"}</a>
+      <dialog ref={applicationDialogRef} aria-labelledby="application-heading" onClick={(event) => { if (event.target === applicationDialogRef.current) applicationDialogRef.current?.close() }} className="w-[calc(100%-2rem)] max-w-lg rounded-2xl border border-[#FDC21E]/30 bg-[#07142D] p-0 text-[#F4EAF0] shadow-2xl backdrop:bg-[#07142D]/75">
+        <div className="relative p-6 sm:p-9">
+          <button type="button" onClick={() => applicationDialogRef.current?.close()} aria-label={rezText("Закрыть", "Close", "Жабуу")} className="absolute right-5 top-4 rounded-lg px-2 py-1 text-2xl text-[#F4EAF0]/70 hover:text-[#FDC21E]">×</button>
+          <h2 id="application-heading" className="pr-8 text-2xl font-semibold">{rezText("Обсудим вашу задачу", "Tell us about your business", "Бизнесиңиз тууралуу айтып бериңиз")}</h2>
+          <p className="mt-2 text-sm text-[#F4EAF0]/65">{rezText("Заполните короткую анкету для обращения в студию.", "Fill out this short request form.", "Кыскача өтүнмөнү толтуруңуз.")}</p>
+          <form noValidate onSubmit={submitApplication} onChange={() => {
+            setApplicationValidationError("")
+            setApplicationDraft(null)
+            setApplicationCopyStatus("idle")
+            if (applicationStatus === "manual" || applicationStatus === "error") setApplicationStatus("idle")
+          }} className="mt-7 space-y-5">
+            {applicationValidationError && <p role="alert" className="application-error rounded-lg border border-red-400/40 p-3 text-sm text-red-300">{applicationValidationError}</p>}
+            <label className="block text-sm">
+              <span className="mb-2 block">{rezText("Ваше имя", "Your name", "Атыңыз")}</span>
+              <input required disabled={applicationStatus === "sending"} maxLength={120} autoComplete="name" value={applicationName} onChange={(e) => setApplicationName(e.target.value)} className="w-full rounded-xl border border-[#F4EAF0]/25 bg-white/5 px-4 py-3 text-base text-[#F4EAF0] outline-none focus:border-[#FDC21E]" placeholder={rezText("Как к вам обращаться", "Your name", "Атыңыз")} />
+            </label>
+            <div className="block text-sm">
+              <label htmlFor="application-phone" className="mb-2 block">{rezText("Номер телефона", "Phone number", "Телефон номери")}</label>
+              <input id="application-phone" ref={applicationPhoneRef} required disabled={applicationStatus === "sending"} type="tel" inputMode="tel" maxLength={30} autoComplete="tel" value={applicationPhone}
+                aria-invalid={applicationStatus !== "sent" && applicationPhoneTouched && applicationPhoneInvalid ? true : undefined}
+                aria-describedby={applicationStatus !== "sent" && applicationPhoneTouched && applicationPhoneInvalid ? "application-phone-hint application-phone-error" : "application-phone-hint"}
+                onChange={(e) => {
+                  e.currentTarget.setCustomValidity(normalizeApplicationPhone(e.target.value) ? "" : phoneValidationMessage)
+                  setApplicationPhone(e.target.value)
+                }}
+                onBlur={() => setApplicationPhoneTouched(true)}
+                onInvalid={(e) => {
+                  setApplicationPhoneTouched(true)
+                  e.currentTarget.setCustomValidity(phoneValidationMessage)
+                }}
+                className="w-full rounded-xl border border-[#F4EAF0]/25 bg-white/5 px-4 py-3 text-base text-[#F4EAF0] outline-none focus:border-[#FDC21E]" placeholder="+996 503 030 997" />
+              <span id="application-phone-hint" className="mt-2 block text-xs leading-relaxed text-[#F4EAF0]/65">{rezText("С кодом страны, например +996 503 030 997 или +7 999 123 45 67.", "Include the country code, for example +996 503 030 997 or +44 20 7946 0958.", "Өлкөнүн коду менен, мисалы +996 503 030 997 же +7 999 123 45 67.")}</span>
+              {applicationStatus !== "sent" && applicationPhoneTouched && applicationPhoneInvalid && <span id="application-phone-error" role="alert" className="application-error mt-2 block text-xs text-red-300">{phoneValidationMessage}</span>}
+            </div>
+            <label className="block text-sm">
+              <span className="mb-2 block">{rezText("Количество человек в организации", "Number of employees", "Уюмдагы кызматкерлердин саны")}</span>
+              <input required disabled={applicationStatus === "sending"} type="number" min="1" max="1000000" step="1" value={applicationTeamSize} onChange={(e) => setApplicationTeamSize(e.target.value)} className="w-full rounded-xl border border-[#F4EAF0]/25 bg-white/5 px-4 py-3 text-base text-[#F4EAF0] outline-none focus:border-[#FDC21E]" placeholder="10" />
+            </label>
+
+            <input type="checkbox" name="botcheck" tabIndex={-1} aria-hidden="true" autoComplete="off" className="pointer-events-none absolute h-0 w-0 opacity-0" />
+            <p className="text-xs leading-relaxed text-[#F4EAF0]/70">
+              {rezText(
+                "Имя, телефон и численность организации используются только для ответа на обращение и обсуждения вашей задачи. Заявки сохраняются в закрытой базе Supabase (Германия); доступ есть только у команды проекта. При отправке резервного письма используется ваше почтовое приложение. Данные могут обрабатываться за пределами вашей страны. Срок хранения зависит от используемого сервиса и нашей переписки. Запросить сведения о данных, исправление или удаление можно по адресу ",
+                "Your name, phone number and organisation size are used only to respond to your request and discuss your needs. Requests are stored in a private Supabase database in Germany, accessible only to the project team. Backup emails use your email application. Data may be processed outside your country. Retention depends on the service used and our correspondence. For access, correction or deletion requests, contact ",
+                "Атыңыз, телефонуңуз жана уюмдун көлөмү кайрылууңузга жооп берүү жана маселеңизди талкуулоо үчүн гана колдонулат. Өтүнмөлөр Supabase жабык базасында (Германия) сакталат; маалыматка долбоордун командасы гана жете алат. Камдык кат почта колдонмоңуз аркылуу жөнөтүлөт. Маалымат өлкөңүздөн тышкары иштетилиши мүмкүн. Сактоо мөөнөтү кызматка жана кат алышууга жараша болот. Маалыматка жетүү, оңдоо же өчүрүү боюнча кайрылыңыз: "
+              )}
+              <a href="mailto:aichurekmilashka@icloud.com" className="underline underline-offset-2 hover:text-[#FDC21E]">aichurekmilashka@icloud.com</a>.
+              {" "}
+              {leadsConfigured && (
+                <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-[#FDC21E]">
+                  {rezText("Политика Supabase", "Supabase privacy policy", "Supabase купуялык саясаты")}
+                </a>
+              )}
+            </p>
+            {!leadsConfigured && (
+              <p className="text-xs leading-relaxed text-[#F4EAF0]/55">
+                {rezText("Мы подготовим письмо с вашими данными. Отправьте его из почтового приложения; если оно не откроется, скопируйте текст ниже.", "We will prepare an email with your details. Send it from your mail app; if it does not open, copy the draft below.", "Маалыматтарыңыз менен кат даярдайбыз. Аны почта колдонмосунан жөнөтүңүз; колдонмо ачылбаса, төмөндөгү текстти көчүрүңүз.")}
+              </p>
+            )}
+            <label className="flex items-start gap-3 text-xs leading-relaxed">
+              <input type="checkbox" name="consent" required disabled={applicationStatus === "sending"} className="mt-1 h-4 w-4 shrink-0 accent-[#FDC21E]" />
+              <span>{rezText("Согласен(на) на обработку указанных данных для ответа на заявку.", "I agree to processing these details to respond to my request.", "Өтүнмөмө жооп берүү үчүн көрсөтүлгөн маалыматтарды иштетүүгө макулмун.")}</span>
+            </label>
+            <button type="submit" disabled={applicationStatus === "sending" || applicationStatus === "sent"} className="w-full rounded-xl bg-[#FDC21E] px-5 py-3 font-semibold text-[#07142D] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-55">
+              {applicationStatus === "sending" ? rezText("Отправляем…", "Sending…", "Жөнөтүлүүдө…") : applicationStatus === "sent" ? rezText("Отправлено", "Sent", "Жөнөтүлдү") : leadsConfigured ? rezText("Отправить", "Send request", "Жөнөтүү") : rezText("Подготовить письмо", "Prepare email", "Кат даярдоо")}
+            </button>
+            {applicationStatus === "sent" && <p role="status" className="text-sm text-[#FDC21E]">{rezText("Заявка отправлена. Мы свяжемся с вами по указанному номеру.", "Request sent. We will contact you at the phone number provided.", "Өтүнмө жөнөтүлдү. Көрсөтүлгөн номер боюнча байланышабыз.")}</p>}
+            {applicationStatus === "error" && !applicationValidationError && <p role="alert" className="application-error text-sm text-red-300">{applicationRateLimited ? rezText("Достигнут лимит отправок. Для нового обращения напишите на почту ниже или попробуйте позже.", "Submission limit reached. Email us below for another request or try later.", "Жөнөтүү чегине жеттиңиз. Жаңы кайрылуу үчүн төмөнкү почтага жазыңыз же кийин аракет кылыңыз.") : rezText("Не удалось подтвердить отправку. Данные сохранены в форме. Повторите попытку или отправьте письмо по электронной почте.", "We could not confirm delivery. Your details remain in the form. Try again or send the request by email.", "Өтүнмөнү жөнөтүү ырасталган жок. Маалыматтар формада калды. Кайра аракет кылыңыз же электрондук почта аркылуу жөнөтүңүз.")}</p>}
+            {applicationStatus === "manual" && <p role="status" className="text-sm text-[#FDC21E]">{rezText("Письмо подготовлено, но ещё не отправлено. Отправьте его из своей почты.", "Your email is prepared, but has not been sent. Send it from your mail app.", "Кат даяр, бирок жөнөтүлө элек. Аны почтаңыздан жөнөтүңүз.")}</p>}
+            {applicationDraft && (applicationStatus === "manual" || applicationStatus === "error") && (
+              <div className="space-y-3 rounded-xl border border-[#F4EAF0]/25 p-4">
+                <p className="break-all text-sm">{rezText("Получатель", "Recipient", "Алуучу")}: <a href="mailto:aichurekmilashka@icloud.com" className="underline">aichurekmilashka@icloud.com</a></p>
+                <textarea readOnly rows={5} value={applicationDraft.message} onFocus={(event) => event.currentTarget.select()} aria-label={rezText("Текст письма", "Email draft", "Каттын тексти")} className="w-full resize-y rounded-lg border border-[#F4EAF0]/25 bg-white/5 p-3 text-sm leading-relaxed" />
+                <div className="flex flex-wrap gap-3 text-sm">
+                  <a href={applicationDraft.mailto} className="ym-disable-tracklink inline-flex min-h-11 items-center rounded-lg border border-[#F4EAF0]/25 px-3 underline">{rezText("Открыть почту", "Open mail app", "Почтаны ачуу")}</a>
+                  <button type="button" onClick={copyApplication} className="min-h-11 rounded-lg border border-[#F4EAF0]/25 px-3">{rezText("Скопировать текст", "Copy draft", "Текстти көчүрүү")}</button>
+                </div>
+                {applicationCopyStatus === "copied" && <p role="status" className="text-xs">{rezText("Текст скопирован. Вставьте его в письмо.", "Draft copied. Paste it into your email.", "Текст көчүрүлдү. Аны катка коюңуз.")}</p>}
+                {applicationCopyStatus === "error" && <p role="status" className="text-xs">{rezText("Выделите текст выше и скопируйте его вручную.", "Select the draft above and copy it manually.", "Жогорудагы текстти белгилеп, кол менен көчүрүңүз.")}</p>}
+              </div>
+            )}
+          </form>
+        </div>
+      </dialog>
+      <footer id="contacts" className="mt-8 scroll-mt-28 border-t border-[#F4EAF0]/15 px-6 py-10 md:mt-12 md:px-12">
+        <div className="mx-auto grid max-w-[1440px] grid-cols-1 items-center gap-10 text-sm md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-6">
+          <div className="text-center md:text-left">
+            <p className="font-medium">aichuuu.co <span className="text-[#FDC21E]">/</span> Digital Intelligence Studio</p>
+            <p className="mt-2 text-[#F4EAF0]/55">© {new Date().getFullYear()} aichuuu.co</p>
+            {isAnalyticsConfigured() && <button type="button" onClick={openCookieSettings} className="mt-2 text-xs text-[#F4EAF0]/60 underline underline-offset-4 hover:text-[#FDC21E]">{language === "ru" ? "Настройки cookie" : language === "ky" ? "Cookie жөндөөлөрү" : "Cookie preferences"}</button>}
+          </div>
+          <div className="flex justify-center">
+            <SocialTooltip items={[
+              { icon: "instagram", ariaLabel: "Instagram", tooltip: "@aichuuu.co", href: "https://www.instagram.com/aichuuu.co/" },
+              { icon: "threads", ariaLabel: "Threads", tooltip: "Threads · @aichuuu.co", href: "https://www.threads.net/@aichuuu.co" },
+              { icon: "telegram", ariaLabel: "Telegram", tooltip: "@Aichuuuco", href: "https://t.me/Aichuuuco" },
+              { icon: "email", ariaLabel: "Email", tooltip: "aichurekmilashka@icloud.com", href: "mailto:aichurekmilashka@icloud.com" },
+              { icon: "phone", ariaLabel: language === "ru" ? "Телефон" : language === "ky" ? "Телефон" : "Phone", tooltip: "+996 503 030 997", href: "tel:+996503030997" },
+            ]} />
+          </div>
+          <nav aria-label={language === "ru" ? "Навигация по странице" : language === "ky" ? "Барактын навигациясы" : "Page navigation"} className="flex justify-center text-[#F4EAF0]/70 md:justify-end">
+            <a href="#top" className="transition-colors hover:text-[#FDC21E]">{language === "ru" ? "Наверх ↑" : language === "ky" ? "Жогору ↑" : "Back to top ↑"}</a>
           </nav>
         </div>
       </footer>
+      {isAnalyticsConfigured() && analyticsConsent === null && (
+        <aside role="region" aria-label={rezText("Настройки cookie", "Cookie preferences", "Cookie жөндөөлөрү")} className="fixed bottom-3 left-3 right-3 z-50 mx-auto max-w-[640px] rounded-2xl border border-[#FDC21E]/35 bg-[#07142D] p-5 text-[#F4EAF0] shadow-2xl sm:bottom-6 sm:p-6">
+          <p className="text-[11px] font-semibold uppercase tracking-[.22em] text-[#FDC21E]">COOKIE &amp; PRIVACY</p>
+          <p className="mt-3 text-sm leading-relaxed text-[#F4EAF0]/85">
+            {rezText(
+              "Мы используем необходимые cookie для работы сайта. С вашего согласия также включаем аналитику посещений, чтобы улучшать сайт. Вы можете принять или отклонить необязательные cookie.",
+              "We use essential cookies to run this website. With your consent, we also use visit analytics to improve it. You can accept or decline optional cookies.",
+              "Сайттын иштеши үчүн зарыл cookie файлдары колдонулат. Макулдугуңуз болсо гана сайтты жакшыртуу үчүн кирүүлөрдү талдайбыз. Кошумча cookie файлдарына макул болууга же баш тартууга болот."
+            )}
+          </p>
+          <div className="mt-4 flex flex-col gap-2 min-[380px]:flex-row">
+            <button type="button" onClick={() => chooseAnalytics("accepted")} className="min-h-11 flex-1 rounded-lg border border-[#FDC21E]/80 px-4 py-2 text-sm font-medium text-[#F4EAF0] transition-colors hover:bg-[#FDC21E]/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FDC21E]">
+              {rezText("Принять", "Accept", "Макул болуу")}
+            </button>
+            <button type="button" onClick={() => chooseAnalytics("rejected")} className="min-h-11 flex-1 rounded-lg border border-[#FDC21E]/80 px-4 py-2 text-sm font-medium text-[#F4EAF0] transition-colors hover:bg-[#FDC21E]/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FDC21E]">
+              {rezText("Отклонить", "Decline", "Баш тартуу")}
+            </button>
+          </div>
+          <button type="button" onClick={openCookieSettings} className="mt-3 min-h-9 text-left text-xs text-[#F4EAF0]/70 underline decoration-[#F4EAF0]/40 underline-offset-4 transition-colors hover:text-[#FDC21E]">
+            {rezText("Подробнее о cookie и данных", "How cookies and data are used", "Cookie жана маалыматтар тууралуу")}
+          </button>
+        </aside>
+      )}
+      {isAnalyticsConfigured() && (
+        <dialog ref={cookiePolicyRef} aria-labelledby="cookie-policy-title" className="fixed inset-0 m-auto max-h-[90dvh] w-[min(94vw,680px)] overflow-y-auto rounded-2xl border border-[#FDC21E]/40 bg-[#07142D] p-0 text-[#F4EAF0] shadow-2xl backdrop:bg-[#07142D]/80">
+          <div className="p-5 sm:p-8">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[.22em] text-[#FDC21E]">AICHUUU.CO / PRIVACY</p>
+                <h2 id="cookie-policy-title" className="mt-2 text-xl font-semibold">
+                  {rezText("Cookie и обработка данных", "Cookies and data processing", "Cookie жана маалыматтарды иштетүү")}
+                </h2>
+              </div>
+              <button type="button" onClick={() => cookiePolicyRef.current?.close()} aria-label={rezText("Закрыть", "Close", "Жабуу")} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#F4EAF0]/25 text-xl hover:border-[#FDC21E]">×</button>
+            </div>
+            <div className="mt-5 space-y-4 text-sm leading-relaxed text-[#F4EAF0]/80">
+              <p>{rezText(
+                "На сайте используются необходимые технологии хранения настроек (например, выбора темы и решения о cookie). Они нужны для работы интерфейса и не используются для рекламы.",
+                "The website uses essential storage for preferences, such as your theme and cookie choice. These are used to operate the interface, not for advertising.",
+                "Сайт интерфейстин иштеши үчүн зарыл болгон жөндөөлөрдү (мисалы, теманы жана cookie тандоосун) сактайт. Алар жарнама үчүн колдонулбайт."
+              )}</p>
+              <p>{rezText(
+                "Только с вашего согласия мы подключаем аналитику. Она может обрабатывать сведения о просмотренных страницах, действиях на сайте, параметрах устройства и браузера, IP-адресе и идентификаторах cookie. Цель — статистика посещений и улучшение сайта.",
+                "Only with your consent do we enable analytics. It may process visited pages, on-site actions, device and browser details, IP addresses and cookie identifiers. The purpose is visitor statistics and website improvement.",
+                "Макулдугуңуз менен гана аналитика иштетилет. Ал ачылган барактар, сайттагы аракеттер, түзмөк жана браузер, IP дарек жана cookie идентификаторлору тууралуу маалыматтарды иштете алат. Максат — кирүүлөрдү талдоо жана сайтты жакшыртуу."
+              )}</p>
+              <p>{rezText(
+                "Поставщики аналитики:", "Analytics providers:", "Аналитика кызматтары:"
+              )} <span className="font-medium text-[#F4EAF0]">{analyticsServices}</span>. {rezText(
+                "Данные могут передаваться этим поставщикам, в том числе для обработки за пределами вашей страны. Сроки хранения аналитических cookie зависят от настроек и политик поставщиков.",
+                "Data may be shared with these providers, including processing outside your country. Analytics cookie retention depends on provider settings and policies.",
+                "Маалыматтар бул кызматтарга, анын ичинде өлкөңүздөн тышкары иштетүү үчүн берилиши мүмкүн. Аналитикалык cookie файлдарын сактоо мөөнөтү кызматтын жөндөөлөрүнө жана саясатына жараша болот."
+              )}</p>
+              <p>{rezText(
+                "Условия обработки данных поставщиками:",
+                "Providers’ data processing policies:",
+                "Кызматтардын маалыматтарды иштетүү эрежелери:"
+              )}{" "}
+                {isYandexMetricaConfigured() && <a className="underline underline-offset-4 hover:text-[#FDC21E]" href="https://yandex.com/legal/confidential/" target="_blank" rel="noopener noreferrer">Yandex Privacy</a>}
+                {isYandexMetricaConfigured() && isGoogleAnalyticsConfigured() && " · "}
+                {isGoogleAnalyticsConfigured() && <a className="underline underline-offset-4 hover:text-[#FDC21E]" href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google Privacy</a>}
+              </p>
+              <p>{rezText(
+                "Ваш выбор сохраняется в браузере до его изменения или удаления данных сайта. Аналитика не загружается до согласия. Согласие можно изменить или отозвать в любой момент через «Настройки cookie» внизу сайта; при отзыве аналитика отключается после перезагрузки страницы. Отказ не ограничивает доступ к сайту.",
+                "Your choice is saved in the browser until you change it or clear site data. Analytics will not load before consent. You can change or withdraw consent any time using “Cookie preferences” in the footer; analytics stops after a page reload when withdrawn. Declining does not restrict access to this website.",
+                "Тандооңуз өзгөртүлмөйүнчө же сайттын маалыматы өчүрүлмөйүнчө браузерде сакталат. Макулдук берилмейинче аналитика жүктөлбөйт. Макулдукту каалаган убакта барактын аягындагы «Cookie жөндөөлөрү» аркылуу өзгөртсөңүз болот; баш тартканда аналитика барак жаңыртылгандан кийин токтойт. Баш тартуу сайтты колдонууга тоскоол болбойт."
+              )}</p>
+              <p>{rezText(
+                "По вопросам обработки данных: ", "For privacy inquiries: ", "Маалыматтарды иштетүү боюнча суроолор: "
+              )}<a className="underline underline-offset-4 hover:text-[#FDC21E]" href="mailto:aichurekmilashka@icloud.com">aichurekmilashka@icloud.com</a></p>
+            </div>
+            <div className="mt-6 flex flex-col gap-2 sm:flex-row">
+              <button type="button" onClick={() => chooseAnalytics("accepted")} className="min-h-11 flex-1 rounded-lg border border-[#FDC21E]/80 px-4 py-2 text-sm font-medium hover:bg-[#FDC21E]/15">{rezText("Принять аналитику", "Accept analytics", "Аналитикага макул болуу")}</button>
+              <button type="button" onClick={() => chooseAnalytics("rejected")} className="min-h-11 flex-1 rounded-lg border border-[#FDC21E]/80 px-4 py-2 text-sm font-medium hover:bg-[#FDC21E]/15">{rezText("Отклонить аналитику", "Decline analytics", "Аналитикадан баш тартуу")}</button>
+            </div>
+          </div>
+        </dialog>
+      )}
     </main>
   )
 }

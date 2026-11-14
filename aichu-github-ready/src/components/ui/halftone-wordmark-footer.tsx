@@ -62,6 +62,7 @@ export default function HalftoneWordmarkFooter({
   const ctx=canvas.getContext("2d");if(!ctx)return;
   const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   let w=0,h=0,dpr=1,px=-1e5,py=-1e5,raf=0,visible=true,awake=true;
+  let touchStart:{id:number;clientX:number;clientY:number;x:number;y:number}|null=null;
   let ring={x:0,y:0,t:-1};let dots=new Float32Array(0),count=0,grainTile:HTMLCanvasElement|null=null;
   const ink=hwfHex(opts.current.colors.ink)||[233,228,218],warm=hwfHex(opts.current.colors.warm)||[233,118,43];
   const layout=()=>{
@@ -103,20 +104,43 @@ export default function HalftoneWordmarkFooter({
     ctx.beginPath();ctx.arc(x,y,dots[j+6],0,6.2832);ctx.fill();
    }
    if(grainTile&&o.grain>0){ctx.globalAlpha=Math.min(1,o.grain)*.09;ctx.globalCompositeOperation="overlay";const pattern=ctx.createPattern(grainTile,"repeat");if(pattern){ctx.fillStyle=pattern;ctx.fillRect(0,0,w,h)}ctx.globalAlpha=1;ctx.globalCompositeOperation="source-over"}
-   awake=moving||ringAge<900||px> -1e4;
+   // Stop drawing after the spring and ripple settle; pointer events wake the loop again.
+   awake=moving||ringAge<900;
   }
   const loop=(now:number)=>{raf=0;if(!visible)return;draw(now);if(awake)raf=requestAnimationFrame(loop)};
   const wake=()=>{awake=true;if(!raf&&visible)raf=requestAnimationFrame(loop)};
   const toLocal=(e:PointerEvent)=>{const b=canvas.getBoundingClientRect();return [e.clientX-b.left,e.clientY-b.top]};
-  const onMove=(e:PointerEvent)=>{if(!opts.current.interactive||reduced)return;[px,py]=toLocal(e);wake()};
+  const onMove=(e:PointerEvent)=>{
+   // A finger moving across the canvas is usually scrolling the page, not hovering.
+   if(e.pointerType==="touch"){
+    if(touchStart&&e.pointerId===touchStart.id&&Math.hypot(e.clientX-touchStart.clientX,e.clientY-touchStart.clientY)>12)touchStart=null;
+    return;
+   }
+   if(!opts.current.interactive||reduced)return;
+   [px,py]=toLocal(e);wake();
+  };
   const onLeave=()=>{px=-1e5;py=-1e5;wake()};
-  const onDown=(e:PointerEvent)=>{if(!opts.current.interactive||reduced)return;if((e.target as HTMLElement).closest("a,button"))return;const p=toLocal(e);ring={x:p[0],y:p[1],t:performance.now()};wake()};
+  const onDown=(e:PointerEvent)=>{
+   if(!opts.current.interactive||reduced)return;
+   if((e.target as HTMLElement).closest("a,button"))return;
+   const p=toLocal(e);
+   if(e.pointerType==="touch"){touchStart={id:e.pointerId,clientX:e.clientX,clientY:e.clientY,x:p[0],y:p[1]};return}
+   ring={x:p[0],y:p[1],t:performance.now()};wake();
+  };
+  const onUp=(e:PointerEvent)=>{
+   if(!touchStart||e.pointerId!==touchStart.id)return;
+   const tap=touchStart;touchStart=null;
+   if(!opts.current.interactive||reduced||Math.hypot(e.clientX-tap.clientX,e.clientY-tap.clientY)>12)return;
+   ring={x:tap.x,y:tap.y,t:performance.now()};wake();
+  };
+  const onCancel=()=>{touchStart=null};
   layout();draw(performance.now());wake();
   root.addEventListener("pointermove",onMove);root.addEventListener("pointerleave",onLeave);root.addEventListener("pointerdown",onDown);
+  root.addEventListener("pointerup",onUp);root.addEventListener("pointercancel",onCancel);
   const ro=new ResizeObserver(()=>{layout();wake()});ro.observe(root);
   const io=new IntersectionObserver(entries=>{visible=entries[0]?entries[0].isIntersecting:true;if(visible)wake()});io.observe(root);
   let alive=true;if(document.fonts?.ready)document.fonts.ready.then(()=>{if(alive){layout();wake()}});
-  return()=>{alive=false;cancelAnimationFrame(raf);ro.disconnect();io.disconnect();root.removeEventListener("pointermove",onMove);root.removeEventListener("pointerleave",onLeave);root.removeEventListener("pointerdown",onDown)};
+  return()=>{alive=false;cancelAnimationFrame(raf);ro.disconnect();io.disconnect();root.removeEventListener("pointermove",onMove);root.removeEventListener("pointerleave",onLeave);root.removeEventListener("pointerdown",onDown);root.removeEventListener("pointerup",onUp);root.removeEventListener("pointercancel",onCancel)};
  },[key]);
  return <footer ref={rootRef} className={"hwf-root "+className} style={{height,"--hwf-bg":colors.background,"--hwf-ink":colors.ink,"--hwf-mono":monoFamily} as React.CSSProperties}>
   <style>{HWF_CSS}</style><canvas ref={canvasRef} aria-hidden="true"/><span className="hwf-sr">{wordmark}</span>
