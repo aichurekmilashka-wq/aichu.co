@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://aichuuu.co/sitemap.xml
+Sitemap: https://aichuuu.com/sitemap.xml

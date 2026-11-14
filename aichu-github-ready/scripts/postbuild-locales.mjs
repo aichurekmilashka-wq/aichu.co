@@ -2,7 +2,7 @@ import { readFile, mkdir, writeFile } from "node:fs/promises"
 import path from "node:path"
 
 const out = path.resolve("dist")
-const origin = (process.env.SITE_ORIGIN || "https://aichuuu.co").replace(/\/$/, "")
+const origin = (process.env.SITE_ORIGIN || "https://aichuuu.com").replace(/\/$/, "")
 const verification = (process.env.GOOGLE_SITE_VERIFICATION || "").trim()
 const pages = {
   ru: {
@@ -47,7 +47,7 @@ for (const [lang, meta] of Object.entries(pages)) {
     ${verificationMeta}
   </head>`)
   // Vite uses base "./". Nested pages must refer one directory up for assets.
-  html = html.replace(/(src|href)="\.\/(assets\/|favicon\.svg)/g, (_, attr, file) => `${attr}="../${file}`)
+  html = html.replace(/(src|href)="\.\/(assets\/|favicon\.svg|favicon-32\.png)/g, (_, attr, file) => `${attr}="../${file}`)
   // Asset paths in nested pages must not point at ./assets/.
   if (/\b(?:src|href)="\.\/assets\//.test(html)) throw new Error(`Bad asset path on ${lang}`)
   const localeDir = path.join(out, lang)
@@ -70,10 +70,13 @@ const rootHtml = `<!doctype html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'none'; img-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
   <meta name="robots" content="noindex,follow" />
   <meta http-equiv="refresh" content="0; url=./ru/" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>aichuuu.co | Digital Intelligence Studio</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png" />
   <link rel="canonical" href="${origin}/ru/" />
   ${alternates}
   ${verificationMeta}
