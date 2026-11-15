@@ -409,6 +409,13 @@ export default function App() {
         <div className="mt-8 border-l-2 border-[#FDC21E] pl-5 md:pl-7">
           <p className="max-w-4xl text-xl font-medium leading-relaxed tracking-tight md:text-3xl">{rezText("Не просто показываем, что происходит в продажах. Помогаем понять почему и что нужно улучшить.", "Not just what is happening in sales, but why and what needs improving.", "Сатууда эмне болуп жатканын гана эмес, анын себептерин жана эмнени жакшыртуу керектигин түшүнүүгө жардам беребиз.")}</p>
         </div>
+        <a
+          href="/ru/funnel/"
+          className="mt-7 inline-flex min-h-12 items-center gap-3 rounded-xl border border-[#FDC21E] bg-[#FDC21E] px-6 py-3 text-sm font-semibold text-[#07142D] transition-opacity hover:opacity-85 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#FDC21E]"
+        >
+          {rezText("Открыть воронку с рекомендациями", "Try funnel analysis (Russian beta)", "Воронканы талдоо (орусча бета)")}
+          <span aria-hidden="true">↗</span>
+        </a>
         <p className="mt-7 text-xs leading-relaxed text-[#F4EAF0]/50">{rezText("REZON разрабатывается как концепция и прототип. Описанные функции пока не являются доступным коммерческим сервисом.", "REZON is in concept and prototype development. These planned features are not yet a commercially available service.", "REZON азыр концепция жана прототип баскычында. Бул пландалган функциялар азырынча коммерциялык сервис эмес.")}</p>
       </section>
 
