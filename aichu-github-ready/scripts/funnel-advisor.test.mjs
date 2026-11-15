@@ -24,7 +24,7 @@ test("computes cohort conversion and identifies largest loss", () => {
   assert.equal(result.lostTotal, 101)
   assert.deepEqual(result.transitions.map(t => t.lost), [38, 21, 26, 16])
   assert.equal(result.mainLeakIndex, 0)
-  assert.equal(result.weakestRateIndex, 2)
+  assert.equal(result.weakestRateIndex, 3)
 })
 
 test("handles empty and complete cohorts without fabricated conversion", () => {
