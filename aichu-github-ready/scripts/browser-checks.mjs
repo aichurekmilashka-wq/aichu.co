@@ -133,6 +133,31 @@ try {
     results.languages.push(locale.code)
     await context.close()
   }
+  // Funnel advisor must work on its real static route, with no CRM connection.
+  for (const width of [375, 1440]) {
+    const context = await browser.newContext({ viewport: { width, height: width === 375 ? 812 : 900 }, isMobile: width === 375, hasTouch: width === 375 })
+    const page = await context.newPage()
+    try {
+      await page.goto("http://127.0.0.1:4173/ru/funnel/", { waitUntil: "networkidle" })
+      await page.getByRole("heading", { name: /Воронка продаж/ }).waitFor()
+      await noOverflow(page)
+      const numbers = page.locator(".fa-input-card input")
+      for (const [i, value] of ["120", "82", "61", "35", "19"].entries()) await numbers.nth(i).fill(value)
+      await page.locator(".fa-stat-accent strong").waitFor()
+      assert.match(await page.locator(".fa-stat-accent strong").innerText(), /15,8%/)
+      assert.match(await page.locator(".fa-loss-number").innerText(), /38/)
+      await page.getByRole("button", { name: "Учебный пример", exact: true }).click()
+      await page.locator(".fa-sample-alert").waitFor()
+      await page.getByRole("button", { name: "Мои данные", exact: true }).click()
+      await page.reload({ waitUntil: "networkidle" })
+      assert.equal(await page.locator(".fa-input-card input").nth(0).inputValue(), "120")
+      await numbers.nth(1).fill("130")
+      await page.getByRole("alert").filter({ hasText: "не может превышать" }).waitFor()
+      await noOverflow(page)
+      results.funnel ??= []
+      results.funnel.push({ width, passed: true })
+    } finally { await context.close() }
+  }
   // Connected path: every outbound delivery request is intercepted locally.
   for (const responseStatus of [503, 200, 429]) {
     const success = responseStatus === 200

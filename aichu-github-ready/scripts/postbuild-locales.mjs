@@ -54,6 +54,23 @@ for (const [lang, meta] of Object.entries(pages)) {
   await mkdir(localeDir, { recursive: true })
   await writeFile(path.join(localeDir, "index.html"), html)
 }
+// A separately routed, non-indexed Russian beta of the analytics tool.
+// Build its HTML explicitly: this is a static GitHub Pages deployment, not an SPA fallback.
+{
+  let html = buildHtml
+  html = setTag(html, /<html lang="[^"]*">/, '<html lang="ru">', "funnel lang")
+  html = setTag(html, /<title>[^<]*<\/title>/, '<title>Воронка продаж с рекомендациями | REZON</title>', "funnel title")
+  html = setTag(html, /<meta name="description" content="[^"]*"\s*\/>/, '<meta name="description" content="Аналитика конверсии по этапам продаж и практические рекомендации REZON." />', "funnel description")
+  html = setTag(html, /<link rel="canonical" href="[^"]*"\s*\/>/, '<link rel="canonical" href="' + origin + '/ru/funnel/" />', "funnel canonical")
+  html = setTag(html, /<meta property="og:title" content="[^"]*"\s*\/>/, '<meta property="og:title" content="REZON — Воронка продаж" />', "funnel og title")
+  html = setTag(html, /<meta property="og:description" content="[^"]*"\s*\/>/, '<meta property="og:description" content="Посчитайте конверсию и найдите точки потерь на своих данных." />', "funnel og description")
+  html = html.replace("</head>", '    <meta name="robots" content="noindex,follow" />\n    <meta property="og:url" content="' + origin + '/ru/funnel/" />\n  </head>')
+  html = html.replace(/(src|href)="\.\/(assets\/|favicon\.svg|favicon-32\.png)/g, (_, attr, file) => attr + '="../../' + file)
+  if (/\b(?:src|href)="\.\/assets\//.test(html)) throw new Error("Bad asset path on funnel")
+  const directory = path.join(out, "ru", "funnel")
+  await mkdir(directory, { recursive: true })
+  await writeFile(path.join(directory, "index.html"), html)
+}
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 ${Object.keys(pages).map(lang => `  <url>
